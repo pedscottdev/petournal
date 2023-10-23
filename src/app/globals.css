@@ -1,0 +1,58 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+body{
+  background-color: #fafafa;
+}
+
+li {
+  display: list-item;
+  text-align: -webkit-match-parent;
+}
+
+ul {
+  display: block;
+  list-style-type: disc;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 40px;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Sidebar */
+.sidebar {
+  box-sizing: border-box;
+}
+
+.sidebar-row:active {
+  border-left:  #f6f2ff; /* Đổi màu nền */
+}
+.sidebar-row:active .sidebar-icon {
+  color:  #7c3aed; /* Đổi màu icon */
+}
+.sidebar-row:active .title {
+  color:  #7c3aed; /* Tô đậm */
+}
+
+@layer components {
+  .icon {
+    @apply hidden md:inline-flex p-2 h-10 w-10 rounded-full text-gray-700  cursor-pointer hover:bg-gray-100;
+  }
+}
+
+/* Progress Bar */
+#nprogress .bar {
+  background:  #5F00F5 !important;
+}
+
+/* Custom Emoji Mart */
+em-emoji-picker {
+  position: absolute;
+  border-radius: 20px;
+}
+
