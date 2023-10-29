@@ -2,6 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import bgImage from '/src/img/bg-image.png'
 import logoImage from '/src/img/logo-name.svg'
+import Link from 'next/link';
 
 function Login() {
   return (
@@ -12,8 +13,7 @@ function Login() {
         {/* <div className='w-60 h-60 bg-gradient-to-tr from-violet-500 to-violet-800 rounded-full'> */}
           <Image 
             src={bgImage} 
-            alt="background-image" 
-            layout='fixed' 
+            alt="background-image"  
           />
         {/* </div> */}
       </div>
@@ -25,7 +25,6 @@ function Login() {
             className='w-48' 
             src={logoImage} 
             alt="background-image"
-            layout='fixed' 
           />
           <p className='text-lg mt-3.5'>Kết nối với cộng đồng những người yêu thú cưng.</p>
 
@@ -50,7 +49,10 @@ function Login() {
             
             {/* Buttons */}
             <div className='mt-6 flex flex-col gap-y-4'>
-              <button className='active:scale-[.98] active:duration-75 transition-all py-2.5 rounded-xl text-white bg-violet-500 text-lg font-bold'>Đăng nhập</button>
+              <Link href="/" className='active:scale-[.98] active:duration-75 transition-all py-2.5 rounded-xl text-center text-white bg-violet-500 text-lg font-bold'>
+                Đăng nhập
+              </Link>
+              
               
                <button className='flex items-center border-2  border-violet-300 justify-center gap-3 active:scale-[.98] active:duration-75 transition-all py-2.5 rounded-xl text-violet-500 bg-white text-lg font-bold' >
                 <svg width={24} height={24} viewBox="0 0 48 48">
@@ -69,10 +71,13 @@ function Login() {
               </button>
             </div>
 
-            <div className='mt-8 flex justify-center items-center'>
-              <p>Bạn chưa có tài khoản?</p>
-              <button className='text-violet-500 textbase font-medium ml-2'>Đăng ký tại đây.</button>
-            </div>
+            <Link href="/signup">
+              <div className='mt-8 flex justify-center items-center'>
+                <p>Bạn chưa có tài khoản?</p>
+                <button className='text-violet-500 textbase font-medium ml-2'>Đăng ký tại đây.</button>
+              </div>
+            </Link>
+            
 
           </div>
         </div>

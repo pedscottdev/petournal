@@ -85,50 +85,50 @@ function InputBox() {
 
   return (
     
-    <div className=' bg-white p-2 overfloy-y-none scrollbar-hide text-gray-500 border-b border-gray-300 '>
-      <div className='flex space-x-5 p-4'>
+    <div className=' bg-white p-2 overfloy-y-none scrollbar-hide text-gray-500 rounded-xl shadow-sm'>
+      <div className='flex space-x-5 p-4 pb-2'>
         <Image 
           className="rounded-full cursor-pointer w-11 h-11"
           src={defaultAvatar}
           // width={48}
           // height={48}
-          layout="fixed"
         />
 
-        <div className='w-full divide-y divide-gray-300 pl-3'>
+        <div className='w-full'>
           <div className={``}>
-            <textarea
+            <input
               onChange={(e) => setInput(e.target.value)} 
               value={input} 
-              rows={2}
-              className='bg-transparent outline-none placeholder-gray-400 w-full min-h-[50px]'
-              placeholder='How is your pet today?' 
-            ></textarea>
+              type='text'
+              className='bg-[#f8f8f9] px-4 text-[15px] rounded-xl outline-none placeholder-gray-400 w-full min-h-[42px]'
+              placeholder='Hôm nay thú cưng của bạn thế nào?' 
+            ></input>
           </div>
           <div>
           {selectedFile && (
             <div className='relative'>
               <div className='absolute w-8 h-8 bg-opacity-75 rounded-full flex items-center justify-center top-4 left-1 cursor-pointer' onClick={() => setSelectedFile(null)}>
-                <XIcon className='h-5 w-5 px-1 bg-white rounded-full text-gray-700'/>
+                <XIcon className='h-5 w-5 p-1 ml-2 bg-white rounded-full text-gray-700'/>
               </div>
               <img 
                 src={selectedFile}
                 alt=''
-                className='rounded-2xl pt-2 justify-center max-h-80 object-contain '
+                className='rounded-2xl my-4 justify-center max-h-80 object-contain '
               />
           </div>
           )}
         </div> 
         </div>
-
         {/* Hiển thị ảnh preview khi đăng ảnh */}
             
       </div>
       
-      {/* Icon chức năng */}
-      <div className='flex gap-3 ml-20 px-3  pb-1 items-center'>
+      {/* Input Controller */}
+      <div className="mb-3 mt-2 mx-4 border-b-2 border-gray-100"></div>
+      <div className='flex gap-6 px-3  pb-1 items-center'>
         <button className='flex gap-2' onClick={() => filePickerRef.current.click()}>
-          <PhotographIcon className='h-6 w-6 text-gray-700 hover:text-violet-500'/>
+          <PhotographIcon className='h-6 w-6 text-[#2683D7]'/>
+          <p className='font-medium'>Thêm ảnh</p>
           <input 
             type='file'
             hidden
@@ -138,11 +138,13 @@ function InputBox() {
         </button>
         
         <button className='flex gap-2 ml-2'>
-          <TbDog className='h-6 w-6 text-gray-700 hover:text-violet-500'/>
+          <TbDog className='h-6 w-6 text-violet-500'/>
+          <p className='font-medium'>Thú cưng</p>
         </button>
 
         <button className='flex gap-2 ml-2' onClick={() => setShowEmojis(!showEmojis)}>
-          <EmojiHappyIcon className='h-6 w-6 text-gray-700 hover:text-violet-500'/>
+          <EmojiHappyIcon className='h-6 w-6 text-[#FE9A66]'/>
+          <p className='font-medium'>Emoji</p>
         </button>
 
         {showEmojis && (
@@ -165,7 +167,7 @@ function InputBox() {
         )}
 
         <div className='grow text-right'>
-          <button className='bg-violet-600 text-white font-md text-md px-4 py-1.5 rounded-full hover:bg-violet-500 disabled:bg-violet-400 disabled:cursor-default' disabled={!input && !selectedFile} onClick={sendPost}>
+          <button className='bg-violet-600 text-[15px] font-medium text-white px-4 py-2 rounded-full hover:bg-violet-500 disabled:bg-violet-400 disabled:cursor-default' disabled={!input && !selectedFile} onClick={sendPost}>
             Chia sẻ
           </button>
         </div>

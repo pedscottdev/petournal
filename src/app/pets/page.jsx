@@ -10,7 +10,10 @@ function pets() {
         <title>Petournal</title>       
       </Head>
       
-      <main>        
+      <main>
+        <div className=''>
+        
+        </div>        
       </main>
     </>
   )

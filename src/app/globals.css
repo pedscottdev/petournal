@@ -2,8 +2,11 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
 body{
-  background-color: #fafafa;
+  background-color: #F9F9FA;
+  font-family: 'Inter', sans-serif;
 }
 
 li {
@@ -41,7 +44,7 @@ ul {
 
 @layer components {
   .icon {
-    @apply hidden md:inline-flex p-2 h-10 w-10 rounded-full text-gray-700  cursor-pointer hover:bg-gray-100;
+    @apply hidden md:inline-flex p-1.5 h-9 w-9 rounded-full text-gray-700  cursor-pointer hover:bg-gray-100;
   }
 }
 

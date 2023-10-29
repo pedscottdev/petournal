@@ -10,13 +10,13 @@ import Image from 'next/image'
 export default function Home() {
   return (
     <main>
-        <div className="flex grid-cols-3">
-          <div className="w-[70%]">
+        <div className="flex grid-cols-3 px-6">
+          <div className="xl:w-[70%] lg:w-[70%] md:w-full sm:w-full" >
             <Feed />
           </div>
 
           {/* Widgets */}
-          <div className="w-[30%]">
+          <div className="w-inherit lg:flex xl:flex md:hidden sm:hidden">
             <Widgets />
           </div>
         </div>

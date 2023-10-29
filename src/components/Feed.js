@@ -10,11 +10,17 @@ import {
 
 function Feed() {
   return (
-    <div className='flex-col flex-shrink-0 overflow-x-hidden display-block min-h-screen border-r-2 border-gray-200 md:w-xl bg-white'>
+    <div className=' p-6 pl-0 flex-col flex-shrink-0 overflow-x-hidden display-block min-h-screen md:w-xl'>
+      <div  className=''>
         {/* InputBox */}
         <InputBox />
+      </div>
+        
 
         {/* Posts */}
+        <PostCard />
+        <PostCard />
+        <PostCard />
         <PostCard />
     </div>
   )

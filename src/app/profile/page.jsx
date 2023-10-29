@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import Head from 'next/head'
 import Image from 'next/image';
@@ -13,14 +14,17 @@ import {
   TbDog,
  } from 'react-icons/tb';
 import defaultAvatar from '/src/img/default-avatar.png'; 
-import RootLayout from '../layout';
 
 function profile() {
   return (
     <>      
-      <RootLayout>
-        
-      </RootLayout>
+       <Head>
+        <title>Petournal</title>       
+      </Head>
+      
+      <main> 
+          <h3>This is your profile page.</h3>
+      </main>
     </>
   )
 }

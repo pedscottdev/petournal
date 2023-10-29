@@ -10,7 +10,7 @@ function settings() {
       </Head>
       
       <main> 
-    
+          <p>This is your setting page.</p>
       </main>
     </>
   )

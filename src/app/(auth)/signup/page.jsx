@@ -1,6 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import bgImage from '/src/img/bg-image.png'
+import Link from 'next/link';
 
 function Signup() {
   return (
@@ -12,7 +13,6 @@ function Signup() {
           <Image 
             src={bgImage} 
             alt="background-image" 
-            layout='fixed' 
           />
         {/* </div> */}
       </div>
@@ -69,13 +69,16 @@ function Signup() {
             
             {/* Buttons */}
             <div className='mt-8 flex flex-col gap-y-4'>
-              <button className='active:scale-[.98] active:duration-75 transition-all py-2.5 rounded-xl text-white bg-violet-500 text-lg font-bold'>Đăng ký</button>
+              <button className='active:scale-[.98] active:duration-75 transition-all py-2.5 rounded-xl text-white bg-violet-500 text-lg font-semibold'>Đăng ký</button>
               
             </div>
-
-            <div className='mt-8 flex justify-center items-center'>
-              <button className='text-violet-500 textbase font-medium ml-2'>Chuyển đến trang đăng nhập</button>
-            </div>
+            
+            <Link href="/login">
+              <div className='mt-8 flex justify-center items-center'>
+                <button className='text-violet-500 textbase font-medium ml-2'>Chuyển đến trang đăng nhập</button>
+              </div>
+            </Link>
+            
 
           </div>
         </div>

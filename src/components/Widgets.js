@@ -10,7 +10,7 @@ import {
 
 function Widgets() {
   return (
-    <div className='flex-shrink-0 h-full space-y-5 bg-white' >    
+    <div className='py-6 flex-shrink-0 space-y-8' >    
       {/* Thông báo và tìm kiếm */}
       {/* <div className='flex p-2 px-4 space-x-4 bg-white'>
         <BellIcon className='icon'/>
@@ -21,7 +21,8 @@ function Widgets() {
         </div>    
       </div>   */}
 
-      <div className=" pt-2 rounded-xl px-2 ">
+      <div className="p-2 rounded-xl bg-white shadow-sm">
+        
         <h4 className="font-bold text-xl px-4 py-2">Có thể bạn biết</h4>
        
           <div
@@ -29,16 +30,14 @@ function Widgets() {
           >
             <Image
               src={defaultAvatar}
-              width={50}
-              height={50}
               objectFit="cover"
-              className="rounded-full"
+              className="rounded-full w-11 h-11"
             />
             <div className="ml-4 leading-5 group">
-              <h4 className="font-bold group-hover:underline">
+              <h4 className="font-semibold group-hover:underline">
                 Phuoc Nguyen
               </h4>
-              <h5 className="text-gray-500 text-[15px]">47 người theo dõi</h5>
+              <h5 className="text-gray-500 text-[14px]">47 người theo dõi</h5>
             </div>
             <button className="ml-auto text-violet-500 rounded-full font-bold text-sm py-1.5 px-3.5">
               Theo dõi
@@ -49,36 +48,33 @@ function Widgets() {
           >
             <Image
               src={testAvatar}
-              width={50}
-              height={50}
               objectFit="cover"
-              className="rounded-full"
+              className="rounded-full w-11 h-11"
             />
             <div className="ml-4 leading-5 group">
-              <h4 className="font-bold group-hover:underline">
+              <h4 className="font-semibold group-hover:underline">
                 Son Nguyen
               </h4>
-              <h5 className="text-gray-500 text-[15px]">89 người theo dõi</h5>
+              <h5 className="text-gray-500 text-[14px]">89 người theo dõi</h5>
             </div>
             <button className="ml-auto text-violet-500 rounded-full font-bold text-sm py-1.5 px-3.5">
               Theo dõi
             </button>
           </div>
+
           <div
             className="hover:bg-white hover:bg-opacity-[0.03] px-4 py-2 cursor-pointer transition duration-200 ease-out flex items-center"
           >
             <Image
               src={testAvatar2}
-              width={50}
-              height={50}
               objectFit="cover"
-              className="rounded-full"
+              className="rounded-full w-11 h-11"
             />
             <div className="ml-4 leading-5 group">
-              <h4 className="font-bold group-hover:underline">
+              <h4 className="font-semibold group-hover:underline">
                 Huong Lua Nguyen
               </h4>
-              <h5 className="text-gray-500 text-[15px]">123 người theo dõi</h5>
+              <h5 className="text-gray-500 text-[14px]">123 người theo dõi</h5>
             </div>
             <button className="ml-auto text-violet-500 rounded-full font-bold text-sm py-1.5 px-3.5">
               Theo dõi

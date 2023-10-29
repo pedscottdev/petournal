@@ -3,14 +3,17 @@ import Head from 'next/head'
 import Sidebar from '../../components/Sidebar'
 import SidebarRow from '../../components/SidebarRow'
 
-function petcares() {
+function petcare() {
   return (
     <>      
        <Head>
         <title>Petournal</title>       
       </Head>
       
-      <main>        
+      <main>
+        <div className=''>
+        
+        </div>        
       </main>
     </>
   )
