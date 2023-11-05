@@ -10,6 +10,7 @@ import AuthService from "../../../core/services/auth.js";
 import { useForm } from "react-hook-form";
 import ErrorField from "../../../components/share/error-field.js";
 import Loading from "../../../components/share/loading.js";
+import defaultAvatar from "/src/img/default-avatar.png";
 
 function Signup() {
     const router = useRouter();
@@ -18,9 +19,9 @@ function Signup() {
         mutationFn: (data) => {
             return AuthService.register(data);
         },
-        onSuccess: (data) => {
+        onSuccess: () => {
             toast.success("Đăng ký thành công");
-            router.push("/login")
+            router.push("/login");
         },
         onError: (err) => {
             console.log(err);
@@ -30,7 +31,7 @@ function Signup() {
 
     const handleRegister = (values) => {
         if (isValidUserData(values)) {
-            mutation.mutate(values);
+            mutation.mutate({ ...values, avatar: defaultAvatar.src });
         }
     };
 
