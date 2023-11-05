@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider } from "react-redux";
 import { persistor, store } from "../core/store";
 import { PersistGate } from "redux-persist/integration/react";
+import { Toaster } from "react-hot-toast";
 // import { Inter } from 'next/font/google'
 
 // const font = Inter ({ subsets: ['latin'] })
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
                             <div>
                                 <Sidebar />
                                 <div className="sm:ml-[80px] xl:ml-[275px]">
+                                    <Toaster />
                                     <Header />
                                     {children}
                                 </div>
