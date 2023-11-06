@@ -20,7 +20,7 @@ function settings() {
       <main className=''>
         <div className="bg-[#F8FAFC] border-b border-gray-200 dark:border-gray-700 ">
           <ul
-            className="flex flex-wrap -mb-px font-semibold text-center"
+            className="border-b-2 border-gray-200 flex flex-wrap -mb-px font-semibold text-center"
             id="default-tab"
             data-tabs-toggle="#default-tab-content"
             role="tablist"
@@ -29,7 +29,7 @@ function settings() {
               <button
                 className={`inline-block p-4 border-b-2 rounded-t-lg ${
                   activeTab === "profile"
-                    ? "border-violet-600 dark:border-white"
+                    ? "border-violet-600"
                     : ""
                 }`}
                 id="profile-tab"
