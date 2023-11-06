@@ -1,20 +1,17 @@
 import '@/styles/globals.css'
+import * as React from "react";
 import Router from 'next/navigation';
-import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
+import {NextUIProvider} from "@nextui-org/react";
 
-function MyApp({ Component, pageProps }) {
+function App({ Component, pageProps }) {
   return (
-    <>   
-      <Component {...pageProps} />
-      <ProgressBar
-            height="4px"
-            color="#9B66FD"
-            options={{ showSpinner: false }}
-            shallowRouting
-      />
+    <>
+      <NextUIProvider>
+        <Component {...pageProps} />
+      </NextUIProvider>       
     </>
   )
   
 }
 
-export default MyApp;
+export default App;

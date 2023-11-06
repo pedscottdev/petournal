@@ -1,7 +1,7 @@
 "use client";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
-import React, { createRef, useEffect } from "react";
+import * as React from "react";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 import "./globals.css";
 // import { Inter } from 'next/font/google'
@@ -13,13 +13,14 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <title>Petournal</title>
+        {/* <link type="icon"></link> */}
       </head>
       <body>
         <div>
           <Sidebar />
           <div className="sm:ml-[80px] xl:ml-[275px]">
             <Header />
-            {children}
+              {children} 
           </div>
         </div>   
         <ProgressBar

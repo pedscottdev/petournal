@@ -4,9 +4,8 @@ import { useState } from 'react';
 import Image from 'next/image';
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
-// import "emoji-mart/css/emoji-mart.css";
-// import { Picker } from "emoji-mart";
-// import { db, storage } from "../firebase";
+import {Button} from "@nextui-org/react";
+import { SearchIcon, BellIcon } from "@heroicons/react/outline";
 import {
   addDoc,
   collection,
@@ -21,9 +20,13 @@ import {
   EmojiHappyIcon,
   XIcon,
  } from '@heroicons/react/outline';
-  import { 
-  TbDog,
- } from 'react-icons/tb'; 
+ import { 
+  PiDogBold
+ } from "react-icons/pi";
+ import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure} from "@nextui-org/react"; 
+ import PetBadge from "../utils/PetBadge"
+ import PetCard from "../utils/PetCard"
+ import SammyAvatar from '../img/sammy-avatar.jpg'
 
 function InputBox() {
   const [input, setInput] = useState("");
@@ -83,6 +86,8 @@ function InputBox() {
     setInput(input + emoji);
   };
 
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+
   return (
     
     <div className=' bg-white p-2 overfloy-y-none scrollbar-hide text-gray-500 rounded-xl shadow-sm'>
@@ -113,22 +118,34 @@ function InputBox() {
               <img 
                 src={selectedFile}
                 alt=''
-                className='rounded-2xl my-4 justify-center max-h-80 object-contain '
+                className='rounded-2xl mt-3 justify-center max-h-80 object-contain '
               />
           </div>
           )}
+
+          
         </div> 
         </div>
         {/* Hiển thị ảnh preview khi đăng ảnh */}
-            
+          
       </div>
+      
+      {/* Tagging pets */}
+      <div className='gap-x-3 w-fit mx-5 mt-1 ml-20'>
+        <PetBadge petAvatar={SammyAvatar} petName="Sammy"/>
+        <PetBadge petAvatar={SammyAvatar} petName="Lucky"/>
+        <PetBadge petAvatar={SammyAvatar} petName="Alex"/>
+        <PetBadge petAvatar={SammyAvatar} petName="Kitty"/>
+        <PetBadge petAvatar={SammyAvatar} petName="Benjamin"/>
+      </div>
+        
       
       {/* Input Controller */}
       <div className="mb-3 mt-2 mx-4 border-b-2 border-gray-100"></div>
-      <div className='flex gap-6 px-3  pb-1 items-center'>
-        <button className='flex gap-2' onClick={() => filePickerRef.current.click()}>
+      <div className='flex gap-4 px-3  pb-1 items-center'>
+        <button className="active:scale-[.94] p-2 active:duration-75 transition-all hover:bg-gray-100 rounded-full flex gap-2"  onClick={() => filePickerRef.current.click()}>
           <PhotographIcon className='h-6 w-6 text-[#2683D7]'/>
-          <p className='font-medium'>Thêm ảnh</p>
+          <p className='font-medium text-base text-[#5C6A80]'>Thêm ảnh</p>
           <input 
             type='file'
             hidden
@@ -136,30 +153,53 @@ function InputBox() {
             ref={filePickerRef}
           />
         </button>
-        
-        <button className='flex gap-2 ml-2'>
-          <TbDog className='h-6 w-6 text-violet-500'/>
-          <p className='font-medium'>Thú cưng</p>
-        </button>
 
-        <button className='flex gap-2 ml-2' onClick={() => setShowEmojis(!showEmojis)}>
+        <button className="active:scale-[.94] p-2 active:duration-75 transition-all hover:bg-gray-100 rounded-full flex gap-2" onClick={onOpen}>
+          <PiDogBold className='h-6 w-6 text-violet-500'/>
+          <p className='font-medium text-base text-[#5C6A80]'>Thú cưng</p>
+        </button>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1 text-lg">Gắn thẻ thú cưng</ModalHeader>
+              <ModalBody>
+                <p> 
+                  Chọn thú cưng bạn muốn gắn thẻ
+                </p>
+                <div className="hidden md:flex items-center rounded-full bg-[#f8f8f9] py-2 px-2 ">
+                  <SearchIcon className="h-4 ml-2 text-gray-500" />
+                  <input
+                    className=" flex ml-4 bg-transparent outline-none text-base text-gray-500 flex-shrink min-w-[20rem]"
+                    type="text"
+                    placeholder="Tìm thú cưng của bạn"
+                  ></input>
+                </div>
+                <div className="flow-root divide-y divide-gray-200" role="list">
+                  <PetCard petName="Sammy" petInfo="Chó Anh lông ngắn" path="" type="tag"/>
+                  <PetCard petName="Sammy" petInfo="Chó Anh lông ngắn" path="" type="tag"/>
+                </div>
+                
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="light" onPress={onClose}>
+                  Đóng
+                </Button>
+                <Button color="secondary" onPress={onClose}>
+                  Xác nhận
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+        <button className="active:scale-[.94] p-2 active:duration-75 transition-all hover:bg-gray-100 rounded-full flex gap-2" onClick={() => setShowEmojis(!showEmojis)}>
           <EmojiHappyIcon className='h-6 w-6 text-[#FE9A66]'/>
-          <p className='font-medium'>Emoji</p>
+          <p className='font-medium text-base text-[#5C6A80] '>Emoji</p>
         </button>
 
         {showEmojis && (
-          // <Picker
-          //   onSelect={addEmoji}
-          //   style={{
-          //     position: "absolute",
-          //     marginTop: "465px",
-          //     marginLeft: -40,
-          //     maxWidth: "320px",
-          //     borderRadius: "20px",
-          //   }}
-          //   theme="light"
-          //   set="google"
-          // />
           <Picker 
             data={data} 
             onEmojiSelect={addEmoji}
@@ -167,7 +207,7 @@ function InputBox() {
         )}
 
         <div className='grow text-right'>
-          <button className='bg-violet-600 text-[15px] font-medium text-white px-4 py-2 rounded-full hover:bg-violet-500 disabled:bg-violet-400 disabled:cursor-default' disabled={!input && !selectedFile} onClick={sendPost}>
+          <button className='active:scale-[.98] active:duration-75 transition-all bg-violet-600 text-[15px] font-medium text-white px-4 py-2 rounded-full hover:bg-violet-500 disabled:bg-violet-400 disabled:cursor-default' disabled={!input && !selectedFile} onClick={sendPost}>
             Chia sẻ
           </button>
         </div>

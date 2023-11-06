@@ -16,7 +16,6 @@ function Feed() {
         <InputBox />
       </div>
         
-
         {/* Posts */}
         <PostCard />
         <PostCard />

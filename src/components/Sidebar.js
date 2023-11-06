@@ -2,7 +2,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname  } from 'next/navigation';
 import SidebarRow from './SidebarRow'
 import Image from 'next/image'
 import SmLogo from '/src/img/sm-logo.svg'
@@ -14,6 +14,7 @@ import {
  import { 
   TbPaw,
   TbHome2,
+  TbMessage,
  } from 'react-icons/tb';
  import { 
   HiHome,
@@ -36,12 +37,12 @@ import {
  import { 
   PiDogBold,
   PiHouseSimpleBold,
+  PiHandHeartBold
  } from "react-icons/pi";
  
 
 function Sidebar() {
-  const router = useRouter();
-  const [activeMenuItem, setActiveMenuItem] = useState('');
+  const pathname = usePathname()
 
   const menuItems = [
     {
@@ -67,12 +68,12 @@ function Sidebar() {
     {
       path: "/chat",
       title: "Tin nhắn",
-      icon: AnnotationIcon,
+      icon: TbMessage,
     },
     {
       path: "/petcare",
       title: "Pet Care",
-      icon: RiHandHeartLine,
+      icon: PiHandHeartBold,
     },
     {
       path: "/profile",
@@ -81,13 +82,9 @@ function Sidebar() {
     },
 
   ];
-  
-  const handleMenuItemClick = (path) => {
-    setActiveMenuItem(path);
-  };
 
   return (
-    <div className='hidden flex-shrink-0 sm:flex lg:flex md:flex w-[300px] xl:flex xl:flex-col bg-white h-screen xl:w-[275px] sm:w-[80px] fixed border-r border-gray-200'>    
+    <div className='hidden z-50 flex-shrink-0 sm:flex lg:flex md:flex w-[300px] xl:flex xl:flex-col bg-white h-screen xl:w-[275px] sm:w-[80px] fixed border-r border-gray-200'>    
       <div className='w-full'>
 
         {/* Logo */}
@@ -114,12 +111,11 @@ function Sidebar() {
         <div className="mt-4 sm:px-2 md:px-2 xl:px-4 lg:space-y-36 xl:space-y-36">
           <div>
             {menuItems.map((item, index) => (
-              <Link href={item.path} >
-                <SidebarRow
+              <Link href={item.path} key={item.title} >
+                <SidebarRow         
                   Icon={item.icon}
                   title={item.title}
-                  isActive={activeMenuItem === item.path}
-                  onClick={() => handleMenuItemClick(item.path)}
+                  active={`${pathname === item.path ? 'font-bold text-violet-600' : 'opacity-80 text-gray-700 font-medium'}`}
                 />
               </Link>
             ))}
@@ -130,10 +126,10 @@ function Sidebar() {
             <div className='mt-4'>
               
               <Link href="/settings">
-                  <SidebarRow Icon={CogIcon} title="Cài đặt" />  
+                  <SidebarRow Icon={CogIcon} title="Cài đặt" active={`${pathname === "/settings" ? 'font-bold text-violet-600' : 'opacity-80 text-gray-700 font-medium'}`} />  
               </Link>
               <Link href="/login">
-                  <SidebarRow Icon={LogoutIcon} title="Đăng xuất"/> 
+                  <SidebarRow Icon={LogoutIcon} title="Đăng xuất" active={`${pathname === "/login" ? 'font-bold text-violet-600' : 'opacity-80 text-gray-700 font-medium'}`}/> 
               </Link>
                         
             </div>

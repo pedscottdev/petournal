@@ -9,6 +9,10 @@ body{
   font-family: 'Inter', sans-serif;
 }
 
+main{
+  overflow-y: auto;
+}
+
 li {
   display: list-item;
   text-align: -webkit-match-parent;
@@ -56,6 +60,8 @@ ul {
 /* Custom Emoji Mart */
 em-emoji-picker {
   position: absolute;
-  border-radius: 20px;
+  padding-right: 40px;
 }
+
+
 
