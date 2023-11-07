@@ -12,7 +12,7 @@ function NotiCard(props) {
       {type === "follow" ? (
         <div className="flex px-4 py-3 hover:bg-gray-100 cursor-pointer  w-full max-w-sm">
           <div className="flex-shrink-0">
-            <Image className="rounded-full w-11 h-11 mr-6" src={defaultAvatar}/>
+            <Image className="rounded-full w-11 h-11 mr-6" alt="" src={defaultAvatar}/>
           </div>
           <div className="w-full ml-4">
               <div className="text-gray-600 text-sm mb-1.5 dark:text-gray-400"><span className="font-semibold text-gray-900 ">
@@ -24,7 +24,7 @@ function NotiCard(props) {
       ) : type === "like" ? (
         <div className="flex px-4 py-3 hover:bg-gray-100 cursor-pointer  w-full max-w-sm">
           <div className="flex-shrink-0">
-            <Image className="rounded-full w-11 h-11 mr-6" src={defaultAvatar}/>
+            <Image className="rounded-full w-11 h-11 mr-6" alt="" src={defaultAvatar}/>
           </div>
           <div className="w-full ml-4">
               <div className="text-gray-600 text-sm mb-1.5 dark:text-gray-400"><span className="font-semibold text-gray-900 ">
@@ -36,7 +36,7 @@ function NotiCard(props) {
       ) : type == "comment" ?(
         <div className="flex px-4 py-3 hover:bg-gray-100 cursor-pointer  w-full max-w-sm">
           <div className="flex-shrink-0">
-            <Image className="rounded-full w-11 h-11 mr-6" src={defaultAvatar}/>
+            <Image className="rounded-full w-11 h-11 mr-6" alt="" src={defaultAvatar}/>
           </div>
           <div className="w-full ml-4">
               <div className="text-gray-600 text-sm mb-1.5 dark:text-gray-400"><span className="font-semibold text-gray-900 ">
@@ -48,7 +48,7 @@ function NotiCard(props) {
       ) : type == "" ? (
         <div className="flex px-4 py-3 hover:bg-gray-100 cursor-pointer  w-full max-w-sm">
           <div className="flex-shrink-0">
-            <Image className="rounded-full w-11 h-11 mr-6" src={defaultAvatar}/>
+            <Image className="rounded-full w-11 h-11 mr-6" alt="" src={defaultAvatar}/>
           </div>
           <div className="w-full ml-4">
               <div className="text-gray-600 text-sm mb-1.5 dark:text-gray-400">

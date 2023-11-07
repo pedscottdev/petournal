@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <title>Petournal</title>
-        {/* <link type="icon"></link> */}
+        <link rel='icon' href='/favicon.ico'/>
       </head>
       <body>
         <Provider store={store}>
@@ -35,8 +35,8 @@ export default function RootLayout({ children }) {
               <ProgressBar
                 height="4px"
                 color="#9B66FD"
-                options={{ showSpinner: true }}
-                shallowRouting
+                options={{ showSpinner: false }}
+                // shallowRouting
               />
             </PersistGate>
           </QueryClientProvider>

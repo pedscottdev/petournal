@@ -142,6 +142,7 @@ function PostCard() {
           <Image
             src={testImage}
             className="rounded-xl cursor-pointer max-h-[360px] object-cover mt-4"
+            alt=""
           />
         </div>
 
@@ -231,6 +232,7 @@ function PostCard() {
           <Image
             className="rounded-full cursor-pointer w-11 h-11"
             src={defaultAvatar}
+            alt=""
           />
 
           <div className="w-full">

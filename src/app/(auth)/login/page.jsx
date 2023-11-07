@@ -77,7 +77,11 @@ function Login() {
                                 {...register("password")}
                             />
                         </div>
-                        <button className="font-medium text-base text-violet-500 mt-3">Quên mật khẩu?</button>
+
+                        <Link href="/forgot">
+                            <button className="font-medium text-base text-violet-500 mt-3">Quên mật khẩu?</button>
+                        </Link>
+                        
 
                         {/* Buttons */}
                         <div className="mt-6 flex flex-col gap-y-4">

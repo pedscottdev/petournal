@@ -3,6 +3,7 @@ import Image from "next/image";
 import { MdSubdirectoryArrowRight, MdKeyboardArrowUp } from "react-icons/md";
 import { FaArrowRight } from "react-icons/fa6";
 import defaultAvatar from "/src/img/default-avatar.png";
+import testAvatar from '/src/img/test-avatar.jpg';
 
 function CommentChild(props) {
   const { commentUserName, content, createdTime } = props;
@@ -11,9 +12,9 @@ function CommentChild(props) {
     <div className="flex">
       <div className="flex mt-4">
         <div className="flex-shrink-0 mr-3">
-          <img
-            className="mt-3 rounded-full w-7 h-7 sm:w-10 sm:h-10"
-            src="https://images.unsplash.com/photo-1604426633861-11b2faead63c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=80"
+          <Image
+            className="mt-3 rounded-full w-10 h-10"
+            src={testAvatar}
             alt=""
           />
         </div>
@@ -25,7 +26,9 @@ function CommentChild(props) {
           <p className="text-[15px]">
             {content}
           </p>
+          <div className="text-sm mt-2 text-gray-500 font-semibold cursor-pointer"> Xóa bình luận</div>
         </div>
+        
       </div>
     </div>
   );

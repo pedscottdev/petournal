@@ -12,32 +12,25 @@ import {
   BiNews,
  } from 'react-icons/bi';
  import { 
-  TbPaw,
-  TbHome2,
-  TbMessage,
- } from 'react-icons/tb';
- import { 
   HiHome,
   HiOutlineUserGroup,
   HiOutlineUserCircle,
  } from 'react-icons/hi';
- import { 
-  RiHandHeartLine,
- } from 'react-icons/ri';
 import { 
   LogoutIcon,
   StarIcon, 
   CogIcon,
   AnnotationIcon,
  } from '@heroicons/react/outline'; 
- import {
-  UserCircleIcon, 
-  ChevronDownIcon,
- } from '@heroicons/react/solid';
  import { 
   PiDogBold,
-  PiHouseSimpleBold,
-  PiHandHeartBold
+  PiHouseBold,
+  PiHandHeartBold,
+  PiUserCircleBold,
+  PiPaperPlaneRightBold,
+  PiGlobeSimpleBold,
+  PiUsersBold,
+  PiGearSixBold,
  } from "react-icons/pi";
  
 
@@ -57,18 +50,18 @@ function Sidebar() {
     },
     {
       path: "/follower",
-      title: "Người theo dõi",
-      icon: StarIcon,
+      title: "Cộng đồng",
+      icon: PiGlobeSimpleBold,
     },
     {
       path: "/group",
       title: "Nhóm",
-      icon: HiOutlineUserGroup,
+      icon: PiUsersBold,
     },
     {
       path: "/chat",
       title: "Tin nhắn",
-      icon: TbMessage,
+      icon: PiPaperPlaneRightBold,
     },
     {
       path: "/petcare",
@@ -78,7 +71,7 @@ function Sidebar() {
     {
       path: "/profile",
       title: "Trang cá nhân",
-      icon: HiOutlineUserCircle,
+      icon: PiUserCircleBold,
     },
 
   ];
@@ -95,7 +88,7 @@ function Sidebar() {
               alt="Logo" 
               width={35} 
               height={35} 
-              layout='fixed' 
+               
             />
             <Image 
               className='xl:flex lg:flex md:hidden sm:hidden '
@@ -103,7 +96,6 @@ function Sidebar() {
               alt="Petournal" 
               width={160} 
               height={100} 
-              layout='fixed' 
             />   
           </a>
 
@@ -115,7 +107,7 @@ function Sidebar() {
                 <SidebarRow         
                   Icon={item.icon}
                   title={item.title}
-                  active={`${pathname === item.path ? 'font-bold text-violet-600' : 'opacity-80 text-gray-700 font-medium'}`}
+                  active={`${pathname === item.path ? 'font-bold text-violet-600' : 'opacity-80 text-gray-600 font-medium'}`}
                 />
               </Link>
             ))}
@@ -126,10 +118,10 @@ function Sidebar() {
             <div className='mt-4'>
               
               <Link href="/settings">
-                  <SidebarRow Icon={CogIcon} title="Cài đặt" active={`${pathname === "/settings" ? 'font-bold text-violet-600' : 'opacity-80 text-gray-700 font-medium'}`} />  
+                  <SidebarRow Icon={PiGearSixBold} title="Cài đặt" active={`${pathname === "/settings" ? 'font-bold text-violet-600' : 'opacity-80 text-gray-600 font-medium'}`} />  
               </Link>
               <Link href="/login">
-                  <SidebarRow Icon={LogoutIcon} title="Đăng xuất" active={`${pathname === "/login" ? 'font-bold text-violet-600' : 'opacity-80 text-gray-700 font-medium'}`}/> 
+                  <SidebarRow Icon={LogoutIcon} title="Đăng xuất" active={`${pathname === "/login" ? 'font-bold text-violet-600' : 'opacity-80 text-gray-600 font-medium'}`}/> 
               </Link>
                         
             </div>

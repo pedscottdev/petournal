@@ -95,6 +95,7 @@ function InputBox() {
         <Image 
           className="rounded-full cursor-pointer w-11 h-11"
           src={defaultAvatar}
+          alt=""
           // width={48}
           // height={48}
         />
@@ -131,7 +132,7 @@ function InputBox() {
       </div>
       
       {/* Tagging pets */}
-      <div className='gap-x-3 w-fit mx-5 mt-1 ml-20'>
+      <div className='flex gap-x-3 w-fit mx-5 mt-1 ml-20'>
         <PetBadge petAvatar={SammyAvatar} petName="Sammy"/>
         <PetBadge petAvatar={SammyAvatar} petName="Lucky"/>
         <PetBadge petAvatar={SammyAvatar} petName="Alex"/>
@@ -145,7 +146,7 @@ function InputBox() {
       <div className='flex gap-4 px-3  pb-1 items-center'>
         <button className="active:scale-[.94] p-2 active:duration-75 transition-all hover:bg-gray-100 rounded-full flex gap-2"  onClick={() => filePickerRef.current.click()}>
           <PhotographIcon className='h-6 w-6 text-[#2683D7]'/>
-          <p className='font-medium text-base text-[#5C6A80]'>Thêm ảnh</p>
+          <p className='font-medium text-[15px] text-[#5C6A80]'>Thêm ảnh</p>
           <input 
             type='file'
             hidden
@@ -156,7 +157,7 @@ function InputBox() {
 
         <button className="active:scale-[.94] p-2 active:duration-75 transition-all hover:bg-gray-100 rounded-full flex gap-2" onClick={onOpen}>
           <PiDogBold className='h-6 w-6 text-violet-500'/>
-          <p className='font-medium text-base text-[#5C6A80]'>Thú cưng</p>
+          <p className='font-medium text-[15px] text-[#5C6A80]'>Thú cưng</p>
         </button>
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
         <ModalContent>
@@ -196,7 +197,7 @@ function InputBox() {
 
         <button className="active:scale-[.94] p-2 active:duration-75 transition-all hover:bg-gray-100 rounded-full flex gap-2" onClick={() => setShowEmojis(!showEmojis)}>
           <EmojiHappyIcon className='h-6 w-6 text-[#FE9A66]'/>
-          <p className='font-medium text-base text-[#5C6A80] '>Emoji</p>
+          <p className='font-medium text-[15px] text-[#5C6A80] '>Emoji</p>
         </button>
 
         {showEmojis && (

@@ -11,12 +11,12 @@ export default function Home() {
   return (
     <main>
         <div className="flex grid-cols-2 px-4 justify-center">
-          <div className="xl:w-[70%] lg:w-[70%] md:w-full sm:w-full" >
+          <div className="xl:w-[68%] lg:w-[70%] md:w-full sm:w-full" >
             <Feed />
           </div>
 
           {/* Widgets */}
-          <div className="min-w-[30%] lg:flex xl:flex md:hidden sm:hidden">
+          <div className="min-w-[32%] lg:flex xl:flex md:hidden sm:hidden">
             <Widgets />
           </div>
         </div>
