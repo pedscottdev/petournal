@@ -21,10 +21,10 @@ const UserSlice = createSlice({
         setUserLogin: (state, action) => {
             if (action.payload && action.payload) {
                 const user = action.payload;
-                state.id = user.id;
+                state.id = user._id;
                 state.firstName = user.firstName;
                 state.lastName = user.lastName;
-                state.fullName = user.firstName + " " + user.lastName;
+                state.fullName = user.lastName + " " + user.firstName;
                 state.email = user.email;
                 state.avatar = user.avatar;
             }

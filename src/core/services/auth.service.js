@@ -10,6 +10,9 @@ const AuthService = {
     refreshToken: () => {
         return axiosClient.post("/auth/refresh-token");
     },
+    logout : () => {
+      return axiosClient.post("auth/logout")
+    }
 };
 
 
