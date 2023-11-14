@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 
 function CommentParent(props) {
-    const { commentId, postId, parentImage, commentUser, commentUserName, content, createdTime, getCommentsByPost } =
+    const { commentId, postId, parentImage, commentUser, commentUserName, content, createdTime, postOwner, getCommentsByPost } =
         props;
 
     const [isCommentVisible, setCommentVisible] = useState(false);
@@ -58,7 +58,9 @@ function CommentParent(props) {
     const handleDeleteComment = async () => {
         const result = confirm("Xác nhận xoá");
         if (result == true) {
+            console.log(commentId);
             const result = await CommentService.deleteComment(commentId);
+            console.log(result);
             if (result) {
                 await sendDataToParent(postId);
                 await toast.success("Đã xoá");
@@ -100,7 +102,7 @@ function CommentParent(props) {
                         onClick={handleDeleteComment}
                         className="text-sm ml-4 text-gray-500 font-semibold cursor-pointer"
                     >
-                        {commentUser == userLogin.id ? "Xóa bình luận" : ""}
+                        {commentUser == userLogin.id || postOwner == userLogin.id ? "Xóa bình luận" : ""}
                     </div>
                 </div>
 

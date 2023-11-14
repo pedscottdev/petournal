@@ -293,6 +293,7 @@ function PostCard(props) {
                                 commentUserName={comment?.user?.lastName + " " + comment?.user?.firstName}
                                 createdTime={handleTimestamp(comment?.createdAt)}
                                 content={comment?.text}
+                                postOwner={postData?.user?._id}
                                 getCommentsByPost={getCommentsByPost}
                             />
                         );
