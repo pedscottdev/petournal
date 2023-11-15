@@ -32,13 +32,14 @@ import { useMutation } from "@tanstack/react-query";
 import Loading from "./share/loading";
 
 function PostCard(props) {
-    const { postId, isUserFollowing } = props;
+    const { postId, isUserFollowing, isUserLiked } = props;
 
     const [postData, setPostData] = useState();
     const [commentData, setCommentData] = useState([]);
     const [totalComment, setTotalComment] = useState();
     const [commentInput, setCommentInput] = useState("");
     const [countLoadComment, setCountLoadComment] = useState(2);
+    const [usersLike, setUsersLike] = useState([]);
 
     const userStore = useSelector((state) => state.user);
 
@@ -49,7 +50,11 @@ function PostCard(props) {
 
     const getPostById = async () => {
         const { data } = await PostService.getPostById(postId);
-        setPostData(data);
+        await setPostData(data);
+        await setUsersLike(data?.likes);
+        if (isUserLiked) {
+            await setIsLiked(true);
+        }
     };
 
     const getCommentsByPost = async (postId) => {
@@ -85,12 +90,20 @@ function PostCard(props) {
     // Like Handle
     const [isLiked, setIsLiked] = useState(false);
 
-    const handleLikeClick = () => {
+    const likePost = async (postId) => {
+        const { data } = await PostService.likePost(postId);
+        console.log(data);
+        await setUsersLike(data);
+    };
+
+    const handleLikeClick = async () => {
         if (isLiked) {
-            // alert("Đã bỏ thích bài viết");
+            await likePost(postId);
+            toast.success("Đã bỏ thích bài viết");
             setIsLiked(false);
         } else {
-            // alert("Đã thích bài viết");
+            await likePost(postId);
+            toast.success("Đã thích bài viết");
             setIsLiked(true);
         }
     };
@@ -220,7 +233,7 @@ function PostCard(props) {
                             )}
                         </div>
                         <p className="text-[15px]">
-                            <span className="">{postData?.likes?.length}</span> Like
+                            <span className="">{usersLike?.length}</span> Like
                         </p>
                     </div>
 

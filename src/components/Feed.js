@@ -27,7 +27,7 @@ function Feed() {
 
             {/* Posts */}
             {listPost?.map((post) => {
-                return <PostCard key={post._id} postId={post._id} isUserFollowing={post?.isFollowing} />;
+                return <PostCard key={post._id} postId={post._id} isUserFollowing={post?.isFollowing} isUserLiked={post?.isLiked} />;
             })}
         </div>
     );
