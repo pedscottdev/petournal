@@ -21,6 +21,8 @@ import { setUserPets } from "../core/store/feature/pet-slice";
 import { useDispatch, useSelector } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
 import PostService from "../core/services/post.service.js";
+import toast from "react-hot-toast";
+import Loading from "./share/loading.js";
 
 const InputBox = () => {
     const [input, setInput] = useState("");
@@ -48,11 +50,10 @@ const InputBox = () => {
 
     const createPostMutation = useMutation({
         mutationFn: async (data) => {
-            const result = await PostService.createPost(data);
-            console.log(result);
+            await PostService.createPost(data);
         },
-        onSuccess: (data) => {
-            console.log(data);
+        onSuccess: () => {
+            toast.success("Đã đăng post");
         },
         onError: (err) => {
             console.log(err);
@@ -234,11 +235,11 @@ const InputBox = () => {
 
                 <div className="grow text-right">
                     <button
-                        className="active:scale-[.98] active:duration-75 transition-all bg-violet-600 text-[15px] font-medium text-white px-4 py-2 rounded-full hover:bg-violet-500 disabled:bg-violet-400 disabled:cursor-default"
+                        className="active:scale-[.98] active:duration-75 transition-all bg-violet-600 text-[15px] flex justify-center font-medium text-white px-4 py-2 rounded-full hover:bg-violet-500 disabled:bg-violet-400 disabled:cursor-default"
                         disabled={!input && !selectedFile}
                         onClick={sendPost}
                     >
-                        Chia sẻ
+                        {createPostMutation.isPending ? <Loading /> : "Chia sẻ"}
                     </button>
                 </div>
             </div>

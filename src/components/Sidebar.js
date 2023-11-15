@@ -69,7 +69,7 @@ function Sidebar() {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
     if (!user.accessToken) {
-        router.push("/login");
+        // router.push("/login");
     }
 
     const handleLogout = async () => {
