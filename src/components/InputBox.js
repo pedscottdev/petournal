@@ -6,8 +6,9 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { Button } from "@nextui-org/react";
 import { SearchIcon, BellIcon } from "@heroicons/react/outline";
-import { addDoc, collection, doc, serverTimestamp, updateDoc } from "@firebase/firestore";
+// import { addDoc, collection, doc, serverTimestamp, updateDoc } from "@firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "@firebase/storage";
+import { ImageStorage } from "../../firebase.js";
 import defaultAvatar from "/src/img/default-avatar.png";
 import { PhotographIcon, EmojiHappyIcon, XIcon } from "@heroicons/react/outline";
 import { PiDogBold } from "react-icons/pi";
@@ -18,12 +19,15 @@ import SammyAvatar from "../img/sammy-avatar.jpg";
 import PetService from "../core/services/pet.service.js";
 import { setUserPets } from "../core/store/feature/pet-slice";
 import { useDispatch, useSelector } from "react-redux";
+import { useMutation } from "@tanstack/react-query";
+import PostService from "../core/services/post.service.js";
 
 const InputBox = () => {
     const [input, setInput] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
     const [showEmojis, setShowEmojis] = useState(false);
     const [loading, setLoading] = useState(false);
+
     const filePickerRef = useRef(null);
 
     useEffect(() => {
@@ -40,31 +44,40 @@ const InputBox = () => {
         await dispatch(setUserPets(petArray));
     };
     const userPets = useSelector((state) => state.pet);
+    const userStore = useSelector((state) => state.user);
+
+    const createPostMutation = useMutation({
+        mutationFn: async (data) => {
+            const result = await PostService.createPost(data);
+            console.log(result);
+        },
+        onSuccess: (data) => {
+            console.log(data);
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+    });
 
     const sendPost = async () => {
-        if (loading) return;    
+        if (loading) return;
         setLoading(true);
 
-        //Ghi dữ liệu người dùng
-        const docRef = await addDoc(collection(db, "posts"), {
-            id: session.user.uid,
-            username: session.user.name,
-            userImg: session.user.image,
-            tag: session.user.tag,
-            text: input,
-            timestamp: serverTimestamp(),
-        });
+        let body;
+        const petArray = userPets.filter((item) => item.isChecked === true).map((item) => item.id);
 
-        const imageRef = ref(storage, `posts/${docRef.id}/image`);
+        const imageRef = ref(ImageStorage, `posts/${userStore.id}/images/${Date.now()}`);
 
         if (selectedFile) {
-            await uploadString(imageRef, selectedFile, "data_url").then(async () => {
-                const downloadURL = await getDownloadURL(imageRef);
-                await updateDoc(doc(db, "posts", docRef.id), {
-                    image: downloadURL,
-                });
+            await uploadString(imageRef, selectedFile, "data_url").then(async (value) => {
+                const downloadURL = await getDownloadURL(value.ref);
+                body = { content: input, imageUrl: downloadURL, pets: petArray };
             });
+        } else {
+            body = { content: input, pets: petArray };
         }
+
+        createPostMutation.mutate(body);
 
         setLoading(false);
         setInput("");
@@ -139,9 +152,9 @@ const InputBox = () => {
             {/* Tagging pets */}
             <div className="flex gap-x-3 w-fit mx-5 mt-1 ml-20">
                 {userPets.map((pet) => {
-                  if(pet.isChecked){
-                    return <PetBadge key={pet.id} petId={pet.id} petAvatar={pet.avatar} petName={pet.name} />
-                  }
+                    if (pet.isChecked) {
+                        return <PetBadge key={pet.id} petId={pet.id} petAvatar={pet.avatar} petName={pet.name} />;
+                    }
                 })}
             </div>
 

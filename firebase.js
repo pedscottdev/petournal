@@ -1,5 +1,5 @@
-import { initializeApp, getApp, getApps } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp } from "firebase/app";
+// import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -24,9 +24,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const db = getFirestore();
-const storage = getStorage();
+const app = initializeApp(firebaseConfig);
+// const db = getFirestore();
+export const ImageStorage = getStorage(app);
 
-export default app;
-export { db, storage };

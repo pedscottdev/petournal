@@ -209,9 +209,11 @@ function PostCard(props) {
                 <div className="mt-4">
                     <p className="text-[#000000] text-[15px] sm:text-base">{postData?.content}</p>
                     <Image
-                        src={testImage}
+                        src={postData?.imageUrl ? postData.imageUrl : testImage}
                         className="rounded-xl cursor-pointer max-h-[360px] object-cover mt-4"
                         alt=""
+                        width={1000}
+                        height={1000}
                     />
                 </div>
 

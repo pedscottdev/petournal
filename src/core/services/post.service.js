@@ -7,6 +7,9 @@ const PostService = {
     likePost: (postId) => {
         return axiosClient.post(`/post/likePost/${postId}`);
     },
+    createPost: (body) => {
+      return axiosClient.post('/post/createPost', body)
+    }
 };
 
 export default PostService;

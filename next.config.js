@@ -5,6 +5,9 @@ const nextConfig = {
         NEXT_APP_API_URL: "http://localhost:5001/api/v1",
         NEXT_APP_CLIENT: "https://petournal.vercel.app",
     },
+    images: {
+        domains: ["firebasestorage.googleapis.com"],
+    },
 };
 
 module.exports = nextConfig;
