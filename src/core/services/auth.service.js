@@ -7,13 +7,18 @@ const AuthService = {
     register: (user) => {
         return axiosClient.post("/auth/register", user);
     },
+    updatePassword: (body) => {
+        return axiosClient.post("/auth/updatePassword", body);
+    },
     refreshToken: () => {
         return axiosClient.post("/auth/refresh-token");
     },
-    logout : () => {
-      return axiosClient.post("auth/logout")
-    }
+    sendMailResetPassword: (body) => {
+        return axiosClient.post("/auth/sendMailResetPassword", body);
+    },
+    logout: () => {
+        return axiosClient.post("auth/logout");
+    },
 };
-
 
 export default AuthService;

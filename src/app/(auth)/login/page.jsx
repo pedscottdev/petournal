@@ -78,7 +78,7 @@ function Login() {
                             />
                         </div>
 
-                        <Link href="/forgot">
+                        <Link href="/reset-password">
                             <button className="font-medium text-base text-violet-500 mt-3">Quên mật khẩu?</button>
                         </Link>
 
