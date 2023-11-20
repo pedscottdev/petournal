@@ -4,14 +4,14 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
-body{
+:root{
   background-color: #F9F9FA;
   font-family: 'Inter', sans-serif;
 }
 
-main{
-  overflow-y: auto;
-}
+/* body{
+  height: 100%;
+} */
 
 li {
   display: list-item;
@@ -63,5 +63,8 @@ em-emoji-picker {
   padding-right: 40px;
 }
 
+.limit-word{
+  max-width: 160px;
+}
 
 

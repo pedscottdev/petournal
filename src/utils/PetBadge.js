@@ -17,7 +17,7 @@ function PetBadge(props) {
               alt="Logo" 
           />
         </div>
-        <div className='text-sm font-medium text-gray-500'>{petName}</div>
+        <div className='text-[15px] font-medium text-gray-500'>{petName}</div>
         <TbX className='cursor-pointer'/>
     </div>
   )

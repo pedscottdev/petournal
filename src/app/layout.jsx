@@ -20,13 +20,13 @@ export default function RootLayout({ children }) {
         <title>Petournal</title>
         <link rel='icon' href='/favicon.ico'/>
       </head>
-      <body>
+      <body className="">
         <Provider store={store}>
           <QueryClientProvider client={queryClient}>
             <PersistGate persistor={persistor} loading={null}>
-              <div>
+              <div className="">
                 <Sidebar />
-                <div className="sm:ml-[80px] xl:ml-[275px]">
+                <div className=" sm:ml-[80px] xl:ml-[275px]">
                   <Toaster />
                   <Header />
                   {children}

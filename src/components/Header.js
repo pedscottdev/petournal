@@ -21,10 +21,10 @@ import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 
 function Header() {
   return (
-    <div className="flex sticky top-0 z-50 max-h-[65px] justify-between items-center p-4 lg:px-5 bg-white  border-b border-b-gray">
-      {/* Center */}
+    <div className="flex flex-shrink-0 sticky top-0 z-50 max-h-[65px] justify-between items-center p-4 lg:px-5 bg-white  border-b border-b-gray">
+      {/* Search */}
       <div className="hidden md:flex ml-2 items-center rounded-xl bg-[#f8f8f9] py-2 px-3 ">
-        <SearchIcon className="h-4 ml-2 text-gray-500" />
+        <SearchIcon className="h-5 ml-2 text-gray-500" />
         <input
           className=" flex ml-4 bg-transparent outline-none text-[15px] text-gray-500 flex-shrink min-w-[20rem]"
           type="text"
@@ -81,6 +81,9 @@ function Header() {
                 className="rounded-full cursor-pointer w-9 h-9"
                 src={defaultAvatar}
                 alt=""
+                width={64}
+                height={64}
+                quality={100}
               />
               <p className="text-[14px] font-medium flex flex-col">
                 Pedro Scott{" "}

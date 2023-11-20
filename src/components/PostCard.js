@@ -13,7 +13,7 @@ import {
   ShareIcon,
   TrashIcon,
 } from "@heroicons/react/outline";
-import { TbDog, TbHeart } from "react-icons/tb";
+import { TbHeart, TbHeartFilled, TbMessage2, TbDog } from "react-icons/tb";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { FaArrowRight } from "react-icons/fa6";
 import {
@@ -152,32 +152,32 @@ function PostCard() {
           <div className="flex items-center gap-2 cursor-pointer w-[33%] justify-center">
             <div>
               {isLiked ? (
-                <PiHeartFill
+                <TbHeartFilled
                   onClick={handleLikeClick}
-                  className="cursor-pointer h-7 w-7 text-violet-500 active:scale-[.90] active:duration-75 transition-all hover:text-violet-500"
+                  className="cursor-pointer h-7 w-7 text-violet-500 active:scale-[.75] active:duration-100 transition-all hover:text-violet-500"
                 />
               ) : (
-                <PiHeartBold
+                <TbHeart
                   onClick={handleLikeClick}
-                  className="cursor-pointer h-7 w-7 text-gray-700 active:scale-[.84] active:duration-75 transition-all hover:text-violet-500"
+                  className="cursor-pointer h-7 w-7 text-gray-700 active:scale-[.75] active:duration-100 transition-all hover:text-violet-500"
                 />
               )}
             </div>
-            <p className="text-[15px]">
+            <p className="font-medium text-[#374151]  text-[15px]">
               <span className="">12</span> Like
             </p>
           </div>
 
           <Button className="flex items-center gap-2 cursor-pointer w-[33%] active:scale-[.94] active:duration-75 transition-all justify-center hover:bg-gray-100 rounded-xl p-2 px-6" variant="light" onClick={toggleCommentSection}>
-            <PiChatCircleBold className="cursor-pointer h-7 w-7 text-gray-700"  />
-            <p className="text-[15px]">
+            <TbMessage2 className="cursor-pointer h-7 w-7 text-gray-700"  />
+            <p className=" font-medium text-[#374151] text-[15px]">
               <span>9</span> Comment
             </p>
           </Button>
 
           <Button className="flex items-center gap-2 cursor-pointer w-[33%] active:scale-[.94] active:duration-75 transition-all justify-center hover:bg-gray-100 rounded-xl p-2 px-6" variant="light" onPress={onOpen}>
-            <PiDogBold className="cursor-pointer h-7 w-7 text-gray-700" />
-            <p className="text-[15px]">
+            <TbDog className="cursor-pointer h-7 w-7 text-gray-700" />
+            <p className="font-medium text-[#374151] text-[15px]">
               <span className="">2</span> Pet
             </p>
           </Button>

@@ -132,7 +132,7 @@ function InputBox() {
       </div>
       
       {/* Tagging pets */}
-      <div className='flex gap-x-3 w-fit mx-5 mt-1 ml-20'>
+      <div className='flex gap-x-3 w-fit mx-5 my-1 ml-20'>
         <PetBadge petAvatar={SammyAvatar} petName="Sammy"/>
         <PetBadge petAvatar={SammyAvatar} petName="Lucky"/>
         <PetBadge petAvatar={SammyAvatar} petName="Alex"/>

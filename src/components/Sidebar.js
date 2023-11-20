@@ -37,6 +37,7 @@ import {
 function Sidebar() {
   const pathname = usePathname()
 
+
   const menuItems = [
     {
       path: "/",
@@ -107,7 +108,7 @@ function Sidebar() {
                 <SidebarRow         
                   Icon={item.icon}
                   title={item.title}
-                  active={`${pathname === item.path ? 'font-bold text-violet-600' : 'opacity-80 text-gray-600 font-medium'}`}
+                  active={`${pathname === item.path || (item.path === '/pets' && pathname.startsWith('/pets/'))  ? 'font-bold text-violet-600' : 'opacity-80 text-gray-500 font-medium'}`}
                 />
               </Link>
             ))}

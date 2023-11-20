@@ -48,7 +48,7 @@ function UserCard(props) {
               />
             </div>
           ) : (
-            <div className=" inline-flex items-center text-[14px] mr-2 font-medium text-violet-600 cursor-pointer dark:text-white" onClick={handleFollowClick}>
+            <div className=" inline-flex items-center text-[15px] mr-2 font-semibold text-violet-600 cursor-pointer dark:text-white" onClick={handleFollowClick}>
               Theo dõi
             </div>
           )}
