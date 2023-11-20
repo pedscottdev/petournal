@@ -6,7 +6,9 @@ import { AnnotationIcon, SearchIcon, BellIcon } from "@heroicons/react/outline";
 
 import TimeLineService from "../core/services/time-line.service";
 
-function Feed() {
+function Feed(props) {
+    const { socket } = props;
+
     const [listPost, setListPost] = useState();
 
     useEffect(() => {
@@ -27,7 +29,15 @@ function Feed() {
 
             {/* Posts */}
             {listPost?.map((post) => {
-                return <PostCard key={post._id} postId={post._id} isUserFollowing={post?.isFollowing} isUserLiked={post?.isLiked} />;
+                return (
+                    <PostCard
+                        key={post._id}
+                        postId={post._id}
+                        isUserFollowing={post?.isFollowing}
+                        isUserLiked={post?.isLiked}
+                        socket={socket}
+                    />
+                );
             })}
         </div>
     );

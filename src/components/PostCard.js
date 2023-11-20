@@ -5,10 +5,6 @@ import Image from "next/image";
 import defaultAvatar from "/src/img/default-avatar.png";
 import PetCard from "../utils/PetCard";
 import testImage from "/src/img/test-image.jpg";
-import testImage2 from "/src/img/test-image2.jpg";
-import testImage3 from "/src/img/test-image3.jpg";
-import { ChatIcon, HeartIcon, ShareIcon, TrashIcon } from "@heroicons/react/outline";
-import { TbDog, TbHeart } from "react-icons/tb";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { FaArrowRight } from "react-icons/fa6";
 import {
@@ -21,18 +17,18 @@ import {
     DropdownItem,
 } from "@nextui-org/react";
 import { PiDogBold, PiChatCircleBold, PiHeartBold, PiHeartFill, PiCheckBold } from "react-icons/pi";
-import CommentParent from "./CommentParent";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
+import { useSelector } from "react-redux";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import Loading from "./share/loading";
+import CommentParent from "./CommentParent";
+import handleTimestamp from "../core/utils/timestamp.js";
 import PostService from "../core/services/post.service.js";
 import CommentService from "../core/services/comment.service.js";
-import handleTimestamp from "../core/utils/timestamp.js";
-import { useSelector } from "react-redux";
-import toast from "react-hot-toast";
-import { useMutation } from "@tanstack/react-query";
-import Loading from "./share/loading";
 
 function PostCard(props) {
-    const { postId, isUserFollowing, isUserLiked } = props;
+    const { postId, isUserFollowing, isUserLiked, socket } = props;
 
     const [postData, setPostData] = useState();
     const [commentData, setCommentData] = useState([]);
@@ -92,8 +88,9 @@ function PostCard(props) {
 
     const likePost = async (postId) => {
         const { data } = await PostService.likePost(postId);
-        console.log(data);
-        await setUsersLike(data);
+        if (data) {
+            await setUsersLike(data);
+        }
     };
 
     const handleLikeClick = async () => {
@@ -103,8 +100,9 @@ function PostCard(props) {
             setIsLiked(false);
         } else {
             await likePost(postId);
-            toast.success("Đã thích bài viết");
-            setIsLiked(true);
+            await toast.success("Đã thích bài viết");
+            await socket.current.emit("like-post-notification", { post_id: postId, type: "LIKE_POST" });
+            await setIsLiked(true);
         }
     };
 
