@@ -40,6 +40,7 @@
     "redux-persist": "^6.0.0",
     "socket.io": "^4.6.1",
     "tailwind-datepicker-react": "^1.4.3",
+    "socket.io-client": "^4.7.2",
     "tailwind-merge": "^0.9.0"
   },
   "devDependencies": {

@@ -1,16 +1,15 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import bgImage from "/src/img/bg-image.png";
-import logoImage from "/src/img/logo-name.svg";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
-import AuthService from "../../../core/services/auth.service.js";
-import toast from "react-hot-toast";
-import Loading from "../../../components/share/loading.js";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import AuthService from "../../core/services/auth.service.js";
+import Loading from "../../components/share/loading.js";
 
-function page() {
+function FormResetPassword() {
     const mutation = useMutation({
         mutationFn: async (data) => {
             await AuthService.sendMailResetPassword(data);
@@ -79,4 +78,4 @@ function page() {
     );
 }
 
-export default page;
+export default FormResetPassword;

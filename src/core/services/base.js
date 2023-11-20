@@ -1,7 +1,7 @@
 import axios from "axios";
 import { store } from "../store";
 import { jwtDecode } from "jwt-decode";
-import AuthService from "./auth.js";
+import AuthService from "./auth.service.js";
 import { resetUserState, setToken } from "../store/feature/user-slice.js";
 
 const axiosClient = axios.create({
