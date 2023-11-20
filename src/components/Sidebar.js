@@ -30,6 +30,7 @@ import {
   PiUsersBold,
   PiGearSixBold,
 } from "react-icons/pi";
+import { useDispatch, useSelector } from "react-redux";
 
 function Sidebar() {
   const pathname = usePathname();
