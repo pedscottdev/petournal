@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import bgImage from "/src/img/bg-image.png";
 import logoImage from "/src/img/logo-name.svg";
@@ -8,16 +8,17 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import AuthService from "../../../core/services/auth.js";
+import AuthService from "../../../core/services/auth.service.js";
 import { setToken, setUserLogin } from "../../../core/store/feature/user-slice.js";
 import toast from "react-hot-toast";
-import Loading from "../../../components/share/loading.js"
+import Loading from "../../../components/share/loading.js";
 
 function Login() {
     const router = useRouter();
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
     const { register, handleSubmit } = useForm();
+
 
     const mutation = useMutation({
         mutationFn: (data) => {
@@ -78,10 +79,9 @@ function Login() {
                             />
                         </div>
 
-                        <Link href="/forgot">
+                        <Link href="/reset-password">
                             <button className="font-medium text-base text-violet-500 mt-3">Quên mật khẩu?</button>
                         </Link>
-                        
 
                         {/* Buttons */}
                         <div className="mt-6 flex flex-col gap-y-4">

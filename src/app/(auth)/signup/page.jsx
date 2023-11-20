@@ -6,7 +6,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
-import AuthService from "../../../core/services/auth.js";
+import AuthService from "../../../core/services/auth.service.js";
 import { useForm } from "react-hook-form";
 import ErrorField from "../../../components/share/error-field.js";
 import Loading from "../../../components/share/loading.js";
