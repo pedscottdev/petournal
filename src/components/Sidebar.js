@@ -31,6 +31,7 @@ import {
   PiGearSixBold,
 } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
+import { resetUserState } from "../core/store/feature/user-slice";
 
 function Sidebar() {
   const pathname = usePathname();
