@@ -32,7 +32,7 @@ import PostService from "../core/services/post.service.js";
 import CommentService from "../core/services/comment.service.js";
 
 function PostCard(props) {
-    const { postId, isUserFollowing, isUserLiked, socket, handleGetTimeLine } = props;
+    const { postId, isUserFollowing, isUserLiked, socket, handleGetTimeLine, handleResetPage } = props;
 
     const [postData, setPostData] = useState();
     const [commentData, setCommentData] = useState([]);
@@ -158,6 +158,7 @@ function PostCard(props) {
         onSuccess: () => {
             toast.success("Xoá thành công");
             handleGetTimeLine();
+            handleResetPage();
         },
     });
 

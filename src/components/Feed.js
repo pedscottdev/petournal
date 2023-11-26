@@ -22,6 +22,10 @@ function Feed(props) {
         setListPost(data);
     };
 
+    const resetPage = () => {
+        setPage(1);
+    };
+
     const mutation = useMutation({
         mutationFn: async (data) => {
             const body = { page: data };
@@ -73,6 +77,7 @@ function Feed(props) {
                         isUserLiked={post?.isLiked}
                         socket={socket}
                         handleGetTimeLine={getTimeLine}
+                        handleResetPage={resetPage}
                     />
                 );
             })}
