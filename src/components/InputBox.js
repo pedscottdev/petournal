@@ -25,7 +25,7 @@ import toast from "react-hot-toast";
 import Loading from "./share/loading.js";
 
 const InputBox = (props) => {
-    const { handleGetTimeLine } = props;
+    const { handleGetTimeLine, handleResetPage } = props;
 
     const [input, setInput] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
@@ -43,7 +43,12 @@ const InputBox = (props) => {
         const { data } = await PetService.getPetsByUserLogin();
         let petArray = [];
         data.map(async (pet) => {
-            await petArray.push({ id: pet._id, name: pet.name, avatar: pet.avatar, isChecked: false });
+            await petArray.push({
+                id: pet._id,
+                name: pet.name,
+                avatar: pet.avatar,
+                isChecked: false,
+            });
         });
         await dispatch(setUserPets(petArray));
     };
@@ -58,6 +63,7 @@ const InputBox = (props) => {
             dispatch(resetIsChecked());
             toast.success("Đã đăng post");
             handleGetTimeLine();
+            handleResetPage();
         },
         onError: (err) => {
             console.log(err);
@@ -117,7 +123,7 @@ const InputBox = (props) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     return (
-        <div className=" bg-white p-2 overfloy-y-none scrollbar-hide text-gray-500 rounded-xl shadow-sm">
+        <div className=" bg-white p-2 overfloy-y-none scrollbar-hide text-gray-500 rounded-xl shadow-sm border-1">
             <div className="flex space-x-5 p-4 pb-2">
                 <Image
                     className="rounded-full cursor-pointer w-11 h-11"
@@ -169,79 +175,82 @@ const InputBox = (props) => {
 
             {/* Input Controller */}
             <div className="mb-3 mt-2 mx-4 border-b-2 border-gray-100"></div>
-            <div className="flex gap-4 px-3  pb-1 items-center">
-                <button
-                    className="active:scale-[.94] p-2 active:duration-75 transition-all hover:bg-gray-100 rounded-full flex gap-2"
-                    onClick={() => filePickerRef.current.click()}
-                >
-                    <PhotographIcon className="h-6 w-6 text-[#2683D7]" />
-                    <p className="font-medium text-[15px] text-[#5C6A80]">Thêm ảnh</p>
-                    <input type="file" hidden onChange={addImageToPost} ref={filePickerRef} />
-                </button>
+            <div className="flex gap-4 px-3 justify-between pb-1 items-center">
+                <div className="flex">
+                    <button
+                        className="active:scale-[.94] p-2 active:duration-75 transition-all hover:bg-gray-100 rounded-full flex gap-2"
+                        onClick={() => filePickerRef.current.click()}
+                    >
+                        <PhotographIcon className="h-6 w-6 text-[#2683D7]" />
+                        <p className="font-medium text-[15px] text-[#5C6A80]">Thêm ảnh</p>
+                        <input type="file" hidden onChange={addImageToPost} ref={filePickerRef} />
+                    </button>
 
-                <button
-                    className="active:scale-[.94] p-2 active:duration-75 transition-all hover:bg-gray-100 rounded-full flex gap-2"
-                    onClick={onOpen}
-                >
-                    <PiDogBold className="h-6 w-6 text-violet-500" />
-                    <p className="font-medium text-[15px] text-[#5C6A80]">Thú cưng</p>
-                </button>
-                <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
-                    <ModalContent>
-                        {(onClose) => (
-                            <>
-                                <ModalHeader className="flex flex-col gap-1 text-lg">Gắn thẻ thú cưng</ModalHeader>
-                                <ModalBody>
-                                    <p>Chọn thú cưng bạn muốn gắn thẻ</p>
-                                    <div className="hidden md:flex items-center rounded-full bg-[#f8f8f9] py-2 px-2 ">
-                                        <SearchIcon className="h-4 ml-2 text-gray-500" />
-                                        <input
-                                            className=" flex ml-4 bg-transparent outline-none text-base text-gray-500 flex-shrink min-w-[20rem]"
-                                            type="text"
-                                            placeholder="Tìm thú cưng của bạn"
-                                        ></input>
-                                    </div>
-                                    <div className="flow-root divide-y divide-gray-200" role="list">
-                                        {userPets.map((pet) => {
-                                            return (
-                                                <PetCard
-                                                    key={pet.id}
-                                                    petId={pet.id}
-                                                    petName={pet.name}
-                                                    petAvatar={pet.avatar}
-                                                    isChecked={pet.isChecked}
-                                                    petInfo="Chó Anh lông ngắn"
-                                                    path=""
-                                                    type="tag"
-                                                />
-                                            );
-                                        })}
-                                    </div>
-                                </ModalBody>
-                                <ModalFooter>
-                                    <Button variant="light" onPress={onClose}>
-                                        Đóng
-                                    </Button>
-                                    <Button color="secondary" onPress={onClose}>
-                                        Xác nhận
-                                    </Button>
-                                </ModalFooter>
-                            </>
-                        )}
-                    </ModalContent>
-                </Modal>
+                    <button
+                        className="active:scale-[.94] p-2 active:duration-75 transition-all hover:bg-gray-100 rounded-full flex gap-2"
+                        onClick={onOpen}
+                    >
+                        <PiDogBold className="h-6 w-6 text-violet-500" />
+                        <p className="font-medium text-[15px] text-[#5C6A80]">Thú cưng</p>
+                    </button>
 
-                <button
-                    className="active:scale-[.94] p-2 active:duration-75 transition-all hover:bg-gray-100 rounded-full flex gap-2"
-                    onClick={() => setShowEmojis(!showEmojis)}
-                >
-                    <EmojiHappyIcon className="h-6 w-6 text-[#FE9A66]" />
-                    <p className="font-medium text-[15px] text-[#5C6A80] ">Emoji</p>
-                </button>
+                    <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
+                        <ModalContent>
+                            {(onClose) => (
+                                <>
+                                    <ModalHeader className="flex flex-col gap-1 text-lg">Gắn thẻ thú cưng</ModalHeader>
+                                    <ModalBody>
+                                        <p>Chọn thú cưng bạn muốn gắn thẻ</p>
+                                        <div className="hidden md:flex items-center rounded-full bg-[#f8f8f9] py-2 px-2 ">
+                                            <SearchIcon className="h-4 ml-2 text-gray-500" />
+                                            <input
+                                                className=" flex ml-4 bg-transparent outline-none text-base text-gray-500 flex-shrink min-w-[20rem]"
+                                                type="text"
+                                                placeholder="Tìm thú cưng của bạn"
+                                            ></input>
+                                        </div>
+                                        <div className="flow-root divide-y divide-gray-200" role="list">
+                                            {userPets.map((pet) => {
+                                                return (
+                                                    <PetCard
+                                                        key={pet.id}
+                                                        petId={pet.id}
+                                                        petName={pet.name}
+                                                        petAvatar={pet.avatar}
+                                                        isChecked={pet.isChecked}
+                                                        petInfo="Chó Anh lông ngắn"
+                                                        path=""
+                                                        type="tag"
+                                                    />
+                                                );
+                                            })}
+                                        </div>
+                                    </ModalBody>
+                                    <ModalFooter>
+                                        <Button variant="light" onPress={onClose}>
+                                            Đóng
+                                        </Button>
+                                        <Button color="secondary" onPress={onClose}>
+                                            Xác nhận
+                                        </Button>
+                                    </ModalFooter>
+                                </>
+                            )}
+                        </ModalContent>
+                    </Modal>
 
-                {showEmojis && <Picker data={data} onEmojiSelect={addEmoji} />}
+                    <button
+                        className="active:scale-[.94] p-2 active:duration-75 transition-all hover:bg-gray-100 rounded-full flex gap-2"
+                        onClick={() => setShowEmojis(!showEmojis)}
+                    >
+                        <EmojiHappyIcon className="h-6 w-6 text-[#FE9A66]" />
+                        <p className="font-medium text-[15px] text-[#5C6A80] ">Emoji</p>
+                    </button>
 
-                <div className="grow text-right">
+                    {showEmojis && <Picker data={data} onEmojiSelect={addEmoji} />}
+                </div>
+
+                <div className="">
                     <button
                         className="active:scale-[.98] active:duration-75 transition-all bg-violet-600 text-[15px] flex justify-center font-medium text-white px-4 py-2 rounded-full hover:bg-violet-500 disabled:bg-violet-400 disabled:cursor-default"
                         disabled={!input && !selectedFile}

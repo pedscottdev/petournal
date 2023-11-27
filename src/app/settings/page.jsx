@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 import UserService from "../../core/services/user.service";
 import { setToken, updateUserState } from "../../core/store/feature/user-slice";
 import { useDispatch, useSelector } from "react-redux";
+import { Tabs, Tab, Chip, Card, CardBody } from "@nextui-org/react";
+import "../globals.css";
 
 function settings() {
     const user = useSelector((state) => state.user);
@@ -63,7 +65,7 @@ function settings() {
             const response = await UserService.updateUser(data);
             return response;
         },
-        onSuccess: ({data}) => {
+        onSuccess: ({ data }) => {
             dispatch(updateUserState(data));
             toast.success("Cập nhật thành công");
         },
@@ -105,236 +107,205 @@ function settings() {
 
             <main className="">
                 <div className="bg-[#fbfbfb] border-b border-gray-200 dark:border-gray-700 ">
-                    <ul
-                        className="border-b-2 border-gray-200 flex flex-wrap -mb-px font-semibold text-center"
-                        id="default-tab"
-                        data-tabs-toggle="#default-tab-content"
-                        role="tablist"
+                    <Tabs
+                        aria-label="Options"
+                        color="secondary"
+                        variant="underlined"
+                        classNames={{
+                            tabList: "gap-6 w-full relative rounded-none p-0 border-b border-divider ",
+                            cursor: "w-full bg-[#7C3AED]",
+                            tab: "max-w-fit ml-3 py-0 h-14",
+                            tabContent: "text-[16px] py-0 px-0 font-semibold group-data-[selected=true]:text-[#7C3AED]",
+                        }}
                     >
-                        <li className="mr-2" role="presentation">
-                            <button
-                                className={`inline-block p-4 border-b-3 text-gray-700 rounded-t-lg ${
-                                    activeTab === "profile" ? "border-violet-600" : ""
-                                }`}
-                                id="profile-tab"
-                                data-tabs-target="#profile"
-                                type="button"
-                                role="tab"
-                                aria-controls="profile"
-                                aria-selected={activeTab === "profile"}
-                                onClick={() => handleTabClick("profile")}
-                            >
-                                Thông tin cá nhân
-                            </button>
-                        </li>
-                        <li className="mr-2" role="presentation">
-                            <button
-                                className={`inline-block p-4 border-b-3 text-gray-700 rounded-t-lg ${
-                                    activeTab === "dashboard" ? "border-violet-600 dark:border-white" : ""
-                                }`}
-                                id="dashboard-tab"
-                                data-tabs-target="#dashboard"
-                                type="button"
-                                role="tab"
-                                aria-controls="dashboard"
-                                aria-selected={activeTab === "dashboard"}
-                                onClick={() => handleTabClick("dashboard")}
-                            >
-                                Cài đặt và hỗ trợ
-                            </button>
-                        </li>
-                        <li className="mr-2" role="presentation">
-                            <button
-                                className={`inline-block p-4 border-b-3 text-gray-700 rounded-t-lg ${
-                                    activeTab === "settings"
-                                        ? "border-violet-600 dark:border-white"
-                                        : "hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-                                }`}
-                                id="settings-tab"
-                                data-tabs-target="#settings"
-                                type="button"
-                                role="tab"
-                                aria-controls="settings"
-                                aria-selected={activeTab === "settings"}
-                                onClick={() => handleTabClick("settings")}
-                            >
-                                Thông tin khóa luận
-                            </button>
-                        </li>
-                    </ul>
-
-                    <div id="default-tab-content">
-                        <div
-                            className={` bg-white rounded-lg divide-y divide-default-200 ${
-                                activeTab === "profile" ? "block" : "hidden"
-                            }`}
-                            id="profile"
-                            role="tabpanel"
-                            aria-labelledby="profile-tab"
+                        <Tab
+                            key="user"
+                            title={
+                                <div className="flex items-center space-x-2">
+                                    <span>Thông tin cá nhân</span>
+                                </div>
+                            }
+                            className="px-0 py-0"
                         >
-                            <div className="grid gap-4 gap-y-8 p-10 text-sm grid-cols-1 lg:grid-cols-3">
-                                <div className="">
-                                    <p className="text-[16px] mb-1 font-semibold text-gray-700">Thông tin cá nhân</p>
-                                    <p className="font-md pr-6">
-                                        Bạn có thể cập nhật thông tin cá nhân bằng cách chỉnh sửa và bấm lưu .
-                                    </p>
+                            {/* Contents */}
+                            <div className="bg-white border-t border-gray-200 divide-y divide-gray-200">
+                                <div className="grid gap-4 gap-y-8 p-10 text-sm grid-cols-1 lg:grid-cols-3">
+                                    <div className="">
+                                        <p className="text-[16px] mb-1 font-semibold text-gray-700">
+                                            Thông tin cá nhân
+                                        </p>
+                                        <p className="font-md pr-6">
+                                            Bạn có thể cập nhật thông tin cá nhân bằng cách chỉnh sửa và bấm lưu .
+                                        </p>
+                                    </div>
+
+                                    <div className="lg:col-span-2">
+                                        <div className="grid gap-4 gap-y-4 text-sm grid-cols-1 md:grid-cols-6">
+                                            <div className="md:col-span-3">
+                                                <label htmlFor="family_name" className="font-medium">
+                                                    Họ
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="family_name"
+                                                    value={lastName}
+                                                    onChange={(e) => setLastName(e.target.value)}
+                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
+                                                />
+                                            </div>
+                                            <div className="md:col-span-3">
+                                                <label htmlFor="first_name" className="font-medium">
+                                                    Tên
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="first_name"
+                                                    value={firstName}
+                                                    onChange={(e) => setFirstName(e.target.value)}
+                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
+                                                />
+                                            </div>
+
+                                            <div className="md:col-span-6">
+                                                <label for="vio" className="font-medium">
+                                                    Mô tả bản thân
+                                                </label>
+                                                <textarea
+                                                    type="text"
+                                                    id="bio"
+                                                    rows={3}
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
+                                                />
+                                            </div>
+
+                                            <div className="md:col-span-6">
+                                                <label htmlFor="email" className="font-medium">
+                                                    Email
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="email"
+                                                    value={email}
+                                                    onChange={(e) => setEmail(e.target.value)}
+                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
+                                                    readOnly={true}
+                                                />
+                                            </div>
+
+                                            <div className="md:col-span-3">
+                                                <label htmlFor="birthday" className="font-medium">
+                                                    Ngày sinh
+                                                </label>
+                                                <input
+                                                    type="date"
+                                                    id="birthday"
+                                                    value={birthday}
+                                                    onChange={(e) => setBirthday(e.target.value)}
+                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
+                                                />
+                                            </div>
+
+                                            <div className="md:col-span-3">
+                                                <label htmlFor="phone" className="font-medium">
+                                                    Số điện thoại
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="phone"
+                                                    value={phone}
+                                                    onChange={(e) => setPhone(e.target.value)}
+                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
+                                                />
+                                            </div>
+
+                                            <div className="md:col-span-6">
+                                                <label htmlFor="address" className="font-medium">
+                                                    Địa chỉ
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="address"
+                                                    value={address}
+                                                    onChange={(e) => setAddress(e.target.value)}
+                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
+                                                />
+                                            </div>
+
+                                            <div className="md:col-span-6 text-right">
+                                                <div className="inline-flex items-end">
+                                                    <button
+                                                        className="bg-violet-600 hover:bg-violet-500 text-white font-bold py-2 my-4 px-4 rounded"
+                                                        onClick={handleUpdateUser}
+                                                    >
+                                                        Cập nhật
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div className="lg:col-span-2">
-                                    <div className="grid gap-4 gap-y-4 text-sm grid-cols-1 md:grid-cols-6">
-                                        <div className="md:col-span-3">
-                                            <label htmlFor="family_name" className="font-medium">
-                                                Họ
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="family_name"
-                                                value={lastName}
-                                                onChange={(e) => setLastName(e.target.value)}
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
-                                            />
-                                        </div>
-                                        <div className="md:col-span-3">
-                                            <label htmlFor="first_name" className="font-medium">
-                                                Tên
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="first_name"
-                                                value={firstName}
-                                                onChange={(e) => setFirstName(e.target.value)}
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
-                                            />
-                                        </div>
+                                <div className="grid gap-4 gap-y-8 p-10 text-sm grid-cols-1 lg:grid-cols-3 ">
+                                    <div className="">
+                                        <p className="text-[16px] mb-1 font-semibold text-gray-700">Đổi mật khẩu</p>
+                                        <p className="font-md pr-6">Thay đổi mật khẩu đăng nhập.</p>
+                                    </div>
 
-                                        <div className="md:col-span-6">
-                                            <label htmlFor="email" className="font-medium">
-                                                Email
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="email"
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
-                                                readOnly={true}
-                                            />
-                                        </div>
+                                    <div className="lg:col-span-2">
+                                        <div className="grid gap-4 gap-y-4 text-sm grid-cols-1 md:grid-cols-6">
+                                            <div className="md:col-span-6">
+                                                <label htmlFor="password" className="font-medium">
+                                                    Mật khẩu hiện tại
+                                                </label>
+                                                <input
+                                                    type="password"
+                                                    id="password"
+                                                    value={password}
+                                                    onChange={(e) => setPassword(e.target.value)}
+                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
+                                                />
+                                            </div>
+                                            <div className="md:col-span-6">
+                                                <label htmlFor="new_password" className="font-medium">
+                                                    Mật khẩu mới
+                                                </label>
+                                                <input
+                                                    type="password"
+                                                    id="new_password"
+                                                    value={newPassword}
+                                                    onChange={(e) => setNewPassword(e.target.value)}
+                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
+                                                />
+                                            </div>
+                                            <div className="md:col-span-6">
+                                                <label htmlFor="confirm_new_password" className="font-medium">
+                                                    Xác nhận mật khẩu mới
+                                                </label>
+                                                <input
+                                                    type="password"
+                                                    id="confirm_new_password"
+                                                    value={confirmNewPassword}
+                                                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
+                                                />
+                                            </div>
 
-                                        <div className="md:col-span-3">
-                                            <label htmlFor="birthday" className="font-medium">
-                                                Ngày sinh
-                                            </label>
-                                            <input
-                                                type="date"
-                                                id="birthday"
-                                                value={birthday}
-                                                onChange={(e) => setBirthday(e.target.value)}
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
-                                            />
-                                        </div>
-
-                                        <div className="md:col-span-3">
-                                            <label htmlFor="phone" className="font-medium">
-                                                Số điện thoại
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="phone"
-                                                value={phone}
-                                                onChange={(e) => setPhone(e.target.value)}
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
-                                            />
-                                        </div>
-
-                                        <div className="md:col-span-6">
-                                            <label htmlFor="address" className="font-medium">
-                                                Địa chỉ
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="address"
-                                                value={address}
-                                                onChange={(e) => setAddress(e.target.value)}
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
-                                            />
-                                        </div>
-
-                                        <div className="md:col-span-6 text-right">
-                                            <div className="inline-flex items-end">
-                                                <button
-                                                    className="bg-violet-600 hover:bg-violet-500 text-white font-bold py-2 my-4 px-4 rounded"
-                                                    onClick={handleUpdateUser}
-                                                >
-                                                    Cập nhật
-                                                </button>
+                                            <div className="md:col-span-6 text-right">
+                                                <div className="inline-flex items-end">
+                                                    <button
+                                                        className="bg-violet-600 hover:bg-violet-500 text-white font-bold py-2 px-4 my-4 rounded"
+                                                        type="button"
+                                                        onClick={handleChangePassword}
+                                                    >
+                                                        Cập nhật
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div className="grid gap-4 gap-y-8 p-10 text-sm grid-cols-1 lg:grid-cols-3 ">
-                                <div className="">
-                                    <p className="text-[16px] mb-1 font-semibold text-gray-700">Đổi mật khẩu</p>
-                                    <p className="font-md pr-6">Thay đổi mật khẩu đăng nhập.</p>
-                                </div>
-
-                                <div className="lg:col-span-2">
-                                    <div className="grid gap-4 gap-y-4 text-sm grid-cols-1 md:grid-cols-6">
-                                        <div className="md:col-span-6">
-                                            <label htmlFor="password" className="font-medium">
-                                                Mật khẩu hiện tại
-                                            </label>
-                                            <input
-                                                type="password"
-                                                id="password"
-                                                value={password}
-                                                onChange={(e) => setPassword(e.target.value)}
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
-                                            />
-                                        </div>
-                                        <div className="md:col-span-6">
-                                            <label htmlFor="new_password" className="font-medium">
-                                                Mật khẩu mới
-                                            </label>
-                                            <input
-                                                type="password"
-                                                id="new_password"
-                                                value={newPassword}
-                                                onChange={(e) => setNewPassword(e.target.value)}
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
-                                            />
-                                        </div>
-                                        <div className="md:col-span-6">
-                                            <label htmlFor="confirm_new_password" className="font-medium">
-                                                Xác nhận mật khẩu mới
-                                            </label>
-                                            <input
-                                                type="password"
-                                                id="confirm_new_password"
-                                                value={confirmNewPassword}
-                                                onChange={(e) => setConfirmNewPassword(e.target.value)}
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
-                                            />
-                                        </div>
-
-                                        <div className="md:col-span-6 text-right">
-                                            <div className="inline-flex items-end">
-                                                <button
-                                                    className="bg-violet-600 hover:bg-violet-500 text-white font-bold py-2 px-4 my-4 rounded"
-                                                    type="button"
-                                                    onClick={handleChangePassword}
-                                                >
-                                                    Cập nhật
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {/* {isModalOpen && (
+                            {/* {isModalOpen && (
               <div
                 id="popup-modal"
                 className="fixed top-0 left-0 right-0 z-50 p-4 overflow-x-hidden overflow-y-auto inset-0 h-[calc(100%-1rem)] max-h-full"
@@ -399,31 +370,12 @@ function settings() {
                     </div>
                   </div>
                 </div>
-              </div>
-            )} */}
-                        <div
-                            className={`p-8 bg-white rounded-lg  dark:bg-gray-800 ${
-                                activeTab === "dashboard" ? "block" : "hidden"
-                            }`}
-                            id="dashboard"
-                            role="tabpanel"
-                            aria-labelledby="dashboard-tab"
-                        >
-                            <p className="text-md text-gray-500 dark:text-gray-400">Hướng dẫn sơ về cài đặt</p>
-                        </div>
-                        <div
-                            className={`p-8 rounded-lg bg-white dark:bg-gray-800 ${
-                                activeTab === "settings" ? "block" : "hidden"
-                            }`}
-                            id="settings"
-                            role="tabpanel"
-                            aria-labelledby="settings-tab"
-                        >
-                            <p className="text-md text-gray-500 dark:text-gray-400">
-                                Thông tin sinh viên làm khóa luận.
-                            </p>
-                        </div>
-                    </div>
+              }
+            >
+              {/* Contents */}
+                            <div className="bg-white">dddddđd</div>
+                        </Tab>
+                    </Tabs>
                 </div>
             </main>
         </>

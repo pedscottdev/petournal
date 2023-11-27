@@ -22,8 +22,8 @@ function Feed(props) {
         setListPost(data);
     };
 
-    const resetPage = () => {
-        setPage(1);
+    const resetPage = async () => {
+        await setPage(2);
     };
 
     const mutation = useMutation({
@@ -64,7 +64,7 @@ function Feed(props) {
         <div className=" p-6 pl-0 flex-col flex-shrink-0 overflow-x-hidden overflow-y-auto display-block min-h-screen md:w-xl">
             <div className="">
                 {/* InputBox */}
-                <InputBox handleGetTimeLine={getTimeLine} />
+                <InputBox handleGetTimeLine={getTimeLine} handleResetPage={resetPage} />
             </div>
 
             {/* Posts */}

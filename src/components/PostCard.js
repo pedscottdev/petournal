@@ -244,17 +244,20 @@ function PostCard(props) {
                 {/* Content */}
                 <div className="mt-4">
                     <p className="text-[#000000] text-[15px] sm:text-base">{postData?.content}</p>
-                    {postData?.imageUrl ? (
-                        <Image
-                            src={postData?.imageUrl}
-                            className="rounded-xl cursor-pointer max-h-[360px] object-cover mt-4"
-                            alt=""
-                            width={1000}
-                            height={1000}
-                        />
-                    ) : (
-                        ""
-                    )}
+                    <div className="max-h-[380px]">
+                        {postData?.imageUrl ? (
+                            <Image
+                                src={postData?.imageUrl}
+                                className="rounded-xl cursor-pointer max-h-[360px] object-cover mt-4"
+                                alt=""
+                                isblurred="true"
+                                width={1000}
+                                height={1000}
+                            />
+                        ) : (
+                            ""
+                        )}
+                    </div>
                 </div>
 
                 {/* Metadata */}
@@ -265,16 +268,16 @@ function PostCard(props) {
                             {isLiked ? (
                                 <PiHeartFill
                                     onClick={handleLikeClick}
-                                    className="cursor-pointer h-7 w-7 text-violet-500 active:scale-[.90] active:duration-75 transition-all hover:text-violet-500"
+                                    className="cursor-pointer h-6 w-6 text-violet-500 active:scale-[.90] active:duration-75 transition-all hover:text-violet-500"
                                 />
                             ) : (
                                 <PiHeartBold
                                     onClick={handleLikeClick}
-                                    className="cursor-pointer h-7 w-7 text-gray-700 active:scale-[.84] active:duration-75 transition-all hover:text-violet-500"
+                                    className="cursor-pointer h-6 w-6 text-gray-700 active:scale-[.84] active:duration-75 transition-all hover:text-violet-500"
                                 />
                             )}
                         </div>
-                        <p className="text-[15px]">
+                        <p className="text-[15px] font-medium text-gray-700">
                             <span className="">{usersLike?.length}</span> Like
                         </p>
                     </div>
@@ -284,8 +287,8 @@ function PostCard(props) {
                         variant="light"
                         onClick={toggleCommentSection}
                     >
-                        <PiChatCircleBold className="cursor-pointer h-7 w-7 text-gray-700" />
-                        <p className="text-[15px]">
+                        <PiChatCircleBold className="cursor-pointer h-6 w-6 text-gray-700" />
+                        <p className="text-[15px] font-medium text-gray-700">
                             <span>{totalComment}</span> Comment
                         </p>
                     </Button>
@@ -295,8 +298,8 @@ function PostCard(props) {
                         variant="light"
                         onPress={onOpen}
                     >
-                        <PiDogBold className="cursor-pointer h-7 w-7 text-gray-700" />
-                        <p className="text-[15px]">
+                        <PiDogBold className="cursor-pointer h-6 w-6 text-gray-700" />
+                        <p className="text-[15px] font-medium text-gray-700">
                             <span className="">{postData?.pets?.length}</span> Pet
                         </p>
                     </Button>
@@ -372,7 +375,7 @@ function PostCard(props) {
                                 type="text"
                                 value={commentInput}
                                 onChange={(e) => setCommentInput(e.target.value)}
-                                className="bg-[#f8f8f9] px-4 text-[15px] rounded-xl outline-none placeholder-gray-400 w-full min-h-[43px]"
+                                className="bg-[#f8f8f9] px-4 p-1 text-[15px] rounded-xl outline-none placeholder-gray-400 w-full min-h-[43px]"
                                 placeholder="Nhập bình luận"
                             ></input>
                             <button

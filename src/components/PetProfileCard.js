@@ -1,9 +1,10 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image"
+import Image from "next/image";
 import { useState } from "react";
-import bgProfile from "../img/bg-profile.jpg"
+import bgProfile from "../img/bg-profile.jpg";
 import { CircularProgress } from "@nextui-org/react";
+import { TbHeartFilled } from "react-icons/tb";
 
 function PetProfileCard(props) {
   const [isLiked, setIsLiked] = useState(false);
@@ -12,8 +13,6 @@ function PetProfileCard(props) {
   const { petAvatar, petName, species, sex, breed, likes, age } = props;
 
   const handleButtonClick = async () => {
-    setIsLoading(true);
-
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     if (isLiked) {
@@ -22,13 +21,11 @@ function PetProfileCard(props) {
       alert("Đã hủy yêu thích");
     }
 
-    setIsLoading(false);
-
     setIsLiked((prevState) => !prevState);
   };
 
   return (
-    <div className=" bg-white cursor-pointer hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl shadow border-1">
+    <div className=" bg-white cursor-pointer hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl shadow-sm border-1">
       <div className="flex flex-col items-center justify-center w-full m-auto">
         {/* Avatar */}
         <div className="py-5 mx-auto">
@@ -36,7 +33,7 @@ function PetProfileCard(props) {
             <img
               alt="profile"
               src={petAvatar}
-              className="object-cover h-48 w-80 rounded-lg "
+              className="object-cover max-h-48 w-80 rounded-xl"
             />
           </div>
         </div>
@@ -59,31 +56,45 @@ function PetProfileCard(props) {
 
         {/* User Info */}
         <div className="flex  items-center flex-col w-full px-auto">
-          <div className="flex flex-col text-center justify-center">
-            <h2 className="flex text-lg font-semibold text-gray-900">
-              {petName}
-            </h2>
-            <p className="text-[15px] text-gray-500">{breed}</p>
+          <div className="flex w-full px-6 justify-between">
+            <div className="flex flex-col w-full justify-start">
+              <h2 className="flex text-lg font-semibold text-gray-900">
+                {petName}
+              </h2>
+              <p className="text-[15px] text-gray-500">{breed}</p>
+            </div>
+            <button
+              className={`${
+                isLiked
+                  ? "bg-violet-50 text-violet-300"
+                  : " text-white bg-violet-500"
+              } active:scale-[.94] active:duration-75 transition-all font-medium p-2 rounded-full md:text-base h-fit`}
+              onClick={handleButtonClick}
+            >
+              <TbHeartFilled className="w-6 h-6" />
+            </button>
           </div>
-          
-          <div className="flex divide-x divide-gray-300 items-center mt-4 justify-between">
-            <div className="flex flex-col px-6 justify-center">
-              <div className="text-[15px]">Giới tính</div>
+
+          <div className="flex  mx-6 divide-x divide-gray-300 items-center mt-4 mb-2 justify-between">
+            <div className="flex flex-col px-5 justify-center">
               <span className="text-md font-semibold flex flex-col text-center">
                 {sex}
               </span>
+              <div className="text-sm font-medium text-gray-400">Giới tính</div>
             </div>
-            <div className="flex flex-col px-6 justify-center text-center">
-              <div className="text-[15px]">Tuổi</div>
+            <div className="flex flex-col px-5 justify-center text-center">
               <span className="text-md font-semibold flex flex-col ">
-                {age}{" "} tháng
+                {age}
               </span>
+              <div className="text-sm font-medium text-gray-400">Tuổi</div>
             </div>
-            <div className="flex flex-col px-6 backdrop:justify-center">
-              <div className="text-[15px]">Lượt thích</div>
+            <div className="flex flex-col px-5 backdrop:justify-center">
               <span className="text-md font-semibold flex flex-col text-center">
                 {likes}
               </span>
+              <div className="text-sm font-medium text-gray-400">
+                Lượt thích
+              </div>
             </div>
           </div>
         </div>
@@ -96,26 +107,6 @@ function PetProfileCard(props) {
             Xem Profile
           </button>
         </Link>
-        <button
-          className={`${
-            isLiked ? "bg-violet-50" : "bg-gray-100"
-          } active:scale-[.94] active:duration-75 transition-all p-2 font-medium ${
-            isLiked ? "text-violet-600" : "text-gray-600"
-          } text-[15px] px-4 rounded-full text-s md:text-base`}
-          onClick={handleButtonClick}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <div className="flex items-center px-6 justify-center w-6 h-6">
-              <CircularProgress size="sm" color="secondary" aria-label="Loading..." />
-            </div>
-            
-          ) : isLiked ? (
-            "Yêu thích"
-          ) : (
-            "Đã thích"
-          )}
-        </button>
       </div>
     </div>
   );

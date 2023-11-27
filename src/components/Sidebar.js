@@ -143,7 +143,7 @@ function Sidebar() {
                   }`}
                 />
               </Link>
-              <button onClick={handleLogout}>
+              <button className="w-full" onClick={handleLogout}>
                 <SidebarRow
                   Icon={LogoutIcon}
                   title="Đăng xuất"

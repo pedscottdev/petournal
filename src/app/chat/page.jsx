@@ -36,7 +36,7 @@ function chat() {
 
       <main className="flex flex-auto overflow-y-hidden">
         <div className="relative flex w-full h-[calc(100vh-65px)] border-r border-gray-200 overflow-y-hidden">
-          {/* <div className="flex w-full "> */}
+
           {/* Controler */}
           <div className="flex flex-col flex-auto bg-[#FBFBFB] lg:min-w-[32%] lg:max-w-[32%] xl:min-w-[32%] xl:max-w-[32%]">
             {/* Header */}
