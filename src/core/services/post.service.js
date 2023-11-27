@@ -8,8 +8,11 @@ const PostService = {
         return axiosClient.post(`/post/likePost/${postId}`);
     },
     createPost: (body) => {
-      return axiosClient.post('/post/createPost', body)
-    }
+        return axiosClient.post("/post/createPost", body);
+    },
+    deletePost: (postId) => {
+        return axiosClient.post(`/post/deletePost/${postId}`);
+    },
 };
 
 export default PostService;

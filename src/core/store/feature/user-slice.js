@@ -1,13 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-
 const initialState = {
     id: "",
     fullName: "",
     firstName: "",
     lastName: "",
     email: "",
-    accessToken: '',
+    accessToken: "",
 };
 
 const UserSlice = createSlice({
@@ -19,7 +18,7 @@ const UserSlice = createSlice({
         },
 
         setUserLogin: (state, action) => {
-            if (action.payload && action.payload) {
+            if (action.payload) {
                 const user = action.payload;
                 state.id = user._id;
                 state.firstName = user.firstName;
@@ -29,7 +28,27 @@ const UserSlice = createSlice({
                 state.avatar = user.avatar;
             }
         },
-
+        updateUserState: (state, action) => {
+            const { lastName, firstName, email } = action.payload;
+            if (lastName) {
+                state.lastName = lastName;
+                if (!firstName) {
+                    state.fullName = lastName + " " + state.firstName;
+                }
+            }
+            if (firstName) {
+                state.firstName = firstName;
+                if (!lastName) {
+                    state.fullName = state.lastName + " " + firstName;
+                }
+            }
+            if (lastName && firstName) {
+                state.fullName = lastName + " " + firstName;
+            }
+            if (email) {
+                state.email = email;
+            }
+        },
         setToken: (state, action) => {
             state.accessToken = action.payload;
         },
@@ -38,10 +57,6 @@ const UserSlice = createSlice({
     },
 });
 
-export const {
-    setUserLogin,
-    resetUserState,
-    setToken,
-} = UserSlice.actions;
+export const { setUserLogin, resetUserState, setToken, updateUserState } = UserSlice.actions;
 
 export default UserSlice.reducer;

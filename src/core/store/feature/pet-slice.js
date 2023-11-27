@@ -1,15 +1,17 @@
 const { createSlice } = require("@reduxjs/toolkit");
 
+const initialState = [
+    {
+        id: "",
+        name: "",
+        avatar: "",
+        isChecked: false,
+    },
+];
+
 const PetSlice = createSlice({
     name: "Pet",
-    initialState: [
-        {
-            id: "",
-            name: "",
-            avatar: "",
-            isChecked: false,
-        },
-    ],
+    initialState,
     reducers: {
         setUserPets: (state, action) => {
             return action.payload;
@@ -22,9 +24,14 @@ const PetSlice = createSlice({
                 petToUpdate.isChecked = isChecked;
             }
         },
+        resetIsChecked: (state, action) => {
+            state.forEach((pet) => {
+                pet.isChecked = false;
+            });
+        },
     },
 });
 
-export const { setUserPets, setIsChecked } = PetSlice.actions;
+export const { setUserPets, setIsChecked, resetIsChecked } = PetSlice.actions;
 
 export default PetSlice.reducer;

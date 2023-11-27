@@ -29,19 +29,19 @@ function Header() {
         return state.user;
     });
 
-    const socket = useRef();
-    useEffect(() => {
-        socket.current = io(process.env.HOST, {
-            extraHeaders: { Authorization: `${user.accessToken}` },
-        });
-        socket.current.on("connect", () => {
-            console.log("Connected to WebSocket idH: " + socket.current.id);
-        });
+    // const socket = useRef();
+    // useEffect(() => {
+    //     socket.current = io(process.env.HOST, {
+    //         extraHeaders: { Authorization: `${user.accessToken}` },
+    //     });
+    //     socket.current.on("connect", () => {
+    //         console.log("Connected to WebSocket idH: " + socket.current.id);
+    //     });
 
-        return () => {
-            socket.current.disconnect();
-        };
-    }, [user.accessToken]);
+    //     return () => {
+    //         socket.current.disconnect();
+    //     };
+    // }, [user.accessToken]);
 
     const avatar = user.avatar != null ? user.avatar : defaultAvatar;
 

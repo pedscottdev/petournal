@@ -17,14 +17,16 @@ import PetBadge from "../utils/PetBadge";
 import PetCard from "../utils/PetCard";
 import SammyAvatar from "../img/sammy-avatar.jpg";
 import PetService from "../core/services/pet.service.js";
-import { setUserPets } from "../core/store/feature/pet-slice";
+import { resetIsChecked, setUserPets } from "../core/store/feature/pet-slice";
 import { useDispatch, useSelector } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
 import PostService from "../core/services/post.service.js";
 import toast from "react-hot-toast";
 import Loading from "./share/loading.js";
 
-const InputBox = () => {
+const InputBox = (props) => {
+    const { handleGetTimeLine } = props;
+
     const [input, setInput] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
     const [showEmojis, setShowEmojis] = useState(false);
@@ -53,7 +55,9 @@ const InputBox = () => {
             await PostService.createPost(data);
         },
         onSuccess: () => {
+            dispatch(resetIsChecked());
             toast.success("Đã đăng post");
+            handleGetTimeLine();
         },
         onError: (err) => {
             console.log(err);
@@ -69,16 +73,20 @@ const InputBox = () => {
 
         const imageRef = ref(ImageStorage, `posts/${userStore.id}/images/${Date.now()}`);
 
-        if (selectedFile) {
-            await uploadString(imageRef, selectedFile, "data_url").then(async (value) => {
-                const downloadURL = await getDownloadURL(value.ref);
-                body = { content: input, imageUrl: downloadURL, pets: petArray };
-            });
-        } else {
-            body = { content: input, pets: petArray };
-        }
+        if (petArray.length != 0) {
+            if (selectedFile) {
+                await uploadString(imageRef, selectedFile, "data_url").then(async (value) => {
+                    const downloadURL = await getDownloadURL(value.ref);
+                    body = { content: input, imageUrl: downloadURL, pets: petArray };
+                });
+            } else {
+                body = { content: input, pets: petArray };
+            }
 
-        createPostMutation.mutate(body);
+            createPostMutation.mutate(body);
+        } else {
+            toast.error("Bài viết phải có thú cưng");
+        }
 
         setLoading(false);
         setInput("");
