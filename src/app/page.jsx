@@ -28,7 +28,7 @@ export default function Home() {
 
     return (
         <main>
-            <div className="flex grid-cols-2 px-4 justify-center">
+            <div className="flex grid-cols-2 px-6 justify-center">
                 <div className="xl:w-[70%] lg:w-[70%] md:w-full sm:w-full">
                     <Feed socket={socket} />
                 </div>

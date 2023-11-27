@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { CircularProgress } from "@nextui-org/react";
 
-function ProfileCard( props ) {
+function ProfileCard(props) {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,11 +30,11 @@ function ProfileCard( props ) {
       <div className="flex flex-col items-center justify-center w-full m-auto">
         {/* Avatar */}
         <div className="py-5 flex mx-auto">
-          <div className="flex items-center mt-4 justify-center">
+          <div className="flex items-center mt-3 justify-center">
             <img
               alt="profile"
               src={userAvatar}
-              className="object-cover w-28 h-28 mx-auto rounded-full"
+              className="object-cover w-28 h-28 mx-auto p-1 rounded-full ring-2 ring-violet-300"
             />
           </div>
         </div>
@@ -44,32 +44,32 @@ function ProfileCard( props ) {
           <h2 className="flex text-md font-semibold text-gray-900">
             {userName}
           </h2>
-          <p className="text-[15px] text-gray-500">{gmail}</p>
-          <div className="flex items-center mt-4 justify-between space-x-10">
-            <div className="flex flex-col">
-              <div className="text-[15px]">Pet</div>
+          <p className="text-sm text-gray-500">{gmail}</p>
+          <div className="flex items-center mt-4 divide-x divide-gray-200 justify-between">
+            <div className="flex flex-col px-6 justify-center">
               <span className="text-md font-semibold flex flex-col text-center">
-              {pet}
+                {pet}
               </span>
+              <div className="text-sm font-medium text-gray-400">Pet</div>
             </div>
-            <div className="flex flex-col justify-center">
-              <div className="text-[15px]">Follower</div>
+            <div className="flex flex-col px-6 justify-center">
               <span className="text-md font-semibold flex flex-col text-center">
-              {follower}{" "}
+                {follower}{" "}
               </span>
+              <div className="text-sm font-medium text-gray-400">Follower</div>
             </div>
-            <div className="flex flex-col justify-center">
-              <div className="text-[15px]">Following</div>
+            <div className="flex flex-col px-6 justify-center">
               <span className="text-md font-semibold flex flex-col text-center">
-              {following}
+                {following}
               </span>
+              <div className="text-sm font-medium text-gray-400">Following</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Controller */}
-      <div className="flex items-center space-x-5  justify-center w-full py-5">
+      <div className="flex items-center space-x-5 justify-center w-full py-5">
         <Link href="">
           <button className="bg-violet-600 active:scale-[.94] active:duration-75 transition-all font-medium text-white p-2 text-[15px] px-4 rounded-full">
             Xem Profile
@@ -87,9 +87,12 @@ function ProfileCard( props ) {
         >
           {isLoading ? (
             <div className="flex items-center px-6 justify-center w-6 h-6">
-              <CircularProgress size="sm" color="secondary" aria-label="Loading..." />
+              <CircularProgress
+                size="sm"
+                color="secondary"
+                aria-label="Loading..."
+              />
             </div>
-            
           ) : isFollowing ? (
             "Theo dõi"
           ) : (

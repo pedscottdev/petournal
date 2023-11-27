@@ -115,7 +115,7 @@ function pets() {
         <div className="p-6 ">
           {/* Header */}
           <div className="flex justify-between">
-            <div className="text-2xl font-semibold mb-2">Thú cưng</div>
+            <div className="text-2xl font-semibold mb-1">Thú cưng</div>
           </div>
 
           {/* Modal Create Pet */}
@@ -320,31 +320,7 @@ function pets() {
             {/* Content */}
             <div className="grid grid-cols-3 pt-3 gap-6 p-6">
               <PetProfileCard
-                petAvatar="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=1894&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                petName="Sammy"
-                breed="Corki"
-                sex="Đực"
-                age="3"
-                likes="48"
-              />
-              <PetProfileCard
-                petAvatar="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=1894&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                petName="Sammy"
-                breed="Corki"
-                sex="Đực"
-                age="3"
-                likes="48"
-              />
-              <PetProfileCard
-                petAvatar="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=1894&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                petName="Sammy"
-                breed="Corki"
-                sex="Đực"
-                age="3"
-                likes="48"
-              />
-              <PetProfileCard
-                petAvatar="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=1894&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                petAvatar="https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 petName="Sammy"
                 breed="Corki"
                 sex="Đực"

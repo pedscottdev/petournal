@@ -23,7 +23,7 @@ function follower() {
       <main className="h-full ">
         <div className="p-6 ">
           {/* Header */}
-          <div className="text-2xl font-semibold mb-2">Cộng đồng</div>
+          <div className="text-2xl font-semibold mb-1">Cộng đồng</div>
 
           {/* Controller */}
           <div className="overflow-y-hidden">
@@ -54,9 +54,9 @@ function follower() {
                   }
                 >
                   {/* Contents */}
-                  <div className="space-y-4">
+                  <div className="space-y-1">
                     {/* Controller */}
-                    <div className="flex justify-between gap-x-5 w-full  h-full my-4">
+                    <div className="flex justify-between gap-x-5 w-full  h-full my-2">
                       <Select
                         radius="sm"
                         variant="bordered"

@@ -22,6 +22,8 @@ import {
   DotsHorizontalIcon,
 } from "@heroicons/react/outline";
 import { TbDog } from "react-icons/tb";
+import PetsAvatar from "../../utils/PetsAvatar";
+
 function profile() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -65,7 +67,7 @@ function profile() {
                 alt="avatar"
               />
             </div>
-            <div className="text-center px-3 pb-4 pt-2">
+            <div className="text-center px-3 pb-4 pt-2 rounded-t-xl">
               <h3 className="text-gray-700 text-xl font-bold ">Pedro Scott</h3>
               <p className=" text-[15px]">
                 Hello, i'm from another the other side!
@@ -156,10 +158,25 @@ function profile() {
               }
             >
               {/* Contents */}
-              <div className="flex space-y-4 justify-center ">
+              <div className="flex space-y-4 px-6 justify-center ">
                 {/* Controller */}
                 <div className="flex flex-col min-w-[70%] max-w-[70%] gap-x-5 h-full my-4">
                   <InputBox />
+
+                  {/* Pets Filter */}
+                  <div className="flex gap-4 items-center justify-center mt-5">
+                    <PetsAvatar
+                      petAvatar="https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    />
+                    <PetsAvatar
+                      petAvatar="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGRvZ3xlbnwwfHwwfHx8MA%3D%3D"
+                    />
+                    <PetsAvatar
+                      petAvatar="https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    />
+
+                  </div>
+
                   <PostCard />
                   <PostCard />
                   <PostCard />
@@ -235,7 +252,9 @@ function profile() {
                   <ul className="mt-4 text-gray-700 text-[15px]">
                     <li className="flex border-y py-2">
                       <span className="font-bold w-32">Mô tả bản thân:</span>
-                      <span className="text-gray-700 ml-6">Hello, i'm from another the other side!</span>
+                      <span className="text-gray-700 ml-6">
+                        Hello, i'm from another the other side!
+                      </span>
                     </li>
                     <li className="flex border-y py-2">
                       <span className="font-bold w-32">Tên đầy đủ:</span>

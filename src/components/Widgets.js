@@ -25,7 +25,7 @@ function Widgets() {
 
     return (
         <div className="py-6 flex-shrink-0 space-y-8 w-full">
-            <div className="p-2 rounded-xl bg-white shadow-sm">
+            <div className="p-2 rounded-xl bg-white shadow-sm border-1">
                 <h4 className="font-semibold text-xl px-4 py-2">Có thể bạn biết</h4>
 
                 {/* Users */}
