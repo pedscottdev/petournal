@@ -164,9 +164,9 @@ function follower() {
                   }
                 >
                   {/* Contents */}
-                  <div className="space-y-4 ">
+                  <div className="space-y-2 ">
                     {/* Controller */}
-                    <div className="flex justify-between gap-x-5 w-full  h-full my-4">
+                    <div className="flex justify-between gap-x-5 w-full  h-full my-2">
                       <Select
                         radius="sm"
                         variant="bordered"
