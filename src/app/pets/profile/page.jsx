@@ -115,6 +115,7 @@ function profile() {
         <title>Petournal</title>
       </Head>
 
+
       <main>
         <div className="flex flex-col p-6 justify-center items-center">
           <div className="relative flex flex-col items-center p-6 bg-white shadow-sm border-1 rounded-t-2xl xl:w-[70%] lg:w-[70%] md:w-full sm:w-full">

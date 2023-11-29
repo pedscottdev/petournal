@@ -10,15 +10,14 @@ import { useDispatch } from "react-redux";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import AuthService from "../../../core/services/auth.service.js";
 import { setToken, setUserLogin } from "../../../core/store/feature/user-slice.js";
-import toast from "react-hot-toast";
 import Loading from "../../../components/share/loading.js";
+import toast from "react-hot-toast";
 
 function Login() {
     const router = useRouter();
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
     const { register, handleSubmit } = useForm();
-
 
     const mutation = useMutation({
         mutationFn: (data) => {
@@ -32,6 +31,7 @@ function Login() {
             router.push("/");
         },
         onError: (error) => {
+            console.log(error);
             toast.error(error.response.data.message);
         },
     });
@@ -80,7 +80,7 @@ function Login() {
                         </div>
 
                         <Link href="/reset-password">
-                            <button className="font-medium text-base text-violet-500 mt-3">Quên mật khẩu?</button>
+                            <div className="cursor-pointer font-medium text-base text-violet-500 mt-3">Quên mật khẩu?</div>
                         </Link>
 
                         {/* Buttons */}
@@ -92,7 +92,7 @@ function Login() {
                                 {mutation.isPending ? <Loading /> : "Đăng nhập"}
                             </button>
 
-                            <button className="flex items-center border-2  border-violet-300 justify-center gap-3 active:scale-[.98] active:duration-75 transition-all py-2.5 rounded-xl text-violet-500 bg-white text-lg font-bold">
+                            {/* <button className="flex items-center border-2  border-violet-300 justify-center gap-3 active:scale-[.98] active:duration-75 transition-all py-2.5 rounded-xl text-violet-500 bg-white text-lg font-bold">
                                 <svg width={24} height={24} viewBox="0 0 48 48">
                                     <title>Google Logo</title>
                                     <clipPath id="g">
@@ -106,7 +106,7 @@ function Login() {
                                     </g>
                                 </svg>
                                 Đăng nhập với Google
-                            </button>
+                            </button> */}
                         </div>
 
                         <Link href="/signup">

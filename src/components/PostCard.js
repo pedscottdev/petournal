@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "../app/globals.css";
 import Image from "next/image";
 import defaultAvatar from "/src/img/default-avatar.png";
@@ -7,6 +7,7 @@ import PetCard from "../utils/PetCard";
 import testImage from "/src/img/test-image.jpg";
 import testImage2 from "/src/img/test-image2.jpg";
 import testImage3 from "/src/img/test-image3.jpg";
+import { Select, SelectItem, Avatar } from "@nextui-org/react";
 import {
   ChatIcon,
   HeartIcon,
@@ -48,23 +49,52 @@ import CommentParent from "./CommentParent";
 import handleTimestamp from "../core/utils/timestamp.js";
 import PostService from "../core/services/post.service.js";
 import CommentService from "../core/services/comment.service.js";
+import { Textarea } from "@nextui-org/react";
+import Picker from "@emoji-mart/react";
+import data from "@emoji-mart/data";
+import { resetIsChecked, setUserPets } from "../core/store/feature/pet-slice";
+
+import {
+  PhotographIcon,
+  EmojiHappyIcon,
+  XIcon,
+} from "@heroicons/react/outline";
 
 function PostCard(props) {
-  const { postId, isUserFollowing, isUserLiked, socket } = props;
+  const {
+    postId,
+    isUserFollowing,
+    isUserLiked,
+    socket,
+    handleGetTimeLine,
+    handleResetPage,
+  } = props;
 
+  const userPets = useSelector((state) => state.pet);
   const [postData, setPostData] = useState();
   const [commentData, setCommentData] = useState([]);
   const [totalComment, setTotalComment] = useState();
   const [commentInput, setCommentInput] = useState("");
   const [countLoadComment, setCountLoadComment] = useState(2);
   const [usersLike, setUsersLike] = useState([]);
+  const [showEmojis, setShowEmojis] = useState(false);
 
   const userStore = useSelector((state) => state.user);
+
+  const isUserLogin = postData?.user?._id === userStore.id;
 
   useEffect(() => {
     getPostById();
     getCommentsByPost(postId);
   }, []);
+
+  const addEmoji = (e) => {
+    let sym = e.unified.split("-");
+    let codesArray = [];
+    sym.forEach((el) => codesArray.push("0x" + el));
+    let emoji = String.fromCodePoint(...codesArray);
+    setInput(input + emoji);
+  };
 
   const getPostById = async () => {
     const { data } = await PostService.getPostById(postId);
@@ -85,10 +115,16 @@ function PostCard(props) {
   const timePostAgo = handleTimestamp(postData?.createdAt);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onOpenChange: onEditOpenChange,
+  } = useDisclosure();
 
   const [isCommentSectionVisible, setIsCommentSectionVisible] = useState(false);
 
   const toggleCommentSection = () => {
+    console.log(commentData.length);
     setIsCommentSectionVisible(!isCommentSectionVisible);
   };
 
@@ -167,8 +203,30 @@ function PostCard(props) {
     mutationComment.mutate(body);
   };
 
+  const mutationDeletePost = useMutation({
+    mutationFn: async (postId) => {
+      await PostService.deletePost(postId);
+    },
+    onSuccess: () => {
+      toast.success("Xoá thành công");
+      handleGetTimeLine();
+      handleResetPage();
+    },
+  });
+
+  const filePickerRef = useRef(null);
+
+  const handleDeletePost = () => {
+    const response = confirm("Xác nhận xoá");
+    if (response) {
+      mutationDeletePost.mutate(postId);
+    } else {
+      toast.error("Đã huỷ xoá");
+    }
+  };
+
   return (
-    <div className="flex justify-center bg-white rounded-xl shadow-sm border-1 mt-6">
+    <div className="flex justify-center bg-white rounded-xl shadow-sm border-1 borrder-gray-200 mt-6">
       <div className="flex flex-col p-6 w-full">
         {/* Header */}
         <div className="flex justify-between">
@@ -190,8 +248,7 @@ function PostCard(props) {
             </div>
           </div>
           <div className="flex items-center">
-            {postData?.user?._id === userStore.id ||
-            isUserFollowing === true ? (
+            {isUserLogin || isUserFollowing === true ? (
               ""
             ) : (
               <div>
@@ -220,61 +277,171 @@ function PostCard(props) {
                   <HiDotsHorizontal className="flex text-gray-600 border-none justify-between w-6 h-6" />
                 </div>
               </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Action event example"
-                onAction={(key) => alert(key)}
-              >
-                <DropdownItem key="new">Báo cáo</DropdownItem>
-                <DropdownItem key="copy">Sửa bài viết</DropdownItem>
-                <DropdownItem
-                  key="delete"
-                  className="text-danger"
-                  color="danger"
-                >
-                  Xóa bài viết
-                </DropdownItem>
+              <DropdownMenu aria-label="Action event example">
+                {!isUserLogin ? (
+                  <DropdownItem key="new">Báo cáo</DropdownItem>
+                ) : (
+                  ""
+                )}
+                {isUserLogin ? (
+                  <DropdownItem key="copy" onPress={onEditOpen}>
+                    Sửa bài viết
+                  </DropdownItem>
+                ) : (
+                  ""
+                )}
+                {isUserLogin ? (
+                  <DropdownItem
+                    key="delete"
+                    className="text-danger"
+                    color="danger"
+                    onClick={handleDeletePost}
+                  >
+                    Xóa bài viết
+                  </DropdownItem>
+                ) : (
+                  ""
+                )}
               </DropdownMenu>
             </Dropdown>
           </div>
         </div>
 
+        {/* Modal For Editting Posts */}
+        <Modal
+          isOpen={isEditOpen}
+          onOpenChange={onEditOpenChange}
+          isDismissable={false}
+          size="3xl"
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Chỉnh sửa bài viết
+                </ModalHeader>
+                <ModalBody>
+                  <div className="lg:col-span-2">
+                    <div className="grid gap-4 gap-y-2   text-sm grid-cols-1 md:grid-cols-6">
+                      <div className="md:col-span-6">
+                        <Textarea
+                          className="text-md"
+                          size="lg"
+                          variant="underlined"
+                          labelPlacement="outside"
+                          placeholder="Nhập nội dung bài viết"
+                          maxRows={2}
+                          value={postData?.content}
+                        />
+                      </div>
+
+                      <div className="md:col-span-6">
+                        <div className="flex mb-1">
+                          <button className="active:scale-[.94] p-2 active:duration-75 transition-all hover:bg-gray-100 rounded-full flex gap-2">
+                            <PhotographIcon className="h-6 w-6 text-[#2683D7]" />
+                            <p className="font-medium text-[15px] text-[#5C6A80]">
+                              Thêm ảnh
+                            </p>
+                            <input type="file" hidden />
+                          </button>
+
+                          <button
+                            className="active:scale-[.94] p-2 active:duration-75 transition-all hover:bg-gray-100 rounded-full flex gap-2"
+                            onClick={() => setShowEmojis(!showEmojis)}
+                          >
+                            <EmojiHappyIcon className="h-6 w-6 text-[#FE9A66]" />
+                            <p className="font-medium text-[15px] text-[#5C6A80] ">
+                              Emoji
+                            </p>
+                          </button>
+
+                          {showEmojis && (
+                            <Picker data={data} onEmojiSelect={addEmoji} />
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="md:col-span-6">
+                        {postData?.imageUrl ? (
+                          <Image
+                            src={postData?.imageUrl}
+                            className="rounded-xl cursor-pointer max-h-[360px] object-cover "
+                            alt=""
+                            isblurred="true"
+                            width={1000}
+                            height={1000}
+                          />
+                        ) : null}
+                      </div>
+
+                    </div>
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    <div className="text-[15px] font-medium">Đóng</div>
+                  </Button>
+                  <Button color="secondary">
+                    <div className="text-[15px] font-medium">Xác nhận</div>
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+
         {/* Content */}
-        <div className="mt-2">
+        <div className="mt-4">
           <p className="text-[#000000] text-[15px] sm:text-base">
-            {postData?.content}hhhh
+            {postData?.content}
           </p>
           <div className="max-h-[380px]">
-            <Image
-              src={postData?.imageUrl ? postData.imageUrl : testImage}
-              className="rounded-xl cursor-pointer max-h-[380px] object-cover mt-4"
-              alt=""
-              isBlurred
-              width={1000}
-              height={1000}
-            />
+            {postData?.imageUrl ? (
+              <Image
+                src={postData?.imageUrl}
+                className="rounded-xl cursor-pointer max-h-[360px] object-cover mt-4"
+                alt=""
+                isblurred="true"
+                width={1000}
+                height={1000}
+              />
+            ) : (
+              ""
+            )}
           </div>
         </div>
 
         {/* Metadata */}
         <div className="mt-4 border-b-2 border-gray-100"></div>
         <div className="flex items-center justify-between mx-4 mt-1">
-          <div className="flex items-center gap-2 cursor-pointer w-[33%] justify-center">
-            <div>
-              {isLiked ? (
-                <PiHeartFill
-                  onClick={handleLikeClick}
-                  className="cursor-pointer h-6 w-6 text-violet-500 active:scale-[.90] active:duration-75 transition-all hover:text-violet-500"
-                />
-              ) : (
-                <PiHeartBold
-                  onClick={handleLikeClick}
-                  className="cursor-pointer h-6 w-6 text-gray-700 active:scale-[.84] active:duration-75 transition-all hover:text-violet-500"
-                />
-              )}
-            </div>
-            <p className="text-[15px] font-medium text-gray-700">
-              <span className="">{usersLike?.length}</span> Like
-            </p>
+          <div className="w-[33%]">
+            {isLiked ? (
+              <Button
+                className="flex items-center gap-2 cursor-pointer w-full"
+                variant="light"
+                onClick={handleLikeClick}
+              >
+                {isLiked ? (
+                  <PiHeartFill className="cursor-pointer h-6 w-6 text-violet-500 active:scale-[.90] active:duration-75 transition-all hover:text-violet-500" />
+                ) : (
+                  <PiHeartBold className="cursor-pointer h-6 w-6 text-gray-700 active:scale-[.84] active:duration-75 transition-all hover:text-violet-500" />
+                )}
+                <p className="text-[15px] font-medium text-gray-700">
+                  <span className="">{usersLike?.length}</span> Like
+                </p>
+              </Button>
+            ) : (
+              <Button
+                className="flex items-center gap-2 cursor-pointer w-full"
+                variant="light"
+                onClick={handleLikeClick}
+              >
+                <PiHeartBold className="cursor-pointer h-6 w-6 text-gray-700 active:scale-[.84] active:duration-75 transition-all hover:text-violet-500" />
+                <p className="text-[15px] font-medium text-gray-700">
+                  <span className="">{usersLike?.length}</span> Like
+                </p>
+              </Button>
+            )}
           </div>
 
           <Button
@@ -334,7 +501,9 @@ function PostCard(props) {
 
         {/* Comment Section */}
         <div
-          className={`comment-section mt-4 antialiased w-full space-y-3 ${
+          className={`comment-section  ${
+            commentData && commentData.length > 0 ? "mt-4" : ""
+          } antialiased w-full space-y-3 ${
             isCommentSectionVisible ? "" : "hidden"
           }`}
         >
@@ -359,9 +528,19 @@ function PostCard(props) {
 
           <div
             onClick={handleLoadComment}
-            className="text-center text-[14px] font-semibold my-4 pt-2 text-gray-700 cursor-pointer"
+            className={`text-center text-[14px] font-semibold ${
+              commentData > 0 ? "my-4 pt-2" : ""
+            }  text-gray-700 cursor-pointer`}
           >
-            {mutationComment.isPending ? <Loading /> : "Tải thêm bình luận"}
+            {commentData?.length > 3 ? (
+              mutationComment.isPending ? (
+                <Loading />
+              ) : (
+                "Tải thêm bình luận"
+              )
+            ) : (
+              ""
+            )}
           </div>
         </div>
 
