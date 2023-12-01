@@ -10,6 +10,9 @@ const PostService = {
     createPost: (body) => {
         return axiosClient.post("/post/createPost", body);
     },
+    updatePost: (post_id, body) => {
+        return axiosClient.post(`/post/updatePost/${post_id}`, body);
+    },
     deletePost: (postId) => {
         return axiosClient.post(`/post/deletePost/${postId}`);
     },

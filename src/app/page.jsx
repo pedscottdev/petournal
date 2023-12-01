@@ -15,7 +15,7 @@ export default function Home() {
     const socket = useRef();
     useEffect(() => {
         socket.current = io(process.env.HOST, {
-            extraHeaders: { Authorization: `${user.accessToken}` },
+            extraHeaders: { Authorization: `${user?.accessToken}` },
         });
         socket.current.on("connect", () => {
             console.log("Connected to WebSocket id: " + socket.current.id);
@@ -24,7 +24,7 @@ export default function Home() {
         return () => {
             socket.current.disconnect();
         };
-    }, [user.accessToken]);
+    }, [user?.accessToken]);
 
     return (
         <main>

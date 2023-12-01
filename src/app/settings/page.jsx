@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Sidebar from "../../components/Sidebar";
-import "../globals.css"
+import "../globals.css";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import UserService from "../../core/services/user.service";
@@ -20,6 +20,7 @@ function settings() {
     const [lastName, setLastName] = useState(user.lastName);
     const [firstName, setFirstName] = useState(user.firstName);
     const [email, setEmail] = useState(user.email);
+    const [bio, setBio] = useState("");
     const [birthday, setBirthday] = useState("");
     const [phone, setPhone] = useState("");
     const [address, setAddress] = useState("");
@@ -27,6 +28,7 @@ function settings() {
     const [password, setPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
 
     const handleTabClick = (tabId) => {
         setActiveTab(tabId);
@@ -46,6 +48,7 @@ function settings() {
 
         setBirthday(formattedBirthday);
         setPhone(data.phone);
+        setBio(data.bio);
         setAddress(data.address);
     };
 
@@ -55,6 +58,7 @@ function settings() {
             lastName: lastName,
             email: email,
             phone: phone,
+            bio: bio,
             birthday: birthday,
             address: address,
         };
@@ -99,6 +103,10 @@ function settings() {
             toast.error(err.response.data.message);
         },
     });
+
+    const handleOnChangeLastName = (e) => {
+        setLastName(e.target.value);
+    };
 
     return (
         <>
@@ -150,7 +158,7 @@ function settings() {
                                                     type="text"
                                                     id="family_name"
                                                     value={lastName}
-                                                    onChange={(e) => setLastName(e.target.value)}
+                                                    onChange={handleOnChangeLastName}
                                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
                                                 />
                                             </div>
@@ -162,7 +170,10 @@ function settings() {
                                                     type="text"
                                                     id="first_name"
                                                     value={firstName}
-                                                    onChange={(e) => setFirstName(e.target.value)}
+                                                    onChange={(e) => {
+                                                        setFirstName(e.target.value);
+                                                        setDisabledChange(false);
+                                                    }}
                                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
                                                 />
                                             </div>
@@ -175,6 +186,8 @@ function settings() {
                                                     type="text"
                                                     id="bio"
                                                     rows={3}
+                                                    value={bio}
+                                                    onChange={(e) => setBio(e.target.value)}
                                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
                                                 />
                                             </div>
@@ -235,7 +248,7 @@ function settings() {
                                             <div className="md:col-span-6 text-right">
                                                 <div className="inline-flex items-end">
                                                     <button
-                                                        className="bg-violet-600 hover:bg-violet-500 text-white font-bold py-2 my-4 px-4 rounded"
+                                                        className="disabled:bg-violet-300 bg-violet-600 hover:bg-violet-500 text-white font-bold py-2 my-4 px-4 rounded"
                                                         onClick={handleUpdateUser}
                                                     >
                                                         Cập nhật
@@ -294,9 +307,10 @@ function settings() {
                                             <div className="md:col-span-6 text-right">
                                                 <div className="inline-flex items-end">
                                                     <button
-                                                        className="bg-violet-600 hover:bg-violet-500 text-white font-bold py-2 px-4 my-4 rounded"
+                                                        className="disabled:bg-violet-300 bg-violet-600 hover:bg-violet-500 text-white font-bold py-2 px-4 my-4 rounded"
                                                         type="button"
                                                         onClick={handleChangePassword}
+                                                        disabled={!password && !newPassword}
                                                     >
                                                         Cập nhật
                                                     </button>
@@ -374,13 +388,13 @@ function settings() {
               }
             >
               {/* Contents */}
-              <div className="bg-white">dddddđd</div>
-            </Tab>
-          </Tabs>
-        </div>
-      </main>
-    </>
-  );
+                            <div className="bg-white"></div>
+                        </Tab>
+                    </Tabs>
+                </div>
+            </main>
+        </>
+    );
 }
 
 export default React.memo(settings);
