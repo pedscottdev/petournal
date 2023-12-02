@@ -251,7 +251,7 @@ function group() {
                               </SelectItem>
 
                             </Select>
-                            <p className="text-small text-default-500 py-3">Thành viên đã thêm: {Array.from(selectedUser).join(", ")}</p>
+                            <p className="text-small text-default-500 py-3">Thành viên đã chọn: {Array.from(selectedUser).join(", ")}</p>
                           </div>
                         </div>
                       </div>
