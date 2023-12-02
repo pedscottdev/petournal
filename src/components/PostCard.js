@@ -68,6 +68,7 @@ function PostCard(props) {
     socket,
     handleGetTimeLine,
     handleResetPage,
+    variant,
   } = props;
 
   const userPets = useSelector((state) => state.pet);
@@ -119,6 +120,7 @@ function PostCard(props) {
     isOpen: isEditOpen,
     onOpen: onEditOpen,
     onOpenChange: onEditOpenChange,
+    onClose: onEditClose,
   } = useDisclosure();
 
   const [isCommentSectionVisible, setIsCommentSectionVisible] = useState(false);
@@ -315,7 +317,7 @@ function PostCard(props) {
           size="3xl"
         >
           <ModalContent>
-            {(onClose) => (
+            {(onEditClose) => (
               <>
                 <ModalHeader className="flex flex-col gap-1">
                   Chỉnh sửa bài viết
@@ -378,7 +380,7 @@ function PostCard(props) {
                   </div>
                 </ModalBody>
                 <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
+                  <Button color="danger" variant="light" onPress={onEditClose}>
                     <div className="text-[15px] font-medium">Đóng</div>
                   </Button>
                   <Button color="secondary">
@@ -414,7 +416,7 @@ function PostCard(props) {
         {/* Metadata */}
         <div className="mt-4 border-b-2 border-gray-100"></div>
         <div className="flex items-center justify-between mx-4 mt-1">
-          <div className="w-[33%]">
+          <div className="w-full">
             {isLiked ? (
               <Button
                 className="flex items-center gap-2 cursor-pointer w-full"
@@ -445,7 +447,7 @@ function PostCard(props) {
           </div>
 
           <Button
-            className="flex items-center gap-2 cursor-pointer w-[33%] active:scale-[.94] active:duration-75 transition-all justify-center hover:bg-gray-100 rounded-xl p-2 px-6"
+            className="flex items-center gap-2 cursor-pointer w-full active:scale-[.94] active:duration-75 transition-all justify-center hover:bg-gray-100 rounded-xl p-2 px-6"
             variant="light"
             onClick={toggleCommentSection}
           >
@@ -455,16 +457,19 @@ function PostCard(props) {
             </p>
           </Button>
 
-          <Button
-            className="flex items-center gap-2 cursor-pointer w-[33%] active:scale-[.94] active:duration-75 transition-all justify-center hover:bg-gray-100 rounded-xl p-2 px-6"
-            variant="light"
-            onPress={onOpen}
-          >
-            <PiDogBold className="cursor-pointer h-6 w-6 text-gray-700" />
-            <p className="text-[15px] font-medium text-gray-700">
-              <span className="">{postData?.pets?.length}</span> Pet
-            </p>
-          </Button>
+          {variant === "group" ? null : (
+              <Button
+              className="flex items-center gap-2 cursor-pointer w-full active:scale-[.94] active:duration-75 transition-all justify-center hover:bg-gray-100 rounded-xl p-2 px-6"
+              variant="light"
+              onPress={onOpen}
+            >
+              <PiDogBold className="cursor-pointer h-6 w-6 text-gray-700" />
+              <p className="text-[15px] font-medium text-gray-700">
+                <span className="">{postData?.pets?.length}</span> Pet
+              </p>
+            </Button>
+          )}
+
           <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
             <ModalContent>
               {(onClose) => (

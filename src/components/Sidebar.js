@@ -120,7 +120,8 @@ function Sidebar() {
                   title={item.title}
                   active={`${
                     pathname === item.path ||
-                    (item.path === "/pets" && pathname.startsWith("/pets/"))
+                    (item.path === "/pets" && pathname.startsWith("/pets/")) ||
+                    (item.path === "/group" && pathname.startsWith("/group/"))
                       ? "font-bold text-violet-600"
                       : "opacity-80 text-gray-500 font-medium"
                   }`}

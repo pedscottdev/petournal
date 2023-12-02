@@ -1,5 +1,6 @@
 import React from "react";
 import { Avatar, AvatarGroup } from "@nextui-org/react";
+import Link from "next/link";
 
 function GroupCard() {
   return (
@@ -23,7 +24,11 @@ function GroupCard() {
                   15 thành viên
                 </div>
                 <div className="flex-auto  h-[40px] w-[350px] mt-2 my-1 truncate">
-                  <span className="mr-3 ">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sunt delectus, voluptatibus veniam necessitatibus unde praesentium voluptatem. Laborum repellat rem velit.</span>
+                  <span className="mr-3 ">
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                    Sunt delectus, voluptatibus veniam necessitatibus unde
+                    praesentium voluptatem. Laborum repellat rem velit.
+                  </span>
                 </div>
               </div>
             </div>
@@ -31,17 +36,38 @@ function GroupCard() {
           <div className="flex flex-row justify-between items-center">
             <div>
               <AvatarGroup size="sm" isBordered max={3}>
-                <Avatar size="sm" src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
-                <Avatar size="sm" src="https://i.pravatar.cc/150?u=a04258a2462d826712d" />
-                <Avatar size="sm" src="https://i.pravatar.cc/150?u=a042581f4e29026704d" />
-                <Avatar size="sm" src="https://i.pravatar.cc/150?u=a04258114e29026302d" />
-                <Avatar size="sm" src="https://i.pravatar.cc/150?u=a04258114e29026702d" />
-                <Avatar size="sm" src="https://i.pravatar.cc/150?u=a04258114e29026708c" />
+                <Avatar
+                  size="sm"
+                  src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
+                />
+                <Avatar
+                  size="sm"
+                  src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
+                />
+                <Avatar
+                  size="sm"
+                  src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                />
+                <Avatar
+                  size="sm"
+                  src="https://i.pravatar.cc/150?u=a04258114e29026302d"
+                />
+                <Avatar
+                  size="sm"
+                  src="https://i.pravatar.cc/150?u=a04258114e29026702d"
+                />
+                <Avatar
+                  size="sm"
+                  src="https://i.pravatar.cc/150?u=a04258114e29026708c"
+                />
               </AvatarGroup>
             </div>
-            <button className="bg-violet-600 active:scale-[.94] active:duration-75 transition-all font-medium text-white p-2 text-[15px] px-4 rounded-full">
-            Truy cập nhóm
-          </button>
+
+            <Link href="/group/groupid">
+              <button className="bg-violet-600 active:scale-[.94] active:duration-75 transition-all font-medium text-white p-2 text-[15px] px-4 rounded-full">
+                Truy cập nhóm
+              </button>
+            </Link>
           </div>
         </div>
       </div>

@@ -25,7 +25,7 @@ import {
 } from "@nextui-org/react";
 import { HiPlus } from "react-icons/hi";
 import PetProfileCard from "../../components/PetProfileCard";
-import defaultPetAvatar from "/src/img/default-pet-avatar.png";
+import defaultGroupAvatar from "/src/img/default-group-avatar.png";
 import GroupCard from "../../components/GroupCard";
 
 function group() {
@@ -38,6 +38,14 @@ function group() {
   const [birthday, setBirthday] = useState("");
   const [selectedSex, setSelectedSex] = useState("");
   const [bio, setBio] = useState("");
+
+  const [groupName, setGroupName] = useState(null);
+  const [groupDesc, setGroupDesc] = useState(null);
+  const [selectedUser, setSelectedUser] = React.useState(new Set([]));
+
+  const handleUserSelection = (e) => {
+    setSelectedUser(new Set(e.target.value.split(",")));
+  };
 
   const fileInputRef = useRef(null);
 
@@ -114,8 +122,8 @@ function group() {
                     <ModalBody>
                       <div className="flex w-full mb-4">
                         <Image
-                          src={selectedImage || defaultPetAvatar}
-                          className="h-28 w-28 rounded-lg object-cover"
+                          src={selectedImage || defaultGroupAvatar}
+                          className="h-28 w-28 rounded-xl object-cover"
                           width={128}
                           height={128}
                           quality={100}
@@ -169,38 +177,82 @@ function group() {
                               id="bio"
                               rows="3"
                               class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-1"
-                              placeholder="Mô tả về thú cưng của bạn."
+                              placeholder="Mô tả về nhóm của bạn."
                             ></textarea>
                           </div>
 
                           <div className="md:col-span-6">
                             <label for="species" className="font-medium">
-                              Loài
+                              Thành viên nhóm{" "}
+                              <span className="text-gray-500">
+                                (Nhóm phải có tối thiểu 3 thành viên)
+                              </span>
                             </label>
                             <Select
                               radius="sm"
                               size="md"
                               variant="bordered"
-                              placeholder="Chọn loài"
+                              placeholder="Chọn thành viên"
+                              selectionMode="multiple"
                               labelPlacement="outside"
                               className="mt-1 bg-gray-50"
-                              value={selectedSpecies}
-                              onChange={(value) => setSelectedSpecies(value)}
+                              selectedKeys={selectedUser}
+                              onChange={handleUserSelection}
                             >
-                              <SelectItem key="dog" value="dog">
-                                Chó
+                              <SelectItem key="Daniel de Waal">
+                                <div className="flex gap-2 items-center">
+                                  <Avatar
+                                    alt="Daniel"
+                                    className="flex-shrink-0"
+                                    size="sm"
+                                    src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                  />
+                                  <div className="flex flex-col">
+                                    <span className="text-small">Daniel de Waal</span>
+                                    <span className="text-tiny text-default-400">
+                                      danieldewaal@gmail.com
+                                    </span>
+                                  </div>
+                                </div>
                               </SelectItem>
-                              <SelectItem key="cat" value="cat">
-                                Mèo
+
+                              <SelectItem key="Lisa Beck" >
+                                <div className="flex gap-2 items-center">
+                                  <Avatar
+                                    alt="Lisa"
+                                    className="flex-shrink-0"
+                                    size="sm"
+                                    src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                  />
+                                  <div className="flex flex-col">
+                                  <span className="text-small">Lisa Beck</span>
+                                    <span className="text-tiny text-default-400">
+                                      lisa@gmail.com
+                                    </span>
+                                  </div>
+                                </div>
                               </SelectItem>
-                              <SelectItem key="other" value="other">
-                                Khác
+
+                              <SelectItem key="Calum Scott">
+                                <div className="flex gap-2 items-center">
+                                  <Avatar
+                                    alt="Calum"
+                                    className="flex-shrink-0"
+                                    size="sm"
+                                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                  />
+                                  <div className="flex flex-col">
+                                    <span className="text-small">Calum Scott</span>
+                                    <span className="text-tiny text-default-400">
+                                      calumscott@gmail.com
+                                    </span>
+                                  </div>
+                                </div>
                               </SelectItem>
+
                             </Select>
+                            <p className="text-small text-default-500 py-3">Thành viên đã thêm: {Array.from(selectedUser).join(", ")}</p>
                           </div>
-
-
-                          
                         </div>
                       </div>
                     </ModalBody>
