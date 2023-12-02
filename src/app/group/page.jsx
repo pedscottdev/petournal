@@ -41,13 +41,14 @@ function group() {
 
   const [groupName, setGroupName] = useState(null);
   const [groupDesc, setGroupDesc] = useState(null);
+
   const [selectedUser, setSelectedUser] = React.useState(new Set([]));
 
-  const handleUserSelection = (e) => {
-    setSelectedUser(new Set(e.target.value.split(",")));
-  };
-
   const fileInputRef = useRef(null);
+
+  const handleSelectionChange = (e) => {
+    setValues(new Set(e.target.value.split(",")));
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -197,9 +198,17 @@ function group() {
                               labelPlacement="outside"
                               className="mt-1 bg-gray-50"
                               selectedKeys={selectedUser}
-                              onChange={handleUserSelection}
+                              onSelectionChange={setSelectedUser}
+                              renderValue={(items) => {
+                                return items.map((item, index) => (
+                                  <>
+                                    {index > 0 && ", "}
+                                    {item.key}
+                                  </>
+                                ));
+                              }}
                             >
-                              <SelectItem key="Daniel de Waal">
+                              <SelectItem key="Daniel de Waal" value="Daniel de Waal">
                                 <div className="flex gap-2 items-center">
                                   <Avatar
                                     alt="Daniel"
@@ -216,7 +225,7 @@ function group() {
                                 </div>
                               </SelectItem>
 
-                              <SelectItem key="Lisa Beck" >
+                              <SelectItem key="Lisa Beck" value="Lisa Beck">
                                 <div className="flex gap-2 items-center">
                                   <Avatar
                                     alt="Lisa"
@@ -233,7 +242,7 @@ function group() {
                                 </div>
                               </SelectItem>
 
-                              <SelectItem key="Calum Scott">
+                              <SelectItem key="Calum Scott" value="Calum Scott">
                                 <div className="flex gap-2 items-center">
                                   <Avatar
                                     alt="Calum"

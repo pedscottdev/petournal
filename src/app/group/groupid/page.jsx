@@ -19,6 +19,7 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
+  Checkbox,
 } from "@nextui-org/react";
 
 function groupid() {
@@ -26,7 +27,7 @@ function groupid() {
   const {
     isOpen: isAddOpen,
     onOpen: onAddOpen,
-    onClose: onAddClose,
+    onOpenChange: onAddOpenChange,
   } = useDisclosure();
 
   const fileInputRef = useRef(null);
@@ -36,10 +37,6 @@ function groupid() {
   const [groupName, setGroupName] = useState(null);
   const [groupDesc, setGroupDesc] = useState(null);
   const [selectedUser, setSelectedUser] = React.useState(new Set([]));
-
-  const handleUserSelection = (selectedKeys) => {
-    setSelectedUser(selectedKeys);
-  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -126,7 +123,7 @@ function groupid() {
                     Cập nhật thông tin
                   </button>
 
-                  {/* Update Info Modal */}
+                  {/* Modal Edit Group */}
                   <Modal
                     isOpen={isOpen}
                     onOpenChange={onOpenChange}
@@ -200,88 +197,6 @@ function groupid() {
                                     placeholder="Mô tả về nhóm của bạn."
                                   ></textarea>
                                 </div>
-
-                                <div className="md:col-span-6">
-                                  <label for="species" className="font-medium">
-                                    Thành viên nhóm{" "}
-                                    <span className="text-gray-500">
-                                      (Nhóm phải có tối thiểu 3 thành viên)
-                                    </span>
-                                  </label>
-                                  <Select
-                                    radius="sm"
-                                    size="md"
-                                    variant="bordered"
-                                    placeholder="Chọn thành viên"
-                                    selectionMode="multiple"
-                                    labelPlacement="outside"
-                                    className="mt-1 bg-gray-50"
-                                    
-                                    selectedKeys={selectedUser}
-                                    onChange={handleUserSelection}
-                                  >
-                                    <SelectItem key="Daniel de Waal">
-                                      <div className="flex gap-2 items-center">
-                                        <Avatar
-                                          alt="Daniel"
-                                          className="flex-shrink-0"
-                                          size="sm"
-                                          src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                        />
-                                        <div className="flex flex-col">
-                                          <span className="text-small">
-                                            Daniel de Waal
-                                          </span>
-                                          <span className="text-tiny text-default-400">
-                                            danieldewaal@gmail.com
-                                          </span>
-                                        </div>
-                                      </div>
-                                    </SelectItem>
-
-                                    <SelectItem key="Lisa Beck">
-                                      <div className="flex gap-2 items-center">
-                                        <Avatar
-                                          alt="Lisa"
-                                          className="flex-shrink-0"
-                                          size="sm"
-                                          src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                        />
-                                        <div className="flex flex-col">
-                                          <span className="text-small">
-                                            Lisa Beck
-                                          </span>
-                                          <span className="text-tiny text-default-400">
-                                            lisa@gmail.com
-                                          </span>
-                                        </div>
-                                      </div>
-                                    </SelectItem>
-
-                                    <SelectItem key="Calum Scott">
-                                      <div className="flex gap-2 items-center">
-                                        <Avatar
-                                          alt="Calum"
-                                          className="flex-shrink-0"
-                                          size="sm"
-                                          src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                        />
-                                        <div className="flex flex-col">
-                                          <span className="text-small">
-                                            Calum Scott
-                                          </span>
-                                          <span className="text-tiny text-default-400">
-                                            calumscott@gmail.com
-                                          </span>
-                                        </div>
-                                      </div>
-                                    </SelectItem>
-                                  </Select>
-                                  <p className="text-small text-default-500 py-3">
-                                    Thành viên đã thêm:{" "}
-                                    {selectedUser.join(', ')}
-                                  </p>
-                                </div>
                               </div>
                             </div>
                           </ModalBody>
@@ -308,28 +223,121 @@ function groupid() {
 
                   <button
                     className="bg-gray-100 text-gray-600 active:scale-[.94] active:duration-75 transition-all font-medium p-2.5 text-[15px] px-4 h-fit rounded-full "
-                    onClick={isAddOpen}
+                    onClick={onAddOpen}
                   >
                     Thêm người
                   </button>
 
-                  <Modal isOpen={isAddOpen} isDismissable={false} size="lg">
+                  <Modal isOpen={isAddOpen} onOpenChange={onAddOpenChange} isDismissable={false} size="md">
                     <ModalContent>
                       {(onClose) => (
                         <>
                           <ModalHeader className="flex flex-col gap-1">
-                            Mời thêm người
+                            Thêm người vào nhóm
                           </ModalHeader>
                           <ModalBody>
-                            <div>
-                              <div></div>
+                            <div className="text-base">
+                              <div>Chọn người dùng mà bạn muốn thêm vào nhóm:</div>
+                              <div className="text-gray-500 text-sm mt-1">Bạn chỉ có thể chọn những người mà hai bạn cùng theo dõi nhau.</div>
                             </div>
+                            
+                            {/* Userlist */}
+                            <div className="max-h-[22rem] overflow-y-scroll my-2 px-4">
+                              <div className="gap-y-4 divide-y divide-gray-200">
+                                {/* Custom UserCard */}
+                                <div className=" flex items-center justify-between py-3">
+                                  <div className="flex items-center space-x-4">
+                                    <Avatar
+                                      size="md"
+                                      src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
+                                    />
+                                    <div className="flex flex-col ">
+                                      <div>Tom Walker</div>
+                                      <div className="text-sm text-gray-500">tomwalker@gmail.com</div>
+                                    </div>
+                                  </div>           
+                                  <Checkbox color="secondary">Thêm</Checkbox>
+                                </div>
+
+                                <div className=" flex items-center justify-between py-3">
+                                  <div className="flex items-center space-x-4">
+                                    <Avatar
+                                      size="md"
+                                      src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
+                                    />
+                                    <div className="flex flex-col ">
+                                      <div>Tom Walker</div>
+                                      <div className="text-sm text-gray-500">tomwalker@gmail.com</div>
+                                    </div>
+                                  </div>           
+                                  <Checkbox color="secondary">Thêm</Checkbox>
+                                </div>
+
+                                <div className=" flex items-center justify-between py-3">
+                                  <div className="flex items-center space-x-4">
+                                    <Avatar
+                                      size="md"
+                                      src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
+                                    />
+                                    <div className="flex flex-col ">
+                                      <div>Tom Walker</div>
+                                      <div className="text-sm text-gray-500">tomwalker@gmail.com</div>
+                                    </div>
+                                  </div>           
+                                  <Checkbox color="secondary">Thêm</Checkbox>
+                                </div>
+
+                                <div className=" flex items-center justify-between py-3">
+                                  <div className="flex items-center space-x-4">
+                                    <Avatar
+                                      size="md"
+                                      src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
+                                    />
+                                    <div className="flex flex-col ">
+                                      <div>Tom Walker</div>
+                                      <div className="text-sm text-gray-500">tomwalker@gmail.com</div>
+                                    </div>
+                                  </div>           
+                                  <Checkbox color="secondary">Thêm</Checkbox>
+                                </div>
+
+                                <div className=" flex items-center justify-between py-3">
+                                  <div className="flex items-center space-x-4">
+                                    <Avatar
+                                      size="md"
+                                      src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
+                                    />
+                                    <div className="flex flex-col ">
+                                      <div>Tom Walker</div>
+                                      <div className="text-sm text-gray-500">tomwalker@gmail.com</div>
+                                    </div>
+                                  </div>           
+                                  <Checkbox color="secondary">Thêm</Checkbox>
+                                </div>
+
+                                <div className=" flex items-center justify-between py-3">
+                                  <div className="flex items-center space-x-4">
+                                    <Avatar
+                                      size="md"
+                                      src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
+                                    />
+                                    <div className="flex flex-col ">
+                                      <div>Tom Walker</div>
+                                      <div className="text-sm text-gray-500">tomwalker@gmail.com</div>
+                                    </div>
+                                  </div>           
+                                  <Checkbox color="secondary">Thêm</Checkbox>
+                                </div>
+
+                              </div>               
+                            </div>
+                            
                           </ModalBody>
                           <ModalFooter>
                             <Button
                               color="danger"
                               variant="light"
-                              onPress={onAddClose}
+                              onPress={onClose}
                             >
                               <div className="text-[15px] font-medium">
                                 Đóng
