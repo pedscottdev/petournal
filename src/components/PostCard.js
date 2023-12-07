@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import "../app/globals.css";
 import Image from "next/image";
 import defaultAvatar from "/src/img/default-avatar.png";
@@ -40,9 +40,12 @@ import { PhotographIcon, EmojiHappyIcon, XIcon } from "@heroicons/react/outline"
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { ImageStorage } from "../../firebase";
 import { useRouter } from "next/navigation";
+import { SocketContext } from "../core/socket/socket";
 
 function PostCard(props) {
-    const { postId, isUserFollowing, isUserLiked, socket, handleGetTimeLine, handleResetPage, variant } = props;
+    const { postId, isUserFollowing, isUserLiked, handleGetTimeLine, handleResetPage, variant } = props;
+
+    const socket = useContext(SocketContext);
 
     const userPets = useSelector((state) => state.pet);
     const [postData, setPostData] = useState();
@@ -197,10 +200,10 @@ function PostCard(props) {
         } else {
             await likePost(postId);
             await toast.success("Đã thích bài viết");
-            // await socket.current.emit("like-post-notification", {
-            //     post_id: postId,
-            //     type: "LIKE_POST",
-            // });
+            await socket.emit("like-post-notification", {
+                post_id: postId,
+                type: "LIKE_POST",
+            });
             await setIsLiked(true);
         }
     };

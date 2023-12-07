@@ -3,6 +3,7 @@ import { store } from "../store";
 import { jwtDecode } from "jwt-decode";
 import AuthService from "./auth.service.js";
 import { resetUserState, setToken } from "../store/feature/user-slice.js";
+import socketio from "socket.io-client";
 
 const axiosClient = axios.create({
     baseURL: process.env.NEXT_APP_API_URL,
@@ -33,6 +34,7 @@ axiosClient.interceptors.request.use(
     },
     (err) => Promise.reject(err)
 );
+
 
 // axiosClient.interceptors.response.use(
 //     (response) => {

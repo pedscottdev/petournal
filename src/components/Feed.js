@@ -7,8 +7,7 @@ import { AnnotationIcon, SearchIcon, BellIcon } from "@heroicons/react/outline";
 import TimeLineService from "../core/services/time-line.service";
 import { useMutation } from "@tanstack/react-query";
 
-function Feed(props) {
-    const { socket } = props;
+function Feed() {
 
     const [listPost, setListPost] = useState([]);
     const [page, setPage] = useState(2);
@@ -75,7 +74,6 @@ function Feed(props) {
                         postId={post._id}
                         isUserFollowing={post?.isFollowing}
                         isUserLiked={post?.isLiked}
-                        socket={socket}
                         handleGetTimeLine={getTimeLine}
                         handleResetPage={resetPage}
                     />

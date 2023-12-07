@@ -10,6 +10,8 @@ import { persistor, store } from "../core/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { SocketContext } from "../core/socket/socket";
+import socketio from "socket.io-client";
 // import { Inter } from 'next/font/google'
 
 // const font = Inter ({ subsets: ['latin'] })
@@ -21,6 +23,19 @@ export default function RootLayout({ children }) {
         router.push("/login");
     }
 
+    const getSocket = () => {
+        if (tokenLocal) {
+            return socketio(process.env.HOST, {
+                extraHeaders: { Authorization: `${tokenLocal}` },
+            });
+        }
+        return null;
+    };
+
+    const socket = getSocket();
+
+    console.log(socket);
+
     return (
         <html lang="en">
             <head>
@@ -31,20 +46,22 @@ export default function RootLayout({ children }) {
                 <Provider store={store}>
                     <QueryClientProvider client={queryClient}>
                         <PersistGate persistor={persistor} loading={null}>
-                            <div className="">
-                                <Sidebar />
-                                <div className=" sm:ml-[80px] xl:ml-[275px]">
-                                    <Toaster />
-                                    <Header />
-                                    {children}
+                            <SocketContext.Provider value={socket}>
+                                <div className="">
+                                    <Sidebar />
+                                    <div className=" sm:ml-[80px] xl:ml-[275px]">
+                                        <Toaster />
+                                        <Header />
+                                        {children}
+                                    </div>
                                 </div>
-                            </div>
-                            <ProgressBar
-                                height="4px"
-                                color="#9B66FD"
-                                options={{ showSpinner: false }}
-                                // shallowRouting
-                            />
+                                <ProgressBar
+                                    height="4px"
+                                    color="#9B66FD"
+                                    options={{ showSpinner: false }}
+                                    // shallowRouting
+                                />
+                            </SocketContext.Provider>
                         </PersistGate>
                     </QueryClientProvider>
                 </Provider>
