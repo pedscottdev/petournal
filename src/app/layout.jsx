@@ -9,40 +9,46 @@ import { Provider } from "react-redux";
 import { persistor, store } from "../core/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 // import { Inter } from 'next/font/google'
 
 // const font = Inter ({ subsets: ['latin'] })
 const queryClient = new QueryClient();
 export default function RootLayout({ children }) {
+    const router = useRouter();
+    const tokenLocal = store.getState().user.accessToken;
+    if (!tokenLocal) {
+        router.push("/login");
+    }
 
-  return (
-    <html lang="en">
-      <head>
-        <title>Petournal</title>
-        <link rel='icon' href='/favicon.ico'/>
-      </head>
-      <body className="">
-        <Provider store={store}>
-          <QueryClientProvider client={queryClient}>
-            <PersistGate persistor={persistor} loading={null}>
-              <div className="">
-                <Sidebar />
-                <div className=" sm:ml-[80px] xl:ml-[275px]">
-                  <Toaster />
-                  <Header />
-                  {children}
-                </div>
-              </div>
-              <ProgressBar
-                height="4px"
-                color="#9B66FD"
-                options={{ showSpinner: false }}
-                // shallowRouting
-              />
-            </PersistGate>
-          </QueryClientProvider>
-        </Provider>
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en">
+            <head>
+                <title>Petournal</title>
+                <link rel="icon" href="/favicon.ico" />
+            </head>
+            <body className="">
+                <Provider store={store}>
+                    <QueryClientProvider client={queryClient}>
+                        <PersistGate persistor={persistor} loading={null}>
+                            <div className="">
+                                <Sidebar />
+                                <div className=" sm:ml-[80px] xl:ml-[275px]">
+                                    <Toaster />
+                                    <Header />
+                                    {children}
+                                </div>
+                            </div>
+                            <ProgressBar
+                                height="4px"
+                                color="#9B66FD"
+                                options={{ showSpinner: false }}
+                                // shallowRouting
+                            />
+                        </PersistGate>
+                    </QueryClientProvider>
+                </Provider>
+            </body>
+        </html>
+    );
 }
