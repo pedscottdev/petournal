@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PiCheckBold, PiXBold } from "react-icons/pi";
 import FollowService from "../core/services/follow.service.js";
 import toast from "react-hot-toast";
+import { IoIosArrowForward } from "react-icons/io";
 
 function UserCard(props) {
     const { userId, userAvatar, userName, follower, link, variant } = props;
@@ -61,7 +62,11 @@ function UserCard(props) {
                     <div className="inline-flex items-center text-[14px] mr-2 font-medium text-violet-600 cursor-pointer dark:text-white p-2 bg-violet-50 rounded-xl px-3">
                         Xem
                     </div>
-                ) : (
+                ) : variant === "adduser"? (
+                    <div className="text-base text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
+                            <IoIosArrowForward />
+                    </div>
+                ):(    
                     <div>
                         {isFollowing ? (
                             <div className="flex items-center space-x-2">

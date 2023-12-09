@@ -318,8 +318,10 @@ function groupid() {
                               Mời thêm người
                             </ModalHeader>
                             <ModalBody>
-                              <div>
-                                <div></div>
+                              <div className="gap-y-2 divide-y divide-gray-200">
+                                <UserCard userName="Thai Son Nguyen" userAvatar={testAvatar} follower="140" variant="adduser"/>
+                                <UserCard userName="Thai Son Nguyen" userAvatar={testAvatar} follower="140" variant="adduser"/>
+                                <UserCard userName="Thai Son Nguyen" userAvatar={testAvatar} follower="140" variant="adduser"/>
                               </div>
                             </ModalBody>
                             <ModalFooter>
