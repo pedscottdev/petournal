@@ -24,12 +24,12 @@ function follower() {
     const [sortFollowerOption, setSortFollowerOption] = useState();
 
     useEffect(() => {
-        getFollowingsByUser();
+        getFollowingsByUserPagination();
         getFollowersByUser();
     }, []);
 
-    const getFollowingsByUser = async () => {
-        const { data } = await FollowService.getFollowingsByUser();
+    const getFollowingsByUserPagination = async () => {
+        const { data } = await FollowService.getFollowingsByUserPagination();
         setListFollowings(data.listFollowing);
         setFollowingTotalPages(data.totalPages);
         setTotalFollowings(data.totalFollowings);
@@ -56,7 +56,7 @@ function follower() {
     const mutationFollowingPagination = useMutation({
         mutationFn: async (response) => {
             const body = { page: response, sortBy: sortFollowingOption };
-            const result = await FollowService.getFollowingsByUser(body);
+            const result = await FollowService.getFollowingsByUserPagination(body);
             return result.data;
         },
         onSuccess: (data) => {
@@ -88,7 +88,7 @@ function follower() {
     const mutationFilterFollowings = useMutation({
         mutationFn: async (response) => {
             const body = { sortBy: response, page: countFollowingPage };
-            const { data } = await FollowService.getFollowingsByUser(body);
+            const { data } = await FollowService.getFollowingsByUserPagination(body);
             return data;
         },
         onSuccess: async (data) => {
