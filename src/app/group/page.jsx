@@ -31,7 +31,11 @@ function group() {
         setSelectedUser(new Set(e.target.value.split(",")));
     };
 
-    const fileInputRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  const handleSelectionChange = (e) => {
+    setValues(new Set(e.target.value.split(",")));
+  };
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -177,96 +181,101 @@ function group() {
                                                         ></textarea>
                                                     </div>
 
-                                                    <div className="md:col-span-6">
-                                                        <label for="species" className="font-medium">
-                                                            Thành viên nhóm{" "}
-                                                            <span className="text-gray-500">
-                                                                (Nhóm phải có tối thiểu 3 thành viên)
-                                                            </span>
-                                                        </label>
-                                                        <Select
-                                                            radius="sm"
-                                                            size="md"
-                                                            variant="bordered"
-                                                            placeholder="Chọn thành viên"
-                                                            selectionMode="multiple"
-                                                            labelPlacement="outside"
-                                                            className="mt-1 bg-gray-50"
-                                                            selectedKeys={selectedUser}
-                                                            onChange={handleUserSelection}
-                                                        >
-                                                            <SelectItem key="Daniel de Waal">
-                                                                <div className="flex gap-2 items-center">
-                                                                    <Avatar
-                                                                        alt="Daniel"
-                                                                        className="flex-shrink-0"
-                                                                        size="sm"
-                                                                        src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                                                    />
-                                                                    <div className="flex flex-col">
-                                                                        <span className="text-small">
-                                                                            Daniel de Waal
-                                                                        </span>
-                                                                        <span className="text-tiny text-default-400">
-                                                                            danieldewaal@gmail.com
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            </SelectItem>
+                          <div className="md:col-span-6">
+                            <label for="species" className="font-medium">
+                              Thành viên nhóm{" "}
+                              <span className="text-gray-500">
+                                (Nhóm phải có tối thiểu 3 thành viên)
+                              </span>
+                            </label>
+                            <Select
+                              radius="sm"
+                              size="md"
+                              variant="bordered"
+                              placeholder="Chọn thành viên"
+                              selectionMode="multiple"
+                              labelPlacement="outside"
+                              className="mt-1 bg-gray-50"
+                              selectedKeys={selectedUser}
+                              onSelectionChange={setSelectedUser}
+                              renderValue={(items) => {
+                                return items.map((item, index) => (
+                                  <>
+                                    {index > 0 && ", "}
+                                    {item.key}
+                                  </>
+                                ));
+                              }}
+                            >
+                              <SelectItem key="Daniel de Waal" value="Daniel de Waal">
+                                <div className="flex gap-2 items-center">
+                                  <Avatar
+                                    alt="Daniel"
+                                    className="flex-shrink-0"
+                                    size="sm"
+                                    src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                  />
+                                  <div className="flex flex-col">
+                                    <span className="text-small">Daniel de Waal</span>
+                                    <span className="text-tiny text-default-400">
+                                      danieldewaal@gmail.com
+                                    </span>
+                                  </div>
+                                </div>
+                              </SelectItem>
 
-                                                            <SelectItem key="Lisa Beck">
-                                                                <div className="flex gap-2 items-center">
-                                                                    <Avatar
-                                                                        alt="Lisa"
-                                                                        className="flex-shrink-0"
-                                                                        size="sm"
-                                                                        src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                                                    />
-                                                                    <div className="flex flex-col">
-                                                                        <span className="text-small">Lisa Beck</span>
-                                                                        <span className="text-tiny text-default-400">
-                                                                            lisa@gmail.com
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            </SelectItem>
+                              <SelectItem key="Lisa Beck" value="Lisa Beck">
+                                <div className="flex gap-2 items-center">
+                                  <Avatar
+                                    alt="Lisa"
+                                    className="flex-shrink-0"
+                                    size="sm"
+                                    src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                  />
+                                  <div className="flex flex-col">
+                                  <span className="text-small">Lisa Beck</span>
+                                    <span className="text-tiny text-default-400">
+                                      lisa@gmail.com
+                                    </span>
+                                  </div>
+                                </div>
+                              </SelectItem>
 
-                                                            <SelectItem key="Calum Scott">
-                                                                <div className="flex gap-2 items-center">
-                                                                    <Avatar
-                                                                        alt="Calum"
-                                                                        className="flex-shrink-0"
-                                                                        size="sm"
-                                                                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                                                    />
-                                                                    <div className="flex flex-col">
-                                                                        <span className="text-small">Calum Scott</span>
-                                                                        <span className="text-tiny text-default-400">
-                                                                            calumscott@gmail.com
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            </SelectItem>
-                                                        </Select>
-                                                        <p className="text-small text-default-500 py-3">
-                                                            Thành viên đã chọn: {Array.from(selectedUser).join(", ")}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </ModalBody>
-                                        <ModalFooter>
-                                            <Button color="danger" variant="light" onPress={onClose}>
-                                                <div className="text-[15px] font-medium">Đóng</div>
-                                            </Button>
-                                            <Button color="secondary">
-                                                <div className="text-[15px] font-medium">Xác nhận</div>
-                                            </Button>
-                                        </ModalFooter>
-                                    </>
-                                )}
-                            </ModalContent>
-                        </Modal>
+                              <SelectItem key="Calum Scott" value="Calum Scott">
+                                <div className="flex gap-2 items-center">
+                                  <Avatar
+                                    alt="Calum"
+                                    className="flex-shrink-0"
+                                    size="sm"
+                                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                  />
+                                  <div className="flex flex-col">
+                                    <span className="text-small">Calum Scott</span>
+                                    <span className="text-tiny text-default-400">
+                                      calumscott@gmail.com
+                                    </span>
+                                  </div>
+                                </div>
+                              </SelectItem>
+
+                            </Select>
+                            <p className="text-small text-default-500 py-3">Thành viên đã chọn: {Array.from(selectedUser).join(", ")}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button color="danger" variant="light" onPress={onClose}>
+                        <div className="text-[15px] font-medium">Đóng</div>
+                      </Button>
+                      <Button color="secondary">
+                        <div className="text-[15px] font-medium">Xác nhận</div>
+                      </Button>
+                    </ModalFooter>
+                  </>
+                )}
+              </ModalContent>
+            </Modal>
 
                         {/* Content */}
                         <div className="pb-4 py-3 ">
