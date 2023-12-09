@@ -70,7 +70,6 @@ function profile() {
 
     const getPetsByUserId = async () => {
         const { data } = await PetService.getPetsByUserId(userStore.id);
-        console.log(data);
         setListPet(data);
     };
 

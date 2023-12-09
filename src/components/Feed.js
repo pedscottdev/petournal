@@ -8,7 +8,6 @@ import TimeLineService from "../core/services/time-line.service";
 import { useMutation } from "@tanstack/react-query";
 
 function Feed() {
-
     const [listPost, setListPost] = useState([]);
     const [page, setPage] = useState(2);
 
@@ -71,6 +70,7 @@ function Feed() {
                 return (
                     <PostCard
                         key={post._id}
+                        variant={post.pets.length == 0 ? "group" : null}
                         postId={post._id}
                         isUserFollowing={post?.isFollowing}
                         isUserLiked={post?.isLiked}

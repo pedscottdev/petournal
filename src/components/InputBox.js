@@ -23,9 +23,10 @@ import { useMutation } from "@tanstack/react-query";
 import PostService from "../core/services/post.service.js";
 import toast from "react-hot-toast";
 import Loading from "./share/loading.js";
+import GroupService from "../core/services/group.service.js";
 
 const InputBox = (props) => {
-    const { handleGetTimeLine, handleResetPage, variant } = props;
+    const { handleGetTimeLine, handleResetPage, variant, groupId } = props;
 
     const [input, setInput] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
@@ -56,15 +57,23 @@ const InputBox = (props) => {
     const userPets = useSelector((state) => state.pet);
     const userStore = useSelector((state) => state.user);
 
+    const addPostToGroup = async (data) => {
+        const body = { group_id: groupId, post_id: data };
+        console.log(body);
+        await GroupService.addPostToGroup(body);
+        handleGetTimeLine();
+        handleResetPage();
+    };
+
     const createPostMutation = useMutation({
         mutationFn: async (data) => {
-            await PostService.createPost(data);
+            const result = await PostService.createPost(data);
+            return result.data;
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
             dispatch(resetIsChecked());
             toast.success("Đã đăng post");
-            handleGetTimeLine();
-            handleResetPage();
+            variant === "group" ? addPostToGroup(data._id) : null;
         },
         onError: (err) => {
             console.log(err);
@@ -80,7 +89,7 @@ const InputBox = (props) => {
 
         const imageRef = ref(ImageStorage, `posts/${userStore.id}/images/${Date.now()}`);
 
-        if (petArray.length != 0) {
+        if (variant === "group") {
             if (selectedFile) {
                 await uploadString(imageRef, selectedFile, "data_url").then(async (value) => {
                     const downloadURL = await getDownloadURL(value.ref);
@@ -92,7 +101,20 @@ const InputBox = (props) => {
 
             createPostMutation.mutate(body);
         } else {
-            toast.error("Bài viết phải có thú cưng");
+            if (petArray.length != 0) {
+                if (selectedFile) {
+                    await uploadString(imageRef, selectedFile, "data_url").then(async (value) => {
+                        const downloadURL = await getDownloadURL(value.ref);
+                        body = { content: input, imageUrl: downloadURL, pets: petArray };
+                    });
+                } else {
+                    body = { content: input, pets: petArray };
+                }
+
+                createPostMutation.mutate(body);
+            } else {
+                toast.error("Bài viết phải có thú cưng");
+            }
         }
 
         setLoading(false);

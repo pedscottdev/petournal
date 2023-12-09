@@ -270,6 +270,10 @@ function PostCard(props) {
         router.push(`/profile/${postData?.user?._id}`);
     };
 
+    const handleNavigatePersonal = () => {
+        router.push(`/profile`);
+    };
+
     return (
         <div className="flex justify-center bg-white rounded-xl shadow-sm border-1 borrder-gray-200 mt-6">
             <div className="flex flex-col p-6 w-full">
@@ -286,10 +290,11 @@ function PostCard(props) {
                         <div className=" group ml-4 mr-5 flex flex-col">
                             <h3
                                 className="font-semibold text-[15px] sm:text-base text-[#000000] hover:underline cursor-pointer"
-                                onClick={isUserLogin ? null : handleNavigate}
+                                onClick={isUserLogin ? handleNavigatePersonal : handleNavigate}
                             >
                                 {`${postData?.user?.lastName} ${postData?.user?.firstName}`}
                             </h3>
+
                             <p className="text-gray-400 text-[14px]">{timePostAgo}</p>
                         </div>
                     </div>

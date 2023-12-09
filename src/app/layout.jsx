@@ -19,22 +19,31 @@ const queryClient = new QueryClient();
 export default function RootLayout({ children }) {
     const router = useRouter();
     const tokenLocal = store.getState().user.accessToken;
+    const [socket, setSocket] = React.useState(null);
+
+    React.useEffect(() => {
+        if (tokenLocal) {
+            const newSocket = socketio(process.env.HOST, {
+                extraHeaders: { Authorization: `${tokenLocal}` },
+            });
+            setSocket(newSocket);
+
+            return () => {
+                // Cleanup function to close the socket when the component unmounts
+                newSocket.close();
+            };
+        }
+    }, [tokenLocal]);
+
+    React.useEffect(() => {
+        if (!tokenLocal) {
+            router.push("/login");
+        }
+    }, [tokenLocal, router]);
+
     if (!tokenLocal) {
         router.push("/login");
     }
-
-    const getSocket = () => {
-        if (tokenLocal) {
-            return socketio(process.env.HOST, {
-                extraHeaders: { Authorization: `${tokenLocal}` },
-            });
-        }
-        return null;
-    };
-
-    const socket = getSocket();
-
-    console.log(socket);
 
     return (
         <html lang="en">

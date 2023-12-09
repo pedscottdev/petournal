@@ -342,9 +342,8 @@ function profile() {
                                                 <PostCard
                                                     key={post._id}
                                                     postId={post._id}
-                                                    // isUserFollowing={post?.isFollowing}
+                                                    isUserFollowing={post?.isFollowing}
                                                     isUserLiked={post?.isLiked}
-                                                    // socket={socket}
                                                     handleGetTimeLine={
                                                         isPresent == "user"
                                                             ? getTimeLineByUserId
