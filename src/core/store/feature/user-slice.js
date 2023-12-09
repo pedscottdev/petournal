@@ -6,6 +6,7 @@ const initialState = {
     firstName: "",
     lastName: "",
     email: "",
+    avatar: "",
     accessToken: "",
 };
 
@@ -28,6 +29,12 @@ const UserSlice = createSlice({
                 state.avatar = user.avatar;
             }
         },
+        setAvatar: (state, action) => {
+            if (action.payload) {
+                state.avatar = action.payload;
+            }
+        },
+
         updateUserState: (state, action) => {
             const { lastName, firstName, email } = action.payload;
             if (lastName) {
@@ -57,6 +64,6 @@ const UserSlice = createSlice({
     },
 });
 
-export const { setUserLogin, resetUserState, setToken, updateUserState } = UserSlice.actions;
+export const { setUserLogin, resetUserState, setToken, updateUserState, setAvatar } = UserSlice.actions;
 
 export default UserSlice.reducer;

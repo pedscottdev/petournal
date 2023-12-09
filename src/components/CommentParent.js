@@ -12,8 +12,17 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 
 function CommentParent(props) {
-    const { commentId, postId, parentImage, commentUser, commentUserName, content, createdTime, postOwner, getCommentsByPost } =
-        props;
+    const {
+        commentId,
+        postId,
+        parentImage,
+        commentUser,
+        commentUserName,
+        content,
+        createdTime,
+        postOwner,
+        getCommentsByPost,
+    } = props;
 
     const [isCommentVisible, setCommentVisible] = useState(false);
     const [commentChildData, setCommentChildData] = useState([]);
@@ -131,11 +140,11 @@ function CommentParent(props) {
                 <div className="flex space-x-4 mt-4">
                     <Image
                         className="rounded-full cursor-pointer w-10 h-10"
-                        src={defaultAvatar}
+                        src={userLogin.avatar ? userLogin.avatar : defaultAvatar}
                         alt=""
                         // layout="responsive"
-                        // width={48}
-                        // height={48}
+                        width={48}
+                        height={48}
                     />
 
                     <div className="w-full">

@@ -46,9 +46,12 @@ function UserCard(props) {
                     <Image src={userAvatar} className="w-10 h-10 rounded-full object-cover" alt="Neil image" />
                 </div>
                 <div className="flex-1 min-w-0">
-                    <a className="text-[15px] cursor-pointer font-semibold text-gray-900 truncate dark:text-white">
+                    <Link
+                        href={`/profile/${userId}`}
+                        className="text-[15px] cursor-pointer font-semibold text-gray-900 truncate dark:text-white"
+                    >
                         {userName}
-                    </a>
+                    </Link>
                     <p className="text-sm font-medium text-gray-500 truncate dark:text-gray-400">
                         {follower} người theo dõi
                     </p>
