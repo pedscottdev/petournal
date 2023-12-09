@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import bgImage from "/src/img/bg-image.png";
 import logoImage from "/src/img/logo-name.svg";
@@ -12,12 +12,21 @@ import AuthService from "../../../core/services/auth.service.js";
 import { setToken, setUserLogin } from "../../../core/store/feature/user-slice.js";
 import Loading from "../../../components/share/loading.js";
 import toast from "react-hot-toast";
+import { store } from "../../../core/store/index.js";
 
 function Login() {
     const router = useRouter();
+
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
     const { register, handleSubmit } = useForm();
+
+    const token = store.getState().user.accessToken;
+    if (token) {
+        setTimeout(() => {
+            router.push("/");
+        }, 1000);
+    }
 
     const mutation = useMutation({
         mutationFn: (data) => {
@@ -28,7 +37,7 @@ function Login() {
             dispatch(setUserLogin(user));
             dispatch(setToken(accessToken));
             queryClient.invalidateQueries(["user"]);
-            router.push("/");
+            router.refresh();
         },
         onError: (error) => {
             console.log(error);
@@ -80,7 +89,9 @@ function Login() {
                         </div>
 
                         <Link href="/reset-password">
-                            <div className="cursor-pointer font-medium text-base text-violet-500 mt-3">Quên mật khẩu?</div>
+                            <div className="cursor-pointer font-medium text-base text-violet-500 mt-3">
+                                Quên mật khẩu?
+                            </div>
                         </Link>
 
                         {/* Buttons */}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import "../app/globals.css";
 import Image from "next/image";
 import defaultAvatar from "/src/img/default-avatar.png";
@@ -39,17 +39,13 @@ import { resetIsChecked, setUserPets } from "../core/store/feature/pet-slice";
 import { PhotographIcon, EmojiHappyIcon, XIcon } from "@heroicons/react/outline";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { ImageStorage } from "../../firebase";
+import { useRouter } from "next/navigation";
+import { SocketContext } from "../core/socket/socket";
 
 function PostCard(props) {
-  const {
-    postId,
-    isUserFollowing,
-    isUserLiked,
-    socket,
-    handleGetTimeLine,
-    handleResetPage,
-    variant,
-  } = props;
+    const { postId, isUserFollowing, isUserLiked, handleGetTimeLine, handleResetPage, variant } = props;
+
+    const socket = useContext(SocketContext);
 
     const userPets = useSelector((state) => state.pet);
     const [postData, setPostData] = useState();
@@ -69,6 +65,8 @@ function PostCard(props) {
     const userStore = useSelector((state) => state.user);
 
     const isUserLogin = postData?.user?._id === userStore.id;
+
+    const router = useRouter();
 
     useEffect(() => {
         getPostById();
@@ -116,10 +114,20 @@ function PostCard(props) {
         setInput(input + emoji);
     };
 
-    const addImageToPost = (e) => {
+    const addImageToPet = (e) => {
         const reader = new FileReader();
+
         if (e.target.files[0]) {
-            reader.readAsDataURL(e.target.files[0]);
+            const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"]; // Add the allowed image types
+
+            if (allowedTypes.includes(e.target.files[0].type)) {
+                reader.readAsDataURL(e.target.files[0]);
+            } else {
+                toast.error("Vui lòng thêm tệp định dạng hình ảnh");
+                // Optionally, you can reset the input field to clear the invalid selection
+                e.target.value = "";
+                return;
+            }
         }
 
         reader.onload = (readerEvent) => {
@@ -192,7 +200,7 @@ function PostCard(props) {
         } else {
             await likePost(postId);
             await toast.success("Đã thích bài viết");
-            await socket.current.emit("like-post-notification", {
+            await socket.emit("like-post-notification", {
                 post_id: postId,
                 type: "LIKE_POST",
             });
@@ -258,6 +266,14 @@ function PostCard(props) {
         }
     };
 
+    const handleNavigate = () => {
+        router.push(`/profile/${postData?.user?._id}`);
+    };
+
+    const handleNavigatePersonal = () => {
+        router.push(`/profile`);
+    };
+
     return (
         <div className="flex justify-center bg-white rounded-xl shadow-sm border-1 borrder-gray-200 mt-6">
             <div className="flex flex-col p-6 w-full">
@@ -272,9 +288,13 @@ function PostCard(props) {
                             className="h-11 w-11 rounded-full"
                         />
                         <div className=" group ml-4 mr-5 flex flex-col">
-                            <h3 className="font-semibold text-[15px] sm:text-base text-[#000000] hover:underline cursor-pointer">
+                            <h3
+                                className="font-semibold text-[15px] sm:text-base text-[#000000] hover:underline cursor-pointer"
+                                onClick={isUserLogin ? handleNavigatePersonal : handleNavigate}
+                            >
                                 {`${postData?.user?.lastName} ${postData?.user?.firstName}`}
                             </h3>
+
                             <p className="text-gray-400 text-[14px]">{timePostAgo}</p>
                         </div>
                     </div>
@@ -334,33 +354,26 @@ function PostCard(props) {
                     </div>
                 </div>
 
-        {/* Modal For Editting Posts */}
-        <Modal
-          isOpen={isEditOpen}
-          onOpenChange={onEditOpenChange}
-          isDismissable={false}
-          size="3xl"
-        >
-          <ModalContent>
-            {(onEditClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  Chỉnh sửa bài viết
-                </ModalHeader>
-                <ModalBody>
-                  <div className="lg:col-span-2">
-                    <div className="grid gap-4 gap-y-2   text-sm grid-cols-1 md:grid-cols-6">
-                      <div className="md:col-span-6">
-                        <Textarea
-                          className="text-md"
-                          size="lg"
-                          variant="underlined"
-                          labelPlacement="outside"
-                          placeholder="Nhập nội dung bài viết"
-                          maxRows={2}
-                          value={postData?.content}
-                        />
-                      </div>
+                {/* Modal For Editting Posts */}
+                <Modal isOpen={isEditOpen} onOpenChange={onEditOpenChange} isDismissable={false} size="3xl">
+                    <ModalContent>
+                        {(onEditClose) => (
+                            <>
+                                <ModalHeader className="flex flex-col gap-1">Chỉnh sửa bài viết</ModalHeader>
+                                <ModalBody>
+                                    <div className="lg:col-span-2">
+                                        <div className="grid gap-4 gap-y-2   text-sm grid-cols-1 md:grid-cols-6">
+                                            <div className="md:col-span-6">
+                                                <Textarea
+                                                    className="text-md"
+                                                    size="lg"
+                                                    variant="underlined"
+                                                    labelPlacement="outside"
+                                                    placeholder="Nhập nội dung bài viết"
+                                                    maxRows={2}
+                                                    value={postData?.content}
+                                                />
+                                            </div>
 
                                             <div className="md:col-span-6">
                                                 <div className="flex mb-1">
@@ -375,7 +388,7 @@ function PostCard(props) {
                                                         <input
                                                             type="file"
                                                             hidden
-                                                            onChange={addImageToPost}
+                                                            onChange={addImageToPet}
                                                             ref={filePickerRef}
                                                         />
                                                     </button>
@@ -471,94 +484,91 @@ function PostCard(props) {
                     </div>
                 </div>
 
-        {/* Metadata */}
-        <div className="mt-4 border-b-2 border-gray-100"></div>
-        <div className="flex items-center justify-between mx-4 mt-1">
-          <div className="w-full">
-            {isLiked ? (
-              <Button
-                className="flex items-center gap-2 cursor-pointer w-full"
-                variant="light"
-                onClick={handleLikeClick}
-              >
-                {isLiked ? (
-                  <PiHeartFill className="cursor-pointer h-6 w-6 text-violet-500 active:scale-[.90] active:duration-75 transition-all hover:text-violet-500" />
-                ) : (
-                  <PiHeartBold className="cursor-pointer h-6 w-6 text-gray-700 active:scale-[.84] active:duration-75 transition-all hover:text-violet-500" />
-                )}
-                <p className="text-[15px] font-medium text-gray-700">
-                  <span className="">{usersLike?.length}</span> Like
-                </p>
-              </Button>
-            ) : (
-              <Button
-                className="flex items-center gap-2 cursor-pointer w-full"
-                variant="light"
-                onClick={handleLikeClick}
-              >
-                <PiHeartBold className="cursor-pointer h-6 w-6 text-gray-700 active:scale-[.84] active:duration-75 transition-all hover:text-violet-500" />
-                <p className="text-[15px] font-medium text-gray-700">
-                  <span className="">{usersLike?.length}</span> Like
-                </p>
-              </Button>
-            )}
-          </div>
-
-          <Button
-            className="flex items-center gap-2 cursor-pointer w-full active:scale-[.94] active:duration-75 transition-all justify-center hover:bg-gray-100 rounded-xl p-2 px-6"
-            variant="light"
-            onClick={toggleCommentSection}
-          >
-            <PiChatCircleBold className="cursor-pointer h-6 w-6 text-gray-700" />
-            <p className="text-[15px] font-medium text-gray-700">
-              <span>{totalComment}</span> Comment
-            </p>
-          </Button>
-
-          {variant === "group" ? null : (
-              <Button
-              className="flex items-center gap-2 cursor-pointer w-full active:scale-[.94] active:duration-75 transition-all justify-center hover:bg-gray-100 rounded-xl p-2 px-6"
-              variant="light"
-              onPress={onOpen}
-            >
-              <PiDogBold className="cursor-pointer h-6 w-6 text-gray-700" />
-              <p className="text-[15px] font-medium text-gray-700">
-                <span className="">{postData?.pets?.length}</span> Pet
-              </p>
-            </Button>
-          )}
-
-          <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-            <ModalContent>
-              {(onClose) => (
-                <>
-                  <ModalHeader className="flex flex-col pb-0 text-xl ">
-                    Danh sách thú cưng
-                  </ModalHeader>
-                  <ModalBody>
-                    <div
-                      className="flow-root divide-y divide-gray-200"
-                      role="list"
-                    >
-                      {postData?.pets?.map((pet) => {
-                        return (
-                          <PetCard
-                            key={pet._id}
-                            petAvatar={pet.avatar}
-                            petName={pet.name}
-                            petInfo="Chó Anh lông ngắn"
-                            path=""
-                            type="list"
-                          />
-                        );
-                      })}
+                {/* Metadata */}
+                <div className="mt-4 border-b-2 border-gray-100"></div>
+                <div className="flex items-center justify-between mx-4 mt-1">
+                    <div className="w-full">
+                        {isLiked ? (
+                            <Button
+                                className="flex items-center gap-2 cursor-pointer w-full"
+                                variant="light"
+                                onClick={handleLikeClick}
+                            >
+                                {isLiked ? (
+                                    <PiHeartFill className="cursor-pointer h-6 w-6 text-violet-500 active:scale-[.90] active:duration-75 transition-all hover:text-violet-500" />
+                                ) : (
+                                    <PiHeartBold className="cursor-pointer h-6 w-6 text-gray-700 active:scale-[.84] active:duration-75 transition-all hover:text-violet-500" />
+                                )}
+                                <p className="text-[15px] font-medium text-gray-700">
+                                    <span className="">{usersLike?.length}</span> Like
+                                </p>
+                            </Button>
+                        ) : (
+                            <Button
+                                className="flex items-center gap-2 cursor-pointer w-full"
+                                variant="light"
+                                onClick={handleLikeClick}
+                            >
+                                <PiHeartBold className="cursor-pointer h-6 w-6 text-gray-700 active:scale-[.84] active:duration-75 transition-all hover:text-violet-500" />
+                                <p className="text-[15px] font-medium text-gray-700">
+                                    <span className="">{usersLike?.length}</span> Like
+                                </p>
+                            </Button>
+                        )}
                     </div>
-                  </ModalBody>
-                </>
-              )}
-            </ModalContent>
-          </Modal>
-        </div>
+
+                    <Button
+                        className="flex items-center gap-2 cursor-pointer w-full active:scale-[.94] active:duration-75 transition-all justify-center hover:bg-gray-100 rounded-xl p-2 px-6"
+                        variant="light"
+                        onClick={toggleCommentSection}
+                    >
+                        <PiChatCircleBold className="cursor-pointer h-6 w-6 text-gray-700" />
+                        <p className="text-[15px] font-medium text-gray-700">
+                            <span>{totalComment}</span> Comment
+                        </p>
+                    </Button>
+
+                    {variant === "group" ? null : (
+                        <Button
+                            className="flex items-center gap-2 cursor-pointer w-full active:scale-[.94] active:duration-75 transition-all justify-center hover:bg-gray-100 rounded-xl p-2 px-6"
+                            variant="light"
+                            onPress={onOpen}
+                        >
+                            <PiDogBold className="cursor-pointer h-6 w-6 text-gray-700" />
+                            <p className="text-[15px] font-medium text-gray-700">
+                                <span className="">{postData?.pets?.length}</span> Pet
+                            </p>
+                        </Button>
+                    )}
+
+                    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                        <ModalContent>
+                            {(onClose) => (
+                                <>
+                                    <ModalHeader className="flex flex-col pb-0 text-xl ">
+                                        Danh sách thú cưng
+                                    </ModalHeader>
+                                    <ModalBody>
+                                        <div className="flow-root divide-y divide-gray-200" role="list">
+                                            {postData?.pets?.map((pet) => {
+                                                return (
+                                                    <PetCard
+                                                        key={pet._id}
+                                                        petAvatar={pet.avatar}
+                                                        petName={pet.name}
+                                                        petInfo="Chó Anh lông ngắn"
+                                                        path=""
+                                                        type="list"
+                                                    />
+                                                );
+                                            })}
+                                        </div>
+                                    </ModalBody>
+                                </>
+                            )}
+                        </ModalContent>
+                    </Modal>
+                </div>
 
                 <div className="mt-1 border-b-2 border-gray-100"></div>
 
@@ -597,7 +607,13 @@ function PostCard(props) {
 
                 {/* Comment Input */}
                 <div className="flex space-x-4 mt-4">
-                    <Image className="rounded-full cursor-pointer w-11 h-11" src={defaultAvatar} alt="" />
+                    <Image
+                        className="rounded-full cursor-pointer w-11 h-11"
+                        src={userStore.avatar ? userStore.avatar : defaultAvatar}
+                        alt="avatar"
+                        width={100}
+                        height={100}
+                    />
 
                     <div className="w-full">
                         <div className="flex items-center">

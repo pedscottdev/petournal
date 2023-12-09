@@ -7,8 +7,11 @@ const FollowService = {
     unFollowUser: (followId) => {
         return axiosClient.post(`/follow/unFollowUser/${followId}`);
     },
-    getFollowingsByUser: (body) => {
-        return axiosClient.post("/follow/getFollowingsByUser", body);
+    getFollowingsByUserPagination: (body) => {
+        return axiosClient.post("/follow/getFollowingsByUserPagination", body);
+    },
+    getFollowingsByUser: () => {
+        return axiosClient.post("/follow/getFollowingsByUser");
     },
     getFollowersByUser: (body) => {
         return axiosClient.post("follow/getFollowersByUser", body);
