@@ -16,6 +16,12 @@ import PetProfileCard from "../../components/PetProfileCard";
 import defaultGroupAvatar from "/src/img/default-group-avatar.png";
 import GroupCard from "../../components/GroupCard";
 import GroupService from "../../core/services/group.service.js";
+import { useSelector } from "react-redux";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { ImageStorage } from "../../../firebase";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import Loading from "../../components/share/loading.js";
 
 function group() {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -26,22 +32,60 @@ function group() {
     const [groupDesc, setGroupDesc] = useState(null);
     const [selectedUser, setSelectedUser] = React.useState(new Set([]));
     const [listGroups, setListGroups] = useState([]);
+    const [listUser, setListUser] = useState([]);
+    const [listUserSelected, setListUserSelected] = useState([]);
+    const [filter, setFilter] = useState("");
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState();
+
+    const userStoreId = useSelector((state) => state.user.id);
+    let newArray = [userStoreId];
 
     const handleUserSelection = (e) => {
-        setSelectedUser(new Set(e.target.value.split(",")));
+        const selectedUserIdSet = e.values();
+
+        // Use the functional form of setListUserSelected to ensure correctness
+        setListUserSelected((prevListUserSelected) => {
+            newArray = [...prevListUserSelected];
+
+            // Ensure userStoreId is always present
+            if (!newArray.includes(userStoreId)) {
+                newArray.push(userStoreId);
+            }
+
+            for (const selectedUserId of selectedUserIdSet) {
+                const isAlreadySelected = newArray.includes(selectedUserId);
+
+                if (isAlreadySelected) {
+                    newArray.splice(newArray.indexOf(selectedUserId), 1);
+                } else {
+                    newArray.push(selectedUserId);
+                }
+            }
+
+            return newArray;
+        });
     };
 
-  const fileInputRef = useRef(null);
+    useEffect(() => {
+        console.log(listUserSelected);
+    }, [listUserSelected]);
 
-  const handleSelectionChange = (e) => {
-    setValues(new Set(e.target.value.split(",")));
-  };
+    const fileInputRef = useRef(null);
+
+    const handleSelectionChange = (e) => {
+        setValues(new Set(e.target.value.split(",")));
+    };
 
     const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setSelectedImage(URL.createObjectURL(file));
+        const reader = new FileReader();
+        if (e.target.files[0]) {
+            reader.readAsDataURL(e.target.files[0]);
         }
+
+        reader.onload = (readerEvent) => {
+            setSelectedImage(readerEvent.target.result);
+        };
     };
 
     const handleRemoveImage = () => {
@@ -54,15 +98,115 @@ function group() {
 
     useEffect(() => {
         getGroupsByUserLogin();
+        getListUserInvite();
     }, []);
 
     const getGroupsByUserLogin = async () => {
         const { data } = await GroupService.getGroupsByUserLogin();
-        setListGroups(data);
+        setListGroups(data?.groups);
+        setTotalPages(data?.totalPages);
+    };
+
+    const getListUserInvite = async () => {
+        const { data } = await GroupService.getListUserInvite();
+        setListUser(data);
+    };
+
+    useEffect(() => {
+        if (filter !== undefined || page !== undefined) {
+            mutationFilter.mutate(filter);
+            mutationPagination.mutate(page);
+        }
+    }, [filter, page]);
+
+    const mutationPagination = useMutation({
+        mutationFn: async (response) => {
+            const body = { page: response };
+            let result;
+            if (filter === "all") {
+                result = await GroupService.getGroupsByUserLogin(body);
+            }
+            if (filter === "mygroup") {
+                result = await GroupService.getGroupsByOwner(body);
+            }
+            return result.data;
+        },
+        onSuccess: (data) => {
+            console.log(data);
+            setListGroups(data.groups);
+            setTotalPages(data.totalPages);
+        },
+    });
+
+    const mutationFilter = useMutation({
+        mutationFn: async (response) => {
+            const body = { page: page };
+            let result;
+            if (response === "all") {
+                result = await GroupService.getGroupsByUserLogin(body);
+            }
+            if (response === "mygroup") {
+                result = await GroupService.getGroupsByOwner(body);
+            }
+            return result.data;
+        },
+        onSuccess: (data) => {
+            console.log(data);
+            setListGroups(data.groups);
+            setTotalPages(data.totalPages);
+        },
+    });
+
+    const handlePagination = async (page) => {
+        await setPage(page);
     };
 
     const handleFilter = async (key) => {
-        console.log(key);
+        await setFilter(key);
+        await setPage(1);
+    };
+
+    const createGroupMutation = useMutation({
+        mutationFn: async (data) => {
+            const result = await GroupService.createGroup(data);
+            console.log(result);
+            return result.data;
+        },
+        onSuccess: (data) => {
+            console.log(data);
+            toast.success("Tạo thành công ");
+            onClose();
+            setGroupName("");
+            setGroupDesc("");
+            setSelectedImage("");
+            setListUserSelected([]);
+        },
+    });
+
+    const handleCreateGroup = async () => {
+        let body;
+
+        const imageRef = ref(ImageStorage, `groups/images/${Date.now()}`);
+        if (selectedImage) {
+            await uploadString(imageRef, selectedImage, "data_url").then(async (value) => {
+                const downloadURL = await getDownloadURL(value.ref);
+                body = {
+                    name: groupName,
+                    describe: groupDesc,
+                    avatar: downloadURL,
+                    members: listUserSelected,
+                };
+            });
+        } else {
+            body = {
+                name: groupName,
+                describe: groupDesc,
+                avatar: defaultGroupAvatar,
+                members: listUserSelected,
+            };
+        }
+
+        createGroupMutation.mutate(body);
     };
 
     return (
@@ -165,6 +309,8 @@ function group() {
                                                         <input
                                                             type="text"
                                                             id="pet_name"
+                                                            value={groupName}
+                                                            onChange={(e) => setGroupName(e.target.value)}
                                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
                                                         />
                                                     </div>
@@ -176,122 +322,96 @@ function group() {
                                                         <textarea
                                                             id="bio"
                                                             rows="3"
+                                                            value={groupDesc}
+                                                            onChange={(e) => setGroupDesc(e.target.value)}
                                                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-1"
                                                             placeholder="Mô tả về nhóm của bạn."
                                                         ></textarea>
                                                     </div>
 
-                          <div className="md:col-span-6">
-                            <label for="species" className="font-medium">
-                              Thành viên nhóm{" "}
-                              <span className="text-gray-500">
-                                (Nhóm phải có tối thiểu 3 thành viên)
-                              </span>
-                            </label>
-                            <Select
-                              radius="sm"
-                              size="md"
-                              variant="bordered"
-                              placeholder="Chọn thành viên"
-                              selectionMode="multiple"
-                              labelPlacement="outside"
-                              className="mt-1 bg-gray-50"
-                              selectedKeys={selectedUser}
-                              onSelectionChange={setSelectedUser}
-                              renderValue={(items) => {
-                                return items.map((item, index) => (
-                                  <>
-                                    {index > 0 && ", "}
-                                    {item.value}
-                                  </>
-                                ));
-                              }}
-                            >
-                              <SelectItem key="Daniel de Waal" value="Daniel de Waal">
-                                <div className="flex gap-2 items-center">
-                                  <Avatar
-                                    alt="Daniel"
-                                    className="flex-shrink-0"
-                                    size="sm"
-                                    src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                  />
-                                  <div className="flex flex-col">
-                                    <span className="text-small">Daniel de Waal</span>
-                                    <span className="text-tiny text-default-400">
-                                      danieldewaal@gmail.com
-                                    </span>
-                                  </div>
-                                </div>
-                              </SelectItem>
-
-                              <SelectItem key="Lisa Beck" value="Lisa Beck">
-                                <div className="flex gap-2 items-center">
-                                  <Avatar
-                                    alt="Lisa"
-                                    className="flex-shrink-0"
-                                    size="sm"
-                                    src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                  />
-                                  <div className="flex flex-col">
-                                  <span className="text-small">Lisa Beck</span>
-                                    <span className="text-tiny text-default-400">
-                                      lisa@gmail.com
-                                    </span>
-                                  </div>
-                                </div>
-                              </SelectItem>
-
-                              <SelectItem key="Calum Scott" value="Calum Scott">
-                                <div className="flex gap-2 items-center">
-                                  <Avatar
-                                    alt="Calum"
-                                    className="flex-shrink-0"
-                                    size="sm"
-                                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                  />
-                                  <div className="flex flex-col">
-                                    <span className="text-small">Calum Scott</span>
-                                    <span className="text-tiny text-default-400">
-                                      calumscott@gmail.com
-                                    </span>
-                                  </div>
-                                </div>
-                              </SelectItem>
-
-                            </Select>
-                            <p className="text-small text-default-500 py-3">Thành viên đã chọn: {Array.from(selectedUser).join(", ")}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button color="danger" variant="light" onPress={onClose}>
-                        <div className="text-[15px] font-medium">Đóng</div>
-                      </Button>
-                      <Button color="secondary">
-                        <div className="text-[15px] font-medium">Xác nhận</div>
-                      </Button>
-                    </ModalFooter>
-                  </>
-                )}
-              </ModalContent>
-            </Modal>
+                                                    <div className="md:col-span-6">
+                                                        <label for="species" className="font-medium">
+                                                            Thành viên nhóm{" "}
+                                                            <span className="text-gray-500">
+                                                                (Nhóm phải có tối thiểu 3 thành viên)
+                                                            </span>
+                                                        </label>
+                                                        <Select
+                                                            radius="sm"
+                                                            size="md"
+                                                            variant="bordered"
+                                                            placeholder="Chọn thành viên"
+                                                            selectionMode="multiple"
+                                                            labelPlacement="outside"
+                                                            className="mt-1 bg-gray-50"
+                                                            selectedKeys={selectedUser}
+                                                            onSelectionChange={handleUserSelection}
+                                                            renderValue={listUserSelected.join(" ,")}
+                                                        >
+                                                            {listUser?.map((user) => {
+                                                                return (
+                                                                    <SelectItem key={user._id} value={user._id}>
+                                                                        <div className="flex gap-2 items-center">
+                                                                            <Avatar
+                                                                                alt={user._id}
+                                                                                className="flex-shrink-0"
+                                                                                size="sm"
+                                                                                src={user.avatar}
+                                                                            />
+                                                                            <div className="flex flex-col">
+                                                                                <span className="text-small">
+                                                                                    {user.lastName +
+                                                                                        " " +
+                                                                                        user.firstName}
+                                                                                </span>
+                                                                                <span className="text-tiny text-default-400">
+                                                                                    {user.email}
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </SelectItem>
+                                                                );
+                                                            })}
+                                                        </Select>
+                                                        <p className="text-small text-default-500 py-3">
+                                                            Thành viên đã chọn: {listUserSelected.join(", ")}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            <Button color="danger" variant="light" onPress={onClose}>
+                                                <div className="text-[15px] font-medium">Đóng</div>
+                                            </Button>
+                                            <Button color="secondary" onClick={handleCreateGroup}>
+                                                <div className="text-[15px] font-medium">Xác nhận</div>
+                                            </Button>
+                                        </ModalFooter>
+                                    </>
+                                )}
+                            </ModalContent>
+                        </Modal>
 
                         {/* Content */}
                         <div className="pb-4 py-3 ">
                             <div className="gap-6 px-6 grid grid-cols-2">
-                                {listGroups?.map((group) => {
-                                    return (
-                                        <GroupCard
-                                            key={group._id}
-                                            groupId={group._id}
-                                            groupAvatar={group.avatar}
-                                            groupName={group.name}
-                                            members={group.members}
-                                            describe={group.describe}
-                                        />
-                                    );
-                                })}
+                                {mutationPagination.isPending || mutationFilter.isPending ? (
+                                    <Loading />
+                                ) : (
+                                    listGroups?.map((group) => {
+                                        return (
+                                            <GroupCard
+                                                key={group._id}
+                                                groupId={group._id}
+                                                groupAvatar={group.avatar}
+                                                groupName={group.name}
+                                                members={group.members}
+                                                describe={group.describe}
+                                            />
+                                        );
+                                    })
+                                )}
                             </div>
                         </div>
 
@@ -300,8 +420,9 @@ function group() {
                             <Pagination
                                 isCompact
                                 showControls
-                                key="following"
-                                total={10}
+                                key={filter}
+                                total={totalPages}
+                                onChange={handlePagination}
                                 initialPage={1}
                                 color="secondary"
                             />

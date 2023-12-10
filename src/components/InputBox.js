@@ -74,6 +74,8 @@ const InputBox = (props) => {
             dispatch(resetIsChecked());
             toast.success("Đã đăng post");
             variant === "group" ? addPostToGroup(data._id) : null;
+            handleGetTimeLine();
+            handleResetPage();
         },
         onError: (err) => {
             console.log(err);
