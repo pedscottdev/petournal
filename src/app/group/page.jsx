@@ -202,7 +202,7 @@ function group() {
                                 return items.map((item, index) => (
                                   <>
                                     {index > 0 && ", "}
-                                    {item.key}
+                                    {item.value}
                                   </>
                                 ));
                               }}
