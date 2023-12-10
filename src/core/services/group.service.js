@@ -4,11 +4,11 @@ const GroupService = {
     createGroup: (body) => {
         return axiosClient.post("/group/createGroup", body);
     },
-    getGroupsByUserLogin: () => {
-        return axiosClient.post("/group/getGroupsByUserLogin");
+    getGroupsByUserLogin: (body) => {
+        return axiosClient.post("/group/getGroupsByUserLogin", body);
     },
-    getGroupsByOwner: () => {
-        return axiosClient.post("/group/getGroupsByOwner");
+    getGroupsByOwner: (body) => {
+        return axiosClient.post("/group/getGroupsByOwner", body);
     },
     getGroupById: (groupId) => {
         return axiosClient.post(`/group/getGroupById/${groupId}`);
@@ -21,6 +21,12 @@ const GroupService = {
     },
     getPostsFromGroup: (body) => {
         return axiosClient.post("/group/getPostsFromGroup", body);
+    },
+    getListUserInvite: () => {
+        return axiosClient.post("/group/getListUserInvite");
+    },
+    updateProfileGroup: (body) => {
+        return axiosClient.post("/group/updateProfileGroup", body);
     },
 };
 
