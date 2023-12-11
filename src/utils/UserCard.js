@@ -7,9 +7,10 @@ import toast from "react-hot-toast";
 import { IoIosArrowForward } from "react-icons/io";
 import { useRouter } from "next/navigation.js";
 import { useSelector } from "react-redux";
+import { Checkbox } from "@nextui-org/react";
 
 function UserCard(props) {
-    const { userId, userAvatar, userName, follower, userEmail, link, variant } = props;
+    const { userId, userAvatar, userName, follower, userEmail, link, variant, handleOnSelected } = props;
     const router = useRouter();
     const userStoreId = useSelector((state) => state.user.id);
 
@@ -44,6 +45,10 @@ function UserCard(props) {
         }
     };
 
+    const handleCheckboxChange = (isSelected) => {
+        handleOnSelected({ isSelected, userId });
+    };
+
     const handleNavigation = () => {
         userStoreId == userId ? router.push(`/profile`) : router.push(`/profile/${userId}`);
     };
@@ -62,13 +67,13 @@ function UserCard(props) {
                 </div>
                 <div className="flex-1 min-w-0">
                     <Link
-                        href={``}
+                        href={`/profile/${userId}`}
                         className="text-[15px] cursor-pointer font-semibold text-gray-900 truncate dark:text-white"
                     >
                         {userName}
                     </Link>
                     <p className="text-sm font-medium text-gray-500 truncate dark:text-gray-400">
-                        {variant === "group" ? userEmail : follower + " người theo dõi"}
+                        {variant === "adduser" ? userEmail : follower + " người theo dõi"}
                     </p>
                 </div>
 
@@ -80,9 +85,9 @@ function UserCard(props) {
                         Xem
                     </div>
                 ) : variant === "adduser" ? (
-                    <div className="text-base text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
-                        <IoIosArrowForward />
-                    </div>
+                    <Checkbox color="secondary" onValueChange={handleCheckboxChange}>
+                        Thêm
+                    </Checkbox>
                 ) : (
                     <div>
                         {isFollowing ? (

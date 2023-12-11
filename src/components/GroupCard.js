@@ -48,7 +48,7 @@ function GroupCard(props) {
                         <div>
                             <AvatarGroup size="sm" isBordered max={3}>
                                 {listMembers?.map((member) => {
-                                    return <Avatar key={member._id} size="sm" src={member.avatar} />;
+                                    return <Avatar key={member.user._id} size="sm" src={member.user.avatar} />;
                                 })}
                             </AvatarGroup>
                         </div>
