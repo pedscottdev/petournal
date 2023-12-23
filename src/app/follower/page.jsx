@@ -10,6 +10,7 @@ import { Pagination, PaginationItem, PaginationCursor } from "@nextui-org/react"
 import ProfileCard from "../../components/ProfileCard";
 import FollowService from "../../core/services/follow.service";
 import { useMutation } from "@tanstack/react-query";
+import FindingBox from "../../components/share/finding-box";
 
 function follower() {
     const [listFollowings, setListFollowings] = useState([]);
@@ -22,6 +23,8 @@ function follower() {
     const [countFollowerPage, setCountFollowerPage] = useState(1);
     const [sortFollowingOption, setSortFollowingOption] = useState();
     const [sortFollowerOption, setSortFollowerOption] = useState();
+    const [filterFollowerKeyword, setFilterFollowerKeyword] = useState("");
+    const [filterFollowingKeyword, setFilterFollowingKeyword] = useState("");
 
     useEffect(() => {
         getFollowingsByUserPagination();
@@ -178,13 +181,20 @@ function follower() {
                                             </Select>
 
                                             {/* Search */}
-                                            <div className="flex flex-row  ml-2 items-center rounded-lg border-2 border-gray-200 bg-[#ECEDF6] py-1 mx-3 w-[]">
-                                                <SearchIcon className="h-4 ml-2 text-gray-500" />
-                                                <input
-                                                    className=" flex ml-4 bg-transparent outline-none text-[15px] text-gray-500 flex-shrink min-w-[20rem]"
-                                                    type="text"
-                                                    placeholder="Tìm kiếm theo tên"
-                                                ></input>
+                                            <div className="flex flex-col relative">
+                                                <div className="flex flex-row  ml-2 items-center rounded-lg border-2 border-gray-200 bg-[#ECEDF6] py-3 w-[]">
+                                                    <SearchIcon className="h-4 ml-2 text-gray-500" />
+                                                    <input
+                                                        className=" flex ml-4 bg-transparent outline-none text-[15px] text-gray-500 flex-shrink min-w-[20rem]"
+                                                        type="text"
+                                                        value={filterFollowingKeyword}
+                                                        onChange={(e) => setFilterFollowingKeyword(e.target.value)}
+                                                        placeholder="Tìm kiếm theo tên"
+                                                    ></input>
+                                                </div>
+                                                <div className="absolute top-8 left-2">
+                                                    <FindingBox variant="following" keyword={filterFollowingKeyword} />
+                                                </div>
                                             </div>
                                         </div>
 
@@ -268,13 +278,20 @@ function follower() {
                                             </Select>
 
                                             {/* Search */}
-                                            <div className="flex flex-row  ml-2 items-center rounded-lg border-2 border-gray-200 bg-[#ECEDF6] py-1 mx-3 w-[]">
-                                                <SearchIcon className="h-4 ml-2 text-gray-500" />
-                                                <input
-                                                    className=" flex ml-4 bg-transparent outline-none text-[15px] text-gray-500 flex-shrink min-w-[20rem]"
-                                                    type="text"
-                                                    placeholder="Tìm kiếm theo tên"
-                                                ></input>
+                                            <div className="flex flex-col relative">
+                                                <div className="flex flex-row  ml-2 items-center rounded-lg border-2 border-gray-200 bg-[#ECEDF6] py-3 w-[]">
+                                                    <SearchIcon className="h-4 ml-2 text-gray-500" />
+                                                    <input
+                                                        className=" flex ml-4 bg-transparent outline-none text-[15px] text-gray-500 flex-shrink min-w-[20rem]"
+                                                        type="text"
+                                                        value={filterFollowerKeyword}
+                                                        onChange={(e) => setFilterFollowerKeyword(e.target.value)}
+                                                        placeholder="Tìm kiếm theo tên"
+                                                    ></input>
+                                                </div>
+                                                <div className="absolute top-8 left-2">
+                                                    <FindingBox variant="follower" keyword={filterFollowerKeyword} />
+                                                </div>
                                             </div>
                                         </div>
 

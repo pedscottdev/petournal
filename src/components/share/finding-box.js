@@ -1,149 +1,177 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FindingCard from "../../utils/FindingCard";
+import UserService from "../../core/services/user.service";
+import PetService from "../../core/services/pet.service";
+import FollowService from "../../core/services/follow.service";
+import GroupService from "../../core/services/group.service";
 
-const listFollowing = [
-    {
-        _id: "6562653b7601b18080f03d3d",
-        user: "6547a038d57e6981ec01a71a",
-        following: {
-            _id: "6562647f7601b18080f03c1f",
-            firstName: "Nam",
-            lastName: "User",
-            email: "user5@gmail.com",
-            password: "$2b$10$HZrUm1Ck3PWuMQyruR2OCu2MDtrIAlMDjbXO0kh2Wg1FnHpjxIXOS",
-            role: "USER",
-            avatar: "https://firebasestorage.googleapis.com/v0/b/petournal-e5c1a.appspot.com/o/users%2F656264387601b18080f03c17%2Fimages%2F1702319592767?alt=media&token=2f5d2e28-c516-4224-b69a-f710e4e3d5b4",
-            createdAt: "2023-11-25T21:17:51.205Z",
-            updatedAt: "2023-11-25T21:17:51.205Z",
-            status: 0,
-            phone: "0976376876",
-        },
-        createdAt: "2023-11-25T21:20:59.444Z",
-        updatedAt: "2023-11-25T21:20:59.444Z",
-        isChated: false,
-        lastestConversation: null,
-    },
-    {
-        _id: "6564e826afd76a464f4416a0",
-        user: "6547a038d57e6981ec01a71a",
-        following: {
-            _id: "656264527601b18080f03c19",
-            firstName: "Hai",
-            lastName: "User",
-            email: "user2@gmail.com",
-            password: "$2b$10$Xu7evuA11ot7BghFK4gos.Spj6MgcacDFoSEPdSasuQ/PhfuDFJ.S",
-            role: "USER",
-            avatar: "https://firebasestorage.googleapis.com/v0/b/petournal-e5c1a.appspot.com/o/users%2F656264387601b18080f03c17%2Fimages%2F1702319592767?alt=media&token=2f5d2e28-c516-4224-b69a-f710e4e3d5b4",
-            createdAt: "2023-11-25T21:17:06.608Z",
-            updatedAt: "2023-11-25T21:17:06.608Z",
-            status: 1,
-            phone: "0976376567",
-        },
-        createdAt: "2023-11-27T19:04:06.882Z",
-        updatedAt: "2023-11-27T19:04:06.882Z",
-        isChated: false,
-        lastestConversation: null,
-    },
-    {
-        _id: "6565e3c6b41fedaaaabbf56a",
-        user: "6547a038d57e6981ec01a71a",
-        following: {
-            _id: "65624c6c33ca8ffcc6e5b525",
-            firstName: "Quynh",
-            lastName: "Ngoc",
-            email: "ngocquynh@gmail.com",
-            password: "$2b$10$698o.Cx7rhnfO7RUM9KM3uOAjoK3XA7kPH8buvx6TbDNkDY3mfnpq",
-            role: "USER",
-            avatar: "https://firebasestorage.googleapis.com/v0/b/petournal-e5c1a.appspot.com/o/users%2F656264387601b18080f03c17%2Fimages%2F1702319592767?alt=media&token=2f5d2e28-c516-4224-b69a-f710e4e3d5b4",
-            createdAt: "2023-11-25T19:35:08.250Z",
-            updatedAt: "2023-11-25T19:35:08.250Z",
-            status: 0,
-            phone: "0976786555",
-        },
-        createdAt: "2023-11-28T12:57:42.327Z",
-        updatedAt: "2023-11-28T12:57:42.327Z",
-        isChated: false,
-        lastestConversation: null,
-    },
-    {
-        _id: "65707c875931bde525467239",
-        user: "6547a038d57e6981ec01a71a",
-        following: {
-            _id: "656264617601b18080f03c1b",
-            firstName: "Ba",
-            lastName: "User",
-            email: "user3@gmail.com",
-            password: "$2b$10$0S6lG7zHgFbfb3QbcLTwtuN5W0MsHG4wbWYze//EBc1wgsLvSPKdW",
-            role: "USER",
-            avatar: "https://firebasestorage.googleapis.com/v0/b/petournal-e5c1a.appspot.com/o/users%2F656264387601b18080f03c17%2Fimages%2F1702319592767?alt=media&token=2f5d2e28-c516-4224-b69a-f710e4e3d5b4",
-            createdAt: "2023-11-25T21:17:21.503Z",
-            updatedAt: "2023-11-25T21:17:21.503Z",
-            status: 1,
-            phone: "0976376098",
-        },
-        createdAt: "2023-12-06T13:52:07.108Z",
-        updatedAt: "2023-12-06T13:52:07.108Z",
-        isChated: false,
-        lastestConversation: null,
-    },
-    // {
-    //     _id: "6576b69f9e270fe5bbb86533",
-    //     user: "6547a038d57e6981ec01a71a",
-    //     following: {
-    //         _id: "6562648d7601b18080f03c21",
-    //         firstName: "Sau",
-    //         lastName: "User",
-    //         email: "user6@gmail.com",
-    //         password: "$2b$10$l7N8etLce6yqGagHCNiaOe4Lwg2X5iEL6dyrEh9M.RnbzBzu7PXYK",
-    //         role: "USER",
-    //         avatar: "https://firebasestorage.googleapis.com/v0/b/petournal-e5c1a.appspot.com/o/users%2F656264387601b18080f03c17%2Fimages%2F1702319592767?alt=media&token=2f5d2e28-c516-4224-b69a-f710e4e3d5b4",
-    //         createdAt: "2023-11-25T21:18:05.438Z",
-    //         updatedAt: "2023-11-25T21:18:05.438Z",
-    //         phone: "0976376098",
-    //         status: 1,
-    //     },
-    //     createdAt: "2023-12-11T07:13:35.066Z",
-    //     updatedAt: "2023-12-11T07:13:35.066Z",
-    //     isChated: false,
-    //     lastestConversation: null,
-    // },
-    // {
-    //     _id: "6576c67e9e270fe5bbb869a8",
-    //     user: "6547a038d57e6981ec01a71a",
-    //     following: {
-    //         _id: "656264a77601b18080f03c25",
-    //         firstName: "Tam",
-    //         lastName: "User",
-    //         email: "user8@gmail.com",
-    //         password: "$2b$10$GKvatpREkefGW6zPxEMPS.EzU.vgdfcG5OtdZWWDX8DqfXvlQMGOq",
-    //         role: "USER",
-    //         avatar: "https://firebasestorage.googleapis.com/v0/b/petournal-e5c1a.appspot.com/o/users%2F656264387601b18080f03c17%2Fimages%2F1702319592767?alt=media&token=2f5d2e28-c516-4224-b69a-f710e4e3d5b4",
-    //         createdAt: "2023-11-25T21:18:31.930Z",
-    //         updatedAt: "2023-11-25T21:18:31.930Z",
-    //     },
-    //     createdAt: "2023-12-11T08:21:18.934Z",
-    //     updatedAt: "2023-12-11T08:21:18.934Z",
-    //     isChated: false,
-    //     lastestConversation: null,
-    // },
-];
+const FindingBox = (props) => {
+    const { keyword, variant } = props;
+    const [listUser, setListUser] = useState([]);
+    const [listPet, setListPet] = useState([]);
+    const [listFollower, setListFollower] = useState([]);
+    const [listFollowing, setListFollowing] = useState([]);
+    const [listGroup, setListGroup] = useState([]);
 
-const FindingBox = () => {
-    return (
-        <div className="max-h-[20rem] w-[24rem] overflow-y-auto mt-5 border-b border-x rounded-b-lg divide-gray-200">
-            {listFollowing?.map((following) => {
-                return (
-                    <FindingCard
-                        key={following._id}
-                        userAvatar={following.following.avatar}
-                        userId={following.following._id}
-                        userName={following.following.lastName + " " + following.following.firstName}
-                        email={following.following.email}
-                    />
-                );
-            })}
-        </div>
-    );
+    useEffect(() => {
+        variant === "user"
+            ? filterUser(keyword)
+            : variant === "pet"
+            ? filterPet(keyword)
+            : variant === "follower"
+            ? filterFollower(keyword)
+            : variant === "following"
+            ? filterFollowing(keyword)
+            : variant === "group"
+            ? filterGroup(keyword)
+            : null;
+    }, [keyword, variant]);
+
+    const filterUser = async (keyword) => {
+        if (keyword !== "") {
+            const { data } = await UserService.filterUser({ keyword });
+            if (data) {
+                setListUser(data);
+            }
+        } else {
+            setListUser([]);
+        }
+    };
+
+    const filterPet = async (keyword) => {
+        if (keyword !== "") {
+            const { data } = await PetService.filterPet({ keyword });
+            if (data) {
+                setListPet(data);
+            }
+        } else {
+            setListPet([]);
+        }
+    };
+
+    const filterFollower = async (keyword) => {
+        if (keyword !== "") {
+            const { data } = await FollowService.filterFollower({ keyword });
+            if (data) {
+                setListFollower(data);
+            }
+        } else {
+            setListFollower([]);
+        }
+    };
+
+    const filterFollowing = async (keyword) => {
+        if (keyword !== "") {
+            const { data } = await FollowService.filterFollowing({ keyword });
+            if (data) {
+                setListFollowing(data);
+            }
+        } else {
+            setListFollowing([]);
+        }
+    };
+
+    const filterGroup = async (keyword) => {
+        if (keyword !== "") {
+            const { data } = await GroupService.filterGroup({ keyword });
+            if (data) {
+                setListGroup(data);
+            }
+        } else {
+            setListGroup([]);
+        }
+    };
+
+    {
+        return (
+            (listUser.length > 0 ||
+                listPet.length > 0 ||
+                listFollower.length > 0 ||
+                listFollowing.length > 0 ||
+                listGroup.length > 0) && (
+                <div
+                    className={`max-h-[20rem] ${
+                        variant === "user"
+                            ? "w-[24rem]"
+                            : variant === "pet"
+                            ? "w-[23rem]"
+                            : variant === "follower"
+                            ? "w-[23rem]"
+                            : variant === "following"
+                            ? "w-[23rem]"
+                            : variant === "group"
+                            ? "w-[23rem]"
+                            : null
+                    }  overflow-y-auto mt-5 border-b border-x rounded-b-lg`}
+                >
+                    {variant == "user" &&
+                        listUser?.map((user) => {
+                            return (
+                                <FindingCard
+                                    key={user._id}
+                                    userId={user._id}
+                                    userAvatar={user.avatar}
+                                    userName={user.lastName + " " + user.firstName}
+                                    email={user.email}
+                                    variant="user"
+                                />
+                            );
+                        })}
+                    {variant == "pet" &&
+                        listPet?.map((pet) => {
+                            return (
+                                <FindingCard
+                                    key={pet._id}
+                                    petId={pet._id}
+                                    petAvatar={pet.avatar}
+                                    petName={pet.name}
+                                    petBreed={pet.breed}
+                                    variant="pet"
+                                />
+                            );
+                        })}
+                    {variant == "follower" &&
+                        listFollower?.map((follower) => {
+                            return (
+                                <FindingCard
+                                    key={follower._id}
+                                    followerId={follower._id}
+                                    followerAvatar={follower.avatar}
+                                    followerName={follower.lastName + " " + follower.firstName}
+                                    followerEmail={follower.email}
+                                    variant="follower"
+                                />
+                            );
+                        })}
+                    {variant == "following" &&
+                        listFollowing?.map((following) => {
+                            return (
+                                <FindingCard
+                                    key={following._id}
+                                    followingId={following._id}
+                                    followingAvatar={following.avatar}
+                                    followingName={following.lastName + " " + following.firstName}
+                                    followingEmail={following.email}
+                                    variant="following"
+                                />
+                            );
+                        })}
+                    {variant == "group" &&
+                        listGroup?.map((group) => {
+                            return (
+                                <FindingCard
+                                    key={group._id}
+                                    groupId={group._id}
+                                    groupAvatar={group.avatar}
+                                    groupName={group.name}
+                                    variant="group"
+                                />
+                            );
+                        })}
+                </div>
+            )
+        );
+    }
 };
 
 export default FindingBox;

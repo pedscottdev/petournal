@@ -16,6 +16,9 @@ const UserService = {
     getProfileUser: (userId) => {
         return axiosClient.get(`/user/getProfileUser/${userId}`);
     },
+    filterUser: (body) => {
+        return axiosClient.post("/user/filterUser", body);
+    },
 };
 
 export default UserService;

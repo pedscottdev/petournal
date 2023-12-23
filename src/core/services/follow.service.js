@@ -16,6 +16,12 @@ const FollowService = {
     getFollowersByUser: (body) => {
         return axiosClient.post("follow/getFollowersByUser", body);
     },
+    filterFollower: (body) => {
+        return axiosClient.post("follow/filterFollower", body);
+    },
+    filterFollowing: (body) => {
+        return axiosClient.post("follow/filterFollowing", body);
+    },
 };
 
 export default FollowService;

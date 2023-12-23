@@ -34,6 +34,9 @@ const GroupService = {
     addUserToGroup: (body) => {
         return axiosClient.post("/group/addUserToGroup", body);
     },
+    filterGroup: (body) => {
+        return axiosClient.post("/group/filterGroup", body);
+    },
 };
 
 export default GroupService;

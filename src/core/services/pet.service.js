@@ -26,6 +26,9 @@ const PetService = {
     likePet: (petId) => {
         return axiosClient.post(`/pet/likePet/${petId}`);
     },
+    filterPet: (body) => {
+        return axiosClient.post("/pet/filterPet", body);
+    },
 };
 
 export default PetService;

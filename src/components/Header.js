@@ -36,6 +36,7 @@ function Header() {
 
     const [listNoti, setListNoti] = useState([]);
     const [totalNoti, setTotalNoti] = useState();
+    const [filterKeyword, setFilterKeyword] = useState("");
 
     const avatar = user.avatar != null ? user.avatar : defaultAvatar;
 
@@ -102,10 +103,12 @@ function Header() {
                     <input
                         className=" flex ml-4 bg-transparent outline-none text-[15px] text-gray-500 flex-shrink min-w-[20rem]"
                         type="text"
+                        value={filterKeyword}
+                        onChange={(e) => setFilterKeyword(e.target.value)}
                         placeholder="Tìm kiếm trên Petournal"
                     ></input>
                 </div>
-                <div className="absolute top-5 left-2"><FindingBox /></div>
+                <div className="absolute top-5 left-2"><FindingBox variant="user" keyword={filterKeyword} /></div>
             </div>
 
             {/* Right */}
