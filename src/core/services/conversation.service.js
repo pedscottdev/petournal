@@ -10,6 +10,9 @@ const ConversationService = {
     countConversationsNotRead: () => {
         return axiosClient.post("/conversation/countConversationsNotRead");
     },
+    filterConversation: (body) => {
+        return axiosClient.post("/conversation/filterConversation", body);
+    },
 };
 
 export default ConversationService;
