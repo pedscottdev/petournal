@@ -12,7 +12,7 @@ function Feed() {
     const [page, setPage] = useState(2);
 
     useEffect(() => {
-        getTimeLine();
+        getTimeLine().catch(console.error);
     }, []);
 
     const getTimeLine = async () => {

@@ -175,6 +175,7 @@ function group() {
         onSuccess: (data) => {
             console.log(data);
             toast.success("Tạo thành công ");
+            getGroupsByUserLogin();
             onClose();
             setGroupName("");
             setGroupDesc("");

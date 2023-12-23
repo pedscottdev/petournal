@@ -6,18 +6,32 @@ import { IoIosArrowForward } from "react-icons/io";
 import { useSelector } from "react-redux";
 
 function ConversationCard(props) {
-    const { onClick, userId, userAvatar, userName, latestMessage, time, email, hasConversation, selfChat } = props;
+    const {
+        onClick,
+        isRead,
+        conversationId,
+        userId,
+        userAvatar,
+        userName,
+        latestMessage,
+        time,
+        email,
+        hasConversation,
+        selfChat,
+    } = props;
 
     const userStoreId = useSelector((state) => state.user.id);
-    const isUserChat = userStoreId === selfChat;
 
     const handleClick = () => {
-        onClick({ userAvatar, userName, userId });
+        onClick({ user: { userAvatar, userName, userId }, conversationId: conversationId });
     };
+    console.log(isRead);
 
     return (
         <div
-            className="px-6 py-5 cursor-pointer bg-white hover:bg-gray-100"
+            className={`px-6 py-5 cursor-pointer ${
+                isRead ? "bg-white hover:bg-gray-100" : "bg-gray-100 hover:bg-gray-400"
+            } `}
             onClick={handleClick}
         >
             <div className="flex justify-between items-center w-full">
@@ -28,21 +42,41 @@ function ConversationCard(props) {
                         alt="User Avatar"
                     ></img>
                     <div className=" ml-4">
-                        <a className="text-[15px] cursor-pointer font-semibold text-gray-900 truncate dark:text-white">
+                        <a
+                            className={`text-[15px] ${
+                                isRead ? "font-semibold" : "font-bold"
+                            } cursor-pointer  text-gray-900 truncate dark:text-white`}
+                        >
                             {userName}
                         </a>
                         {hasConversation ? (
-                            <div className="text-[15px] font-medium truncate limit-word text-gray-500">
-                                {isUserChat ? "Bạn: " + latestMessage : latestMessage}
+                            <div
+                                className={`text-[15px] ${
+                                    isRead ? "font-medium" : "font-bold"
+                                } truncate limit-word text-gray-500`}
+                            >
+                                {selfChat ? "Bạn: " + latestMessage : latestMessage}
                             </div>
                         ) : (
-                            <div className="text-[15px] font-medium truncate limit-word text-gray-500">{email}</div>
+                            <div
+                                className={`text-[15px] ${
+                                    isRead ? "font-medium" : "font-bold"
+                                } truncate limit-word text-gray-500`}
+                            >
+                                {email}
+                            </div>
                         )}
                     </div>
                 </div>
                 <div className="w-[20%] h-full">
                     {hasConversation ? (
-                        <p className="text-sm cursor-pointer text-gray-600 dark:text-white">{time}</p>
+                        <p
+                            className={`text-sm cursor-pointer ${
+                                isRead ? "font-medium" : "font-bold"
+                            } text-gray-600 dark:text-white`}
+                        >
+                            {time}
+                        </p>
                     ) : (
                         <div className="text-base text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
                             <IoIosArrowForward />

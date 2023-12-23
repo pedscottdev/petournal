@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useContext } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import defaultAvatar from "/src/img/default-avatar.png";
@@ -13,13 +13,26 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDi
 import FollowService from "../../core/services/follow.service";
 import { useSelector } from "react-redux";
 import ConversationService from "../../core/services/conversation.service";
+import { SocketContext } from "../../core/socket/socket";
 
 function chat() {
     const [selectedUser, setSelectedUser] = useState(null);
 
-    const handleUserSelect = (user) => {
-        setSelectedUser(user);
+    const socket = useContext(SocketContext);
+
+    const updateIsRead = async (body) => {
+        const { data } = await ConversationService.updateIsRead(body);
+        return data;
+    };
+
+    const handleUserSelect = async (body) => {
+        await setSelectedUser(body.user);
         onClose();
+        if (body.conversationId !== null) {
+            await updateIsRead({ conversationId: body.conversationId });
+            getConversations();
+            socket.emit("chat-notification", body.conversationId);
+        }
     };
 
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -33,6 +46,12 @@ function chat() {
         getFollowingsByUser();
         getConversations();
     }, []);
+
+    useEffect(() => {
+        socket.on("listen-receive-message", (data) => {
+            getConversations();
+        });
+    }, [socket]);
 
     const getFollowingsByUser = async () => {
         const { data } = await FollowService.getFollowingsByUser();
@@ -102,6 +121,8 @@ function chat() {
                                                             return (
                                                                 <ConversationCard
                                                                     key={following._id}
+                                                                    isRead={false}
+                                                                    conversationId={null}
                                                                     onClick={handleUserSelect}
                                                                     userAvatar={following.following.avatar}
                                                                     userId={following.following._id}
@@ -145,14 +166,18 @@ function chat() {
                                     <ConversationCard
                                         key={conversation._id}
                                         onClick={handleUserSelect}
+                                        conversationId={conversation._id}
+                                        isRead={
+                                            userStore.id !== conversation.userReceive ? true : conversation.isRead
+                                        }
                                         userId={conversation.userPartner._id}
                                         userAvatar={conversation.userPartner.avatar}
                                         userName={
                                             conversation.userPartner.lastName + " " + conversation.userPartner.firstName
                                         }
-                                        selfChat={conversation.selfChat}
-                                        latestMessage={conversation.message[0].message}
-                                        time={formatDate(conversation.message[0].updatedAt)}
+                                        selfChat={conversation.isUserSend}
+                                        latestMessage={conversation.lastMessage.message}
+                                        time={formatDate(conversation.lastMessage.updatedAt)}
                                         hasConversation="true"
                                     />
                                 );

@@ -473,6 +473,7 @@ function groupid() {
                                                 userName={member.user.lastName + " " + member.user.firstName}
                                                 userAvatar={member.user.avatar}
                                                 follower={member.totalFollowers}
+                                                leader = {member.isLeader}
                                                 variant="group"
                                             />
                                         );

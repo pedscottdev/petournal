@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import { MdSubdirectoryArrowRight, MdKeyboardArrowUp } from "react-icons/md";
 import { FaArrowRight } from "react-icons/fa6";
@@ -10,6 +10,8 @@ import CommentService from "../core/services/comment.service";
 import handleTimestamp from "../core/utils/timestamp";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import NotificationService from "../core/services/notification.service";
+import { SocketContext } from "../core/socket/socket";
 
 function CommentParent(props) {
     const {
@@ -21,57 +23,91 @@ function CommentParent(props) {
         content,
         createdTime,
         postOwner,
+        removeCommentById,
         getCommentsByPost,
+        getTotalCommentCount,
+        commentPosition,
     } = props;
 
     const [isCommentVisible, setCommentVisible] = useState(false);
+    const [isReplyVisible, setReplyVisible] = useState(false);
     const [commentChildData, setCommentChildData] = useState([]);
     const [commentChildInput, setCommentChildInput] = useState("");
 
     const userLogin = useSelector((state) => state.user);
+    const socket = useContext(SocketContext);
 
     const toggleComment = () => {
         setCommentVisible(!isCommentVisible);
     };
 
+    const toggleReplyComment = () => {
+        setReplyVisible(!isReplyVisible);
+    };
+
     useEffect(() => {
-        getCommentsChild(postId, commentId);
+        getCommentsChild();
     }, []);
 
-    const getCommentsChild = async (postId, commentId) => {
+    const getCommentsChild = async () => {
         const body = { post_id: postId, comment_id: commentId };
         const { data } = await CommentService.getCommentsChild(body);
-        setCommentChildData(data);
-    };
-
-    const createReplyComment = async (body) => {
-        const result = await CommentService.createComment(body);
-        return result;
-    };
-
-    const handleReplyComment = async () => {
-        if (commentChildInput !== "") {
-            const body = { comment_id: commentId, post_id: postId, text: commentChildInput };
-            const result = await createReplyComment(body);
-            if (result) {
-                await setCommentChildInput("");
-                await getCommentsChild(postId, commentId);
-            }
+        if (data) {
+            setCommentChildData(data);
         }
     };
 
-    const sendDataToParent = async (postId) => {
-        await getCommentsByPost(postId);
+    const isUserNotificationExist = async (body) => {
+        const { data } = await NotificationService.isUserNotificationExist(body);
+        return data;
+    };
+
+    useEffect(() => {
+        if (socket !== null) {
+            const handleCommentChildPostAction = (data) => {
+                if (data.post === postId) {
+                    setCommentChildData((prev) => [...prev, data]);
+                }
+            };
+
+            socket.on("listen-comment-child-post-action", handleCommentChildPostAction);
+
+            // Cleanup function
+            return () => {
+                socket.off("listen-comment-child-post-action", handleCommentChildPostAction);
+            };
+        }
+    }, [socket]);
+
+    const createReplyComment = async (body) => {
+        const result = await CommentService.createComment(body);
+        return result.data;
+    };
+
+    const handleReplyComment = async () => {
+        if (commentChildInput === "") return;
+        const body = { comment_id: commentId, post_id: postId, text: commentChildInput };
+        const result = await createReplyComment(body);
+        if (result) {
+            await socket.emit("comment-child-post-action", { comment_id: result._id });
+            await setCommentChildInput("");
+
+            const data = { type: "COMMENT", post_id: postId, comment_id: commentId };
+            if (await isUserNotificationExist(data)) return;
+            if (postOwner === userLogin.id) return;
+            await socket.emit("comment-post-notification", data);
+        }
     };
 
     const handleDeleteComment = async () => {
         const result = confirm("Xác nhận xoá");
         if (result == true) {
-            console.log(commentId);
-            const result = await CommentService.deleteComment(commentId);
-            console.log(result);
-            if (result) {
-                await sendDataToParent(postId);
+            const { data } = await CommentService.deleteComment(commentId);
+            if (data) {
+                // socket.emit("delete-comment-action", { comment_id: commentId, post_id: postId, position: commentPosition });
+                await removeCommentById(commentId);
+                await getTotalCommentCount();
+                await getCommentsByPost({ post_id: postId, position: commentPosition });
                 await toast.success("Đã xoá");
             }
         }
@@ -106,7 +142,12 @@ function CommentParent(props) {
                             <span>({commentChildData?.length})</span>
                         </div>
                     </div>
-                    <div className="text-sm ml-4 text-gray-500 font-semibold cursor-pointer">Trả lời</div>
+                    <div
+                        className="text-sm ml-4 text-gray-500 font-semibold cursor-pointer"
+                        onClick={toggleReplyComment}
+                    >
+                        Trả lời
+                    </div>
                     <div
                         onClick={handleDeleteComment}
                         className="text-sm ml-4 text-gray-500 font-semibold cursor-pointer"
@@ -128,6 +169,7 @@ function CommentParent(props) {
                                 content={commentChild?.text}
                                 getCommentsChild={getCommentsChild}
                                 postId={postId}
+                                postOwner={postOwner}
                                 commentId={commentId}
                                 commentChildUser={commentChild?.user?._id}
                                 userLogin={userLogin.id}
@@ -137,7 +179,7 @@ function CommentParent(props) {
                 </div>
 
                 {/* Input Reply Comment */}
-                <div className="flex space-x-4 mt-4">
+                <div className={`flex space-x-4 mt-4 ${isReplyVisible ? "" : "hidden"}`}>
                     <Image
                         className="rounded-full cursor-pointer w-10 h-10"
                         src={userLogin.avatar ? userLogin.avatar : defaultAvatar}

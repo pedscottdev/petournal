@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { CircularProgress } from "@nextui-org/react";
 import Link from "next/link";
 import Head from "next/head";
@@ -28,6 +28,9 @@ import { useMutation } from "@tanstack/react-query";
 import Loading from "../../../components/share/loading";
 import toast from "react-hot-toast";
 import FollowService from "../../../core/services/follow.service";
+import NotificationService from "../../../core/services/notification.service";
+import { SocketContext } from "../../../core/socket/socket";
+import { useSelector } from "react-redux";
 
 function profile() {
     const [isFollowing, setIsFollowing] = useState(false);
@@ -45,6 +48,8 @@ function profile() {
 
     const params = useParams();
     const userId = params.id;
+    const socket = useContext(SocketContext);
+    const userStore = useSelector((state) => state.user)
 
     useEffect(() => {
         getProfileUser();
@@ -106,15 +111,26 @@ function profile() {
         await setPage(2);
     };
 
+    const isUserNotificationExist = async (body) => {
+        const { data } = await NotificationService.isUserNotificationExist(body);
+        return data;
+    };
+
     const followMutaion = useMutation({
         mutationFn: async (data) => {
             const result = await FollowService.followUser(data);
             return result.data;
         },
-        onSuccess: () => {
+        onSuccess: async () => {
             toast.success("Đã theo dõi");
             setIsFollowing(true);
             getProfileUser();
+
+            const body = { type: "FOLLOW", follow_id: userId };
+
+            if (await isUserNotificationExist(body)) return;
+
+            socket.emit("follow-notification", body);
         },
     });
 
@@ -394,6 +410,7 @@ function profile() {
                                                 sex={pet.sex}
                                                 age={calculateAge(pet.birthday)}
                                                 likes={pet.likes?.length}
+                                                isUserOwner={pet.user === userStore.id}
                                                 userLiked={pet.isLiked}
                                             />
                                         );

@@ -1,18 +1,22 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PiCheckBold, PiXBold } from "react-icons/pi";
 import FollowService from "../core/services/follow.service.js";
 import toast from "react-hot-toast";
-import { IoIosArrowForward } from "react-icons/io";
+import { PiStarFill } from "react-icons/pi";
 import { useRouter } from "next/navigation.js";
 import { useSelector } from "react-redux";
 import { Checkbox } from "@nextui-org/react";
+import { SocketContext } from "../core/socket/socket.js";
+import NotificationService from "../core/services/notification.service.js";
 
 function UserCard(props) {
-    const { userId, userAvatar, userName, follower, userEmail, link, variant, handleOnSelected } = props;
+    const { userId, userAvatar, userName, follower, userEmail, leader, link, variant, handleOnSelected } = props;
     const router = useRouter();
     const userStoreId = useSelector((state) => state.user.id);
+
+    const socket = useContext(SocketContext);
 
     const [isFollowing, setIsFollowing] = useState(false);
 
@@ -26,6 +30,11 @@ function UserCard(props) {
         return result;
     };
 
+    const isUserNotificationExist = async (body) => {
+        const { data } = await NotificationService.isUserNotificationExist(body);
+        return data;
+    };
+
     const handleFollowClick = async () => {
         if (isFollowing) {
             console.log("sadas");
@@ -36,11 +45,15 @@ function UserCard(props) {
                 setIsFollowing(false);
             }
         } else {
-            const result = await followUser(userId);
-            console.log(result);
-            if (result) {
+            const { data } = await followUser(userId);
+            if (data) {
                 toast.success("Đã theo dõi");
                 setIsFollowing(true);
+                const body = { type: "FOLLOW", follow_id: userId };
+
+                if (await isUserNotificationExist(body)) return;
+
+                socket.emit("follow-notification", body);
             }
         }
     };
@@ -67,10 +80,17 @@ function UserCard(props) {
                 </div>
                 <div className="flex-1 min-w-0">
                     <Link
-                        href={`/profile/${userId}`}
+                        href={variant !== "group" ? `/profile/${userId}` : ""}
                         className="text-[15px] cursor-pointer font-semibold text-gray-900 truncate dark:text-white"
                     >
-                        {userName}
+                        <div className="flex items-center">
+                            {userName}{" "}
+                            {leader && (
+                                <div className="mx-2 ">
+                                    <PiStarFill className="text-sm text-yellow-400" />
+                                </div>
+                            )}
+                        </div>
                     </Link>
                     <p className="text-sm font-medium text-gray-500 truncate dark:text-gray-400">
                         {variant === "adduser" ? userEmail : follower + " người theo dõi"}

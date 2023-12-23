@@ -457,6 +457,7 @@ function pets() {
                                             sex={pet.sex === "male" ? "Đực" : "Cái"}
                                             age={ageOfPet}
                                             likes={pet.likes?.length}
+                                            isUserOwner={pet.user === userStore.id}
                                             userLiked={pet.isLiked}
                                         />
                                     );
