@@ -30,7 +30,7 @@ function ConversationCard(props) {
     return (
         <div
             className={`px-6 py-5 cursor-pointer ${
-                isRead ? "bg-white hover:bg-gray-100" : "bg-gray-100 hover:bg-gray-400"
+                isRead ? "bg-white hover:bg-gray-100" : "bg-gray-50 hover:bg-violet-100"
             } `}
             onClick={handleClick}
         >
@@ -52,19 +52,13 @@ function ConversationCard(props) {
                         {hasConversation ? (
                             <div
                                 className={`text-[15px] ${
-                                    isRead ? "font-medium" : "font-bold"
+                                    isRead ? "font-medium" : "font-bold text-violet-600"
                                 } truncate limit-word text-gray-500`}
                             >
                                 {selfChat ? "Bạn: " + latestMessage : latestMessage}
                             </div>
                         ) : (
-                            <div
-                                className={`text-[15px] ${
-                                    isRead ? "font-medium" : "font-bold"
-                                } truncate limit-word text-gray-500`}
-                            >
-                                {email}
-                            </div>
+                            <div className="text-[15px] font-medium truncate limit-word text-gray-500">{email}</div>
                         )}
                     </div>
                 </div>

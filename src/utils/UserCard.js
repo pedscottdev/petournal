@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { Checkbox } from "@nextui-org/react";
 import { SocketContext } from "../core/socket/socket.js";
 import NotificationService from "../core/services/notification.service.js";
+import "../app/globals.css"
 
 function UserCard(props) {
     const { userId, userAvatar, userName, follower, userEmail, leader, link, variant, handleOnSelected } = props;
@@ -81,14 +82,14 @@ function UserCard(props) {
                 <div className="flex-1 min-w-0">
                     <Link
                         href={variant !== "group" ? `/profile/${userId}` : ""}
-                        className="text-[15px] cursor-pointer font-semibold text-gray-900 truncate dark:text-white"
+                        className="text-[15px] cursor-pointer font-semibold  truncate dark:text-white"
                     >
-                        <div className="flex items-center">
+                        <div className="flex items-center text-gray-900">
                             {userName}{" "}
                             {leader && (
-                                <div className="mx-2 ">
-                                    <PiStarFill className="text-sm text-yellow-400" />
-                                </div>
+                                <span className="mx-2 ">
+                                    <PiStarFill className="text-sm golden-star"/>
+                                </span>
                             )}
                         </div>
                     </Link>

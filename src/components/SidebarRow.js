@@ -13,23 +13,24 @@ function SidebarRow({ Icon, title, active, isChat }) {
     }, []);
 
     useEffect(() => {
-        const handleReceiveMessage = (data) => {
-            countConversationsNotRead();
-        };
+        if (socket !== null) {
+            const handleReceiveMessage = (data) => {
+                countConversationsNotRead();
+            };
 
-        const handleChatNotification = () => {
-            countConversationsNotRead();
-        };
+            const handleChatNotification = () => {
+                countConversationsNotRead();
+            };
+            // Add event listeners
+            socket.on("listen-receive-message", handleReceiveMessage);
+            socket.on("listen-chat-notification", handleChatNotification);
 
-        // Add event listeners
-        socket.on("listen-receive-message", handleReceiveMessage);
-        socket.on("listen-chat-notification", handleChatNotification);
-
-        // Clean up event listeners when the component unmounts
-        return () => {
-            socket.off("listen-receive-message", handleReceiveMessage);
-            socket.off("listen-chat-notification", handleChatNotification);
-        };
+            // Clean up event listeners when the component unmounts
+            return () => {
+                socket.off("listen-receive-message", handleReceiveMessage);
+                socket.off("listen-chat-notification", handleChatNotification);
+            };
+        }
     }, [socket]);
 
     const countConversationsNotRead = async () => {
