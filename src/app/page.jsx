@@ -19,6 +19,10 @@ export default function Home() {
             router.push("/login");
         }
     }, [accessToken]);
+    
+    if (!accessToken) {
+        router.push("/login");
+    }
 
     return (
         <main>

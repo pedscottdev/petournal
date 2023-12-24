@@ -41,10 +41,6 @@ export default function RootLayout({ children }) {
         }
     }, [tokenLocal]);
 
-    // if (!tokenLocal) {
-    //     router.push("/login");
-    // }
-
     return (
         <html lang="en">
             <head>
