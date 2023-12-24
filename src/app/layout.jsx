@@ -68,7 +68,7 @@ export default function RootLayout({ children }) {
                                     height="4px"
                                     color="#9B66FD"
                                     options={{ showSpinner: false }}
-                                    // shallowRouting
+                                    shallowRouting
                                 />
                             </SocketContext.Provider>
                         </PersistGate>

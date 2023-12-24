@@ -427,7 +427,7 @@ function groupid() {
 
                                 {/* Users */}
                                 <div className="mb-4 space-y-2 max-h-[420px] overflow-y-auto">
-                                    {listMembers?.map((member) => {
+                                    {/* {listMembers?.map((member) => {
                                         return (
                                             <UserCard
                                                 key={member._id}
@@ -438,14 +438,39 @@ function groupid() {
                                                 variant="group"
                                             />
                                         );
-                                    })}
+                                    })} */}
 
-                                    {/* <UserCard
+                                    <UserCard
                                         userName="Huong Lua Nguyen"
                                         userAvatar={testAvatar2}
                                         follower="1K"
                                         variant="group"
-                                    /> */}
+                                    />
+
+<UserCard
+                                        userName="Huong Lua Nguyen"
+                                        userAvatar={testAvatar2}
+                                        follower="1K"
+                                        variant="group"
+                                    />
+                                    <UserCard
+                                        userName="Huong Lua Nguyen"
+                                        userAvatar={testAvatar2}
+                                        follower="1K"
+                                        variant="group"
+                                    />
+                                    <UserCard
+                                        userName="Huong Lua Nguyen"
+                                        userAvatar={testAvatar2}
+                                        follower="1K"
+                                        variant="group"
+                                    />
+                                    <UserCard
+                                        userName="Huong Lua Nguyen"
+                                        userAvatar={testAvatar2}
+                                        follower="1K"
+                                        variant="group"
+                                    />
                                 </div>
                             </div>
                         </div>

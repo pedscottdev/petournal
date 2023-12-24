@@ -345,12 +345,20 @@ function group() {
                                                             labelPlacement="outside"
                                                             className="mt-1 bg-gray-50"
                                                             selectedKeys={selectedUser}
-                                                            onSelectionChange={handleUserSelection}
+                                                            onSelectionChange={setSelectedUser}
                                                             renderValue={listUserSelected.join(" ,")}
+                                                            // renderValue={items.map((item, index) => (
+                                                            //   <>
+                                                            //     {index > 0 && ", "}
+                                                            //     {item.value}
+                                                            //   </>
+                                                            // ))}
                                                         >
                                                             {listUser?.map((user) => {
                                                                 return (
-                                                                    <SelectItem key={user._id} value={user._id}>
+                                                                    <SelectItem key={user._id} value={user.lastName +
+                                                                      " " +
+                                                                      user.firstName}>
                                                                         <div className="flex gap-2 items-center">
                                                                             <Avatar
                                                                                 alt={user._id}
@@ -374,8 +382,8 @@ function group() {
                                                             })}
                                                         </Select>
                                                         <p className="text-small text-default-500 py-3">
-                                                            Thành viên đã chọn: {listUserSelected.join(", ")}
-                                                        </p>
+                                                            Thành viên đã chọn: {Array.from(selectedUser).join(", ")}
+    z                                                    </p>
                                                     </div>
                                                 </div>
                                             </div>
