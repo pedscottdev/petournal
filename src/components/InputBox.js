@@ -48,6 +48,7 @@ const InputBox = (props) => {
                 id: pet._id,
                 name: pet.name,
                 avatar: pet.avatar,
+                breed: pet.breed,
                 isChecked: false,
             });
         });
@@ -255,7 +256,7 @@ const InputBox = (props) => {
                                                         petName={pet.name}
                                                         petAvatar={pet.avatar}
                                                         isChecked={pet.isChecked}
-                                                        petInfo="Chó Anh lông ngắn"
+                                                        petInfo={pet.breed}
                                                         path=""
                                                         type="tag"
                                                     />

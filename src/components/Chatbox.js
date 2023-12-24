@@ -18,7 +18,7 @@ function Chatbox(props) {
     const userStore = useSelector((state) => state.user);
     const socket = useContext(SocketContext);
     const router = useRouter();
-    // console.log(socket);
+    console.log(userId);
 
     const [listMessages, setListMessages] = useState([]);
     const [arrivalMessage, setArrivalMessage] = useState(null);
@@ -52,6 +52,7 @@ function Chatbox(props) {
             });
             setListMessages(msgs);
             setText("");
+            
             handleGetConversation();
         },
     });

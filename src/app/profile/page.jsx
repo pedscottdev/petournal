@@ -432,6 +432,7 @@ function profile() {
                                                 age={calculateAge(pet.birthday)}
                                                 likes={pet.likes?.length}
                                                 userLiked={pet.isLiked}
+                                                isUserOwner={pet.user === userStore.id}
                                             />
                                         );
                                     })}

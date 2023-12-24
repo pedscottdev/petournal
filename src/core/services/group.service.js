@@ -25,8 +25,17 @@ const GroupService = {
     getListUserInvite: () => {
         return axiosClient.post("/group/getListUserInvite");
     },
+    getListUserInviteOfGroup: (groupId) => {
+        return axiosClient.post(`/group/getListUserInviteOfGroup/${groupId}`);
+    },
     updateProfileGroup: (body) => {
         return axiosClient.post("/group/updateProfileGroup", body);
+    },
+    addUserToGroup: (body) => {
+        return axiosClient.post("/group/addUserToGroup", body);
+    },
+    filterGroup: (body) => {
+        return axiosClient.post("/group/filterGroup", body);
     },
 };
 

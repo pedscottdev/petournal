@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 import { ImageStorage } from "../../../firebase";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import Loading from "../../components/share/loading.js";
+import FindingBox from "../../components/share/finding-box";
 
 function group() {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -37,6 +38,7 @@ function group() {
     const [filter, setFilter] = useState("");
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState();
+    const [filterKeyword, setFilterKeyword] = useState("");
 
     const userStoreId = useSelector((state) => state.user.id);
     let newArray = [userStoreId];
@@ -175,6 +177,7 @@ function group() {
         onSuccess: (data) => {
             console.log(data);
             toast.success("Tạo thành công ");
+            getGroupsByUserLogin();
             onClose();
             setGroupName("");
             setGroupDesc("");
@@ -239,13 +242,20 @@ function group() {
 
                             <div className="flex space-x-4">
                                 {/* Search */}
-                                <div className="flex flex-row  ml-2 items-center rounded-lg border-2 border-gray-200 bg-[#ECEDF6] py-1 w-[]">
-                                    <SearchIcon className="h-4 ml-2 text-gray-500" />
-                                    <input
-                                        className=" flex ml-4 bg-transparent outline-none text-[15px] text-gray-500 flex-shrink min-w-[20rem]"
-                                        type="text"
-                                        placeholder="Tìm kiếm theo tên"
-                                    ></input>
+                                <div className="flex flex-col relative">
+                                    <div className="flex flex-row  ml-2 items-center rounded-lg border-2 border-gray-200 bg-[#ECEDF6] py-3 w-[]">
+                                        <SearchIcon className="h-4 ml-2 text-gray-500" />
+                                        <input
+                                            className=" flex ml-4 bg-transparent outline-none text-[15px] text-gray-500 flex-shrink min-w-[20rem]"
+                                            type="text"
+                                            value={filterKeyword}
+                                            onChange={(e) => setFilterKeyword(e.target.value)}
+                                            placeholder="Tìm kiếm theo tên"
+                                        ></input>
+                                    </div>
+                                    <div className="absolute top-8 left-2">
+                                        <FindingBox variant="group" keyword={filterKeyword} />
+                                    </div>
                                 </div>
                                 <button
                                     className="flex items-center bg-violet-600 active:scale-[.94] active:duration-75 transition-all font-medium text-white p-2 text-[15px] px-4 rounded-xl"

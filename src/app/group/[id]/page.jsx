@@ -12,7 +12,6 @@ import { Select, SelectItem } from "@nextui-org/react";
 import Datepicker from "tailwind-datepicker-react";
 import Image from "next/image";
 import UserCard from "../../../utils/UserCard";
-import UserCardCheckbox from "../../../utils/UserCardCheckbox";
 import { Avatar, AvatarGroup } from "@nextui-org/react";
 import Link from "next/link";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
@@ -28,8 +27,13 @@ function groupid() {
     const params = useParams();
     const groupId = params.id;
 
-    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-    const { isOpen: isAddOpen, onOpen: onAddOpen, onClose: onAddClose } = useDisclosure();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const {
+        isOpen: isAddOpen,
+        onOpen: onAddOpen,
+        onOpenChange: onAddOpenChange,
+        onClose: onAddClose,
+    } = useDisclosure();
 
     const fileInputRef = useRef(null);
 
@@ -39,7 +43,7 @@ function groupid() {
     const [groupDesc, setGroupDesc] = useState(null);
     const [groupAvatar, setGroupAvatar] = useState(null);
 
-    const [selectedUser, setSelectedUser] = React.useState(new Set([]));
+    const [selectedUser, setSelectedUser] = React.useState([]);
 
     const [groupData, setGroupData] = useState(null);
     const [listMembers, setListMembers] = useState([]);
@@ -50,15 +54,15 @@ function groupid() {
     useEffect(() => {
         getGroupById();
         getPostsFromGroup();
-        getListUserInvite();
+        getListUserInviteOfGroup();
     }, []);
 
     useEffect(() => {
         getMembers();
     }, [groupData]);
 
-    const getListUserInvite = async () => {
-        const { data } = await GroupService.getListUserInvite();
+    const getListUserInviteOfGroup = async () => {
+        const { data } = await GroupService.getListUserInviteOfGroup(groupId);
         setListUserInvite(data);
     };
 
@@ -122,7 +126,28 @@ function groupid() {
     };
 
     const handleUserSelection = (selectedKeys) => {
-        setSelectedUser(selectedKeys);
+        if (selectedKeys.isSelected === true) {
+            setSelectedUser((prevUsers) => [...prevUsers, selectedKeys.userId]);
+        } else {
+            setSelectedUser((prevUsers) => prevUsers.filter((user) => user !== selectedKeys.userId));
+        }
+    };
+
+    const addUserMutation = useMutation({
+        mutationFn: async (data) => {
+            const result = await GroupService.addUserToGroup(data);
+            return result.data;
+        },
+        onSuccess: async () => {
+            await toast.success("Đã thêm");
+            await onAddClose();
+            await getMembers();
+        },
+    });
+
+    const addUserToGroup = async () => {
+        const body = { groupId: groupId, users: selectedUser };
+        addUserMutation.mutate(body);
     };
 
     const handleImageChange = (e) => {
@@ -216,7 +241,13 @@ function groupid() {
                                         <div className="avatar-group">
                                             <AvatarGroup size="sm" isBordered max={3}>
                                                 {listMembers?.map((member) => {
-                                                    return <Avatar key={member._id} size="sm" src={member.avatar} />;
+                                                    return (
+                                                        <Avatar
+                                                            key={member.user._id}
+                                                            size="sm"
+                                                            src={member.user.avatar}
+                                                        />
+                                                    );
                                                 })}
                                             </AvatarGroup>
                                         </div>
@@ -352,30 +383,32 @@ function groupid() {
                                             Thêm người
                                         </button>
 
-                                        <Modal isOpen={isAddOpen} isDismissable={false} size="lg">
+                                        <Modal
+                                            isOpen={isAddOpen}
+                                            onOpenChange={onAddOpenChange}
+                                            isDismissable={false}
+                                            size="lg"
+                                        >
                                             <ModalContent>
-                                                {(onClose) => (
+                                                {(onAddClose) => (
                                                     <>
                                                         <ModalHeader className="flex flex-col gap-1">
                                                             Mời thêm người
                                                         </ModalHeader>
                                                         <ModalBody>
                                                             <div className="gap-y-2 divide-y divide-gray-200">
-                                                                {/* <UserCard
-                                                                    userName="Thai Son Nguyen"
-                                                                    userAvatar={testAvatar}
-                                                                    follower="140"
-                                                                    variant="adduser"
-                                                                /> */}
-                                                                {listUserInvite?.map((user) => {
+                                                                {listUserInvite.map((user) => {
                                                                     return (
-                                                                        <UserCardCheckbox
+                                                                        <UserCard
+                                                                            key={user._id}
                                                                             userId={user._id}
                                                                             userName={
                                                                                 user.lastName + " " + user.firstName
                                                                             }
-                                                                            userEmail={user.email}
                                                                             userAvatar={user.avatar}
+                                                                            userEmail={user.email}
+                                                                            handleOnSelected={handleUserSelection}
+                                                                            variant="adduser"
                                                                         />
                                                                     );
                                                                 })}
@@ -386,7 +419,12 @@ function groupid() {
                                                                 <div className="text-[15px] font-medium">Đóng</div>
                                                             </Button>
                                                             <Button color="secondary">
-                                                                <div className="text-[15px] font-medium">Xác nhận</div>
+                                                                <div
+                                                                    className="text-[15px] font-medium"
+                                                                    onClick={addUserToGroup}
+                                                                >
+                                                                    {addUserMutation.isPending ? <Loading /> : "Xác nhận"}
+                                                                </div>
                                                             </Button>
                                                         </ModalFooter>
                                                     </>
@@ -430,11 +468,12 @@ function groupid() {
                                     {/* {listMembers?.map((member) => {
                                         return (
                                             <UserCard
-                                                key={member._id}
-                                                userId={member._id}
-                                                userName={member.lastName + " " + member.firstName}
-                                                userAvatar={member.avatar}
-                                                userEmail={member.email}
+                                                key={member.user._id}
+                                                userId={member.user._id}
+                                                userName={member.user.lastName + " " + member.user.firstName}
+                                                userAvatar={member.user.avatar}
+                                                follower={member.totalFollowers}
+                                                leader = {member.isLeader}
                                                 variant="group"
                                             />
                                         );

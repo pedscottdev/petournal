@@ -1,17 +1,20 @@
 import axiosClient from "./base.js";
 
 const CommentService = {
-    getComments: (body) => {
-        return axiosClient.post("/comment/getComments", body);
+    getComments: async (body) => {
+        return await axiosClient.post("/comment/getComments", body);
     },
-    getCommentsChild: (body) => {
-        return axiosClient.post("/comment/getCommentsChild", body);
+    getTotalCommentCount: async (body) => {
+        return await axiosClient.post("/comment/getTotalCommentCount", body);
     },
-    createComment: (body) => {
-        return axiosClient.post("/comment/createComment", body);
+    getCommentsChild: async (body) => {
+        return await axiosClient.post("/comment/getCommentsChild", body);
     },
-    deleteComment: (commentId) => {
-        return axiosClient.post(`/comment/deleteComment/${commentId}`);
+    createComment: async (body) => {
+        return await axiosClient.post("/comment/createComment", body);
+    },
+    deleteComment: async (commentId) => {
+        return await axiosClient.post(`/comment/deleteComment/${commentId}`);
     },
 };
 

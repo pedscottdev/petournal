@@ -5,6 +5,7 @@ const initialState = [
         id: "",
         name: "",
         avatar: "",
+        breed: "",
         isChecked: false,
     },
 ];

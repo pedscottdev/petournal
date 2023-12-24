@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
@@ -9,18 +9,27 @@ import defaultPetAvatar from "../img/default-pet-avatar.png";
 import toast from "react-hot-toast";
 import PetService from "../core/services/pet.service";
 import { useMutation } from "@tanstack/react-query";
+import { SocketContext } from "../core/socket/socket";
+import NotificationService from "../core/services/notification.service";
 
 function PetProfileCard(props) {
     const [isLiked, setIsLiked] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [countLike, setCountLike] = useState();
 
-    const { petAvatar, petName, species, sex, breed, likes, age, petId, userLiked } = props;
+    const { petAvatar, petName, species, sex, breed, likes, age, petId, userLiked, isUserOwner } = props;
+
+    const socket = useContext(SocketContext);
 
     useEffect(() => {
         userLiked == true ? setIsLiked(true) : setIsLiked(false);
         setCountLike(likes);
     }, []);
+
+    const isUserNotificationExist = async (body) => {
+        const { data } = await NotificationService.isUserNotificationExist(body);
+        return data;
+    };
 
     const likePetMutation = useMutation({
         mutationFn: async (data) => {
@@ -28,10 +37,17 @@ function PetProfileCard(props) {
             console.log(result);
             return result.data;
         },
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
             setCountLike(data.likes.length);
             setIsLiked(data.isLiked);
             data.isLiked == true ? toast.success("Đã thích") : toast.success("Đã huỷ thích");
+
+            if (data.isLiked == true) {
+                const body = { type: "LIKE_PET", pet_id: petId };
+                if (await isUserNotificationExist(body)) return;
+                if (isUserOwner) return;
+                socket.emit("like-pet-notification", body);
+            }
         },
     });
 

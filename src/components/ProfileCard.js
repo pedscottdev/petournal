@@ -1,13 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import Link from "next/link";
 import { useState } from "react";
 import { CircularProgress } from "@nextui-org/react";
 import { useMutation } from "@tanstack/react-query";
 import FollowService from "../core/services/follow.service";
 import toast from "react-hot-toast";
+import { SocketContext } from "../core/socket/socket";
 
 function ProfileCard(props) {
     const { userAvatar, userName, gmail, pet, follower, following, isUserFollowing, userId } = props;
+
+    const socket = useContext(SocketContext)
 
     const [isFollowing, setIsFollowing] = useState();
     useEffect(() => {
@@ -18,13 +21,24 @@ function ProfileCard(props) {
         }
     }, [isUserFollowing]);
 
+    const isUserNotificationExist = async (body) => {
+        const { data } = await NotificationService.isUserNotificationExist(body);
+        return data;
+    };
+
     const mutationFollow = useMutation({
         mutationFn: async (data) => {
             await FollowService.followUser(data);
         },
-        onSuccess: () => {
+        onSuccess: async () => {
             setIsFollowing(true);
             toast.success("Đã theo dõi");
+
+            const body = { type: "FOLLOW", follow_id: userId };
+
+            if (await isUserNotificationExist(body)) return;
+
+            socket.emit("follow-notification", body);
         },
         onError: (err) => {
             toast.error(err.response.data.message);

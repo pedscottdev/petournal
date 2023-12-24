@@ -118,6 +118,7 @@ function Sidebar() {
                 <SidebarRow
                   Icon={item.icon}
                   title={item.title}
+                  isChat = {item.path === "/chat" ? true : false}
                   active={`${
                     pathname === item.path ||
                     (item.path === "/pets" && pathname.startsWith("/pets/")) ||

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useContext } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import defaultAvatar from "/src/img/default-avatar.png";
@@ -13,13 +13,30 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDi
 import FollowService from "../../core/services/follow.service";
 import { useSelector } from "react-redux";
 import ConversationService from "../../core/services/conversation.service";
+import { SocketContext } from "../../core/socket/socket";
+import { useMutation } from "@tanstack/react-query";
+import Loading from "../../components/share/loading";
 
 function chat() {
     const [selectedUser, setSelectedUser] = useState(null);
+    const [filterKeyword, setFilterKeyword] = useState("");
+    const [filterFollowingKeyword, setFilterFollowingKeyword] = useState("");
 
-    const handleUserSelect = (user) => {
-        setSelectedUser(user);
+    const socket = useContext(SocketContext);
+
+    const updateIsRead = async (body) => {
+        const { data } = await ConversationService.updateIsRead(body);
+        return data;
+    };
+
+    const handleUserSelect = async (body) => {
+        await setSelectedUser(body.user);
         onClose();
+        if (body.conversationId !== null) {
+            await updateIsRead({ conversationId: body.conversationId });
+            getConversations();
+            socket.emit("chat-notification", body.conversationId);
+        }
     };
 
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -34,9 +51,53 @@ function chat() {
         getConversations();
     }, []);
 
+    useEffect(() => {
+        socket.on("listen-receive-message", (data) => {
+            getConversations();
+        });
+    }, [socket]);
+
+    useEffect(() => {
+        filterConversation(filterKeyword);
+        filterFollowing(filterFollowingKeyword);
+    }, [filterKeyword, filterFollowingKeyword]);
+
+    const filterConversation = async (keyword) => {
+        console.log(keyword);
+        const { data } = await ConversationService.filterConversation({ keyword });
+        if (keyword !== "") {
+            if (data) {
+                setListConversation(data);
+            }
+        } else {
+            getConversations();
+        }
+    };
+
+    const getFollowingsMutation = useMutation({
+        mutationFn: async () => {
+            const result = await FollowService.getFollowingsByUser();
+            return result.data;
+        },
+        onSuccess: async (data) => {
+            setListFollowing(data);
+        },
+    });
+
+    const filterFollowing = async (keyword) => {
+        const { data } = await FollowService.filterFollowing({ keyword });
+        if (keyword !== "") {
+            if (data) {
+                setListFollowing(data);
+            }
+        } else {
+            getFollowingsMutation.mutate();
+        }
+    };
+
     const getFollowingsByUser = async () => {
         const { data } = await FollowService.getFollowingsByUser();
-        setListFollowing(data.listUser);
+        setListFollowing(data);
     };
 
     const getConversations = async () => {
@@ -94,26 +155,55 @@ function chat() {
                                                         <input
                                                             className=" flex ml-4 bg-transparent outline-none text-[15px] text-gray-500 flex-shrink"
                                                             type="text"
+                                                            value={filterFollowingKeyword}
+                                                            onChange={(e) => {
+                                                                setFilterFollowingKeyword(e.target.value);
+                                                            }}
                                                             placeholder="Tìm kiếm người dùng"
                                                         ></input>
                                                     </div>
                                                     <div className="h-[20rem] overflow-y-auto mt-5 border-t divide-y divide-gray-200">
-                                                        {listFollowing?.map((following) => {
-                                                            return (
-                                                                <ConversationCard
-                                                                    key={following._id}
-                                                                    onClick={handleUserSelect}
-                                                                    userAvatar={following.following.avatar}
-                                                                    userId={following.following._id}
-                                                                    userName={
-                                                                        following.following.lastName +
-                                                                        " " +
-                                                                        following.following.firstName
-                                                                    }
-                                                                    email={following.following.email}
-                                                                />
-                                                            );
-                                                        })}
+                                                        {getFollowingsMutation.isPending ? (
+                                                            <div className="flex justify-center items-center mt-4">
+                                                                <Loading />
+                                                            </div>
+                                                        ) : (
+                                                            listFollowing.length > 0 &&
+                                                            listFollowing?.map((following) => {
+                                                                return (
+                                                                    <ConversationCard
+                                                                        key={following._id}
+                                                                        isRead={false}
+                                                                        conversationId={null}
+                                                                        onClick={handleUserSelect}
+                                                                        userAvatar={
+                                                                            filterFollowingKeyword !== ""
+                                                                                ? following.avatar
+                                                                                : following?.following?.avatar
+                                                                        }
+                                                                        userId={
+                                                                            filterFollowingKeyword !== ""
+                                                                                ? following._id
+                                                                                : following?.following?._id
+                                                                        }
+                                                                        userName={
+                                                                            filterFollowingKeyword !== ""
+                                                                                ? following.lastName +
+                                                                                  " " +
+                                                                                  following.firstName
+                                                                                : following?.following?.lastName +
+                                                                                  " " +
+                                                                                  following?.following?.firstName
+                                                                        }
+                                                                        email={
+                                                                            filterFollowingKeyword !== ""
+                                                                                ? following.email
+                                                                                : following?.following?.email
+                                                                        }
+                                                                    />
+                                                                );
+                                                            })
+                                                        )}
                                                     </div>
                                                 </div>
                                             </ModalBody>
@@ -133,6 +223,8 @@ function chat() {
                                 <input
                                     className=" flex ml-4 bg-transparent outline-none text-[15px] text-gray-500 flex-shrink"
                                     type="text"
+                                    value={filterKeyword}
+                                    onChange={(e) => setFilterKeyword(e.target.value)}
                                     placeholder="Tìm kiếm cuộc hội thoại"
                                 ></input>
                             </div>
@@ -140,23 +232,30 @@ function chat() {
 
                         {/* Conversation List */}
                         <div className="h-full flex-auto overflow-y-auto divide-y divide-gray-200 lg:min-w-100 lg:max-w-100">
-                            {listConversation?.map((conversation) => {
-                                return (
-                                    <ConversationCard
-                                        key={conversation._id}
-                                        onClick={handleUserSelect}
-                                        userId={conversation.userPartner._id}
-                                        userAvatar={conversation.userPartner.avatar}
-                                        userName={
-                                            conversation.userPartner.lastName + " " + conversation.userPartner.firstName
-                                        }
-                                        selfChat={conversation.selfChat}
-                                        latestMessage={conversation.message[0].message}
-                                        time={formatDate(conversation.message[0].updatedAt)}
-                                        hasConversation="true"
-                                    />
-                                );
-                            })}
+                            {listConversation.length > 0 &&
+                                listConversation?.map((conversation) => {
+                                    return (
+                                        <ConversationCard
+                                            key={conversation._id}
+                                            onClick={handleUserSelect}
+                                            conversationId={conversation._id}
+                                            isRead={
+                                                userStore.id !== conversation.userReceive ? true : conversation.isRead
+                                            }
+                                            userId={conversation.userPartner._id}
+                                            userAvatar={conversation.userPartner.avatar}
+                                            userName={
+                                                conversation.userPartner.lastName +
+                                                " " +
+                                                conversation.userPartner.firstName
+                                            }
+                                            selfChat={conversation.isUserSend}
+                                            latestMessage={conversation.lastMessage.message}
+                                            time={formatDate(conversation.lastMessage.updatedAt)}
+                                            hasConversation="true"
+                                        />
+                                    );
+                                })}
                         </div>
                     </div>
 

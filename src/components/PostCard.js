@@ -41,6 +41,7 @@ import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { ImageStorage } from "../../firebase";
 import { useRouter } from "next/navigation";
 import { SocketContext } from "../core/socket/socket";
+import NotificationService from "../core/services/notification.service";
 
 function PostCard(props) {
     const { postId, isUserFollowing, isUserLiked, handleGetTimeLine, handleResetPage, variant } = props;
@@ -50,6 +51,8 @@ function PostCard(props) {
     const userPets = useSelector((state) => state.pet);
     const [postData, setPostData] = useState();
     const [commentData, setCommentData] = useState([]);
+    const [commentDataSocket, setCommentDataSocket] = useState([]);
+    const [commentDataTemp, setCommentDataTemp] = useState([]);
     const [totalComment, setTotalComment] = useState();
     const [totalCommentParent, setTotalCommentParent] = useState();
     const [commentInput, setCommentInput] = useState("");
@@ -61,6 +64,7 @@ function PostCard(props) {
     const [selectedFile, setSelectedFile] = useState(null);
 
     const [isLoaded, setIsLoaded] = useState(true);
+    const [position, setPosition] = useState();
 
     const userStore = useSelector((state) => state.user);
 
@@ -70,8 +74,11 @@ function PostCard(props) {
 
     useEffect(() => {
         getPostById();
-        getCommentsByPost(postId);
+        getTotalCommentCount();
     }, []);
+    useEffect(() => {
+        getCommentsByPost({ post_id: postId });
+    }, [postId]);
 
     const updatePostMutation = useMutation({
         mutationFn: async (data) => {
@@ -137,20 +144,25 @@ function PostCard(props) {
 
     const getPostById = async () => {
         const { data } = await PostService.getPostById(postId);
-        await setPostData(data);
-        await setInputUpdate(data?.content);
-        await setUsersLike(data?.likes);
+        setPostData(data);
+        setInputUpdate(data?.content);
+        setUsersLike(data?.likes);
         if (isUserLiked) {
-            await setIsLiked(true);
+            setIsLiked(true);
         }
     };
 
-    const getCommentsByPost = async (postId) => {
-        const body = { post_id: postId };
+    const getCommentsByPost = async (body) => {
         const { data } = await CommentService.getComments(body);
-        setCommentData(data.comments);
-        setTotalComment(data.totalCommentCount);
-        setTotalCommentParent(data.totalCommentParent);
+        if (data) {
+            setCommentData(data.comments);
+            setTotalCommentParent(data.totalCommentParent);
+        }
+    };
+
+    const getTotalCommentCount = async () => {
+        const { data } = await CommentService.getTotalCommentCount({ post_id: postId });
+        setTotalComment(data);
     };
 
     const timePostAgo = handleTimestamp(postData?.createdAt);
@@ -191,35 +203,105 @@ function PostCard(props) {
             await setUsersLike(data);
         }
     };
+    const isUserNotificationExist = async (body) => {
+        const { data } = await NotificationService.isUserNotificationExist(body);
+        return data;
+    };
 
     const handleLikeClick = async () => {
         if (isLiked) {
             await likePost(postId);
-            toast.success("Đã bỏ thích bài viết");
-            setIsLiked(false);
+            await toast.success("Đã bỏ thích bài viết");
+            await likePostActionSocket();
+            await setIsLiked(false);
         } else {
             await likePost(postId);
             await toast.success("Đã thích bài viết");
-            await socket.emit("like-post-notification", {
-                post_id: postId,
-                type: "LIKE_POST",
-            });
+            await socket.emit("like-post-action", { post_id: postId });
+            const body = { type: "LIKE_POST", post_id: postId };
             await setIsLiked(true);
+
+            if (await isUserNotificationExist(body)) return;
+            if (isUserLogin) return;
+
+            await socket.emit("like-post-notification", body);
         }
+    };
+
+    useEffect(() => {
+        if (socket !== null) {
+            const handleLikePostAction = (data) => {
+                setUsersLike(data);
+            };
+
+            const handleCommentPostAction = (data) => {
+                if (data.post === postId) {
+                    setCommentDataSocket((prev) => {
+                        console.log(prev);
+                        return [data, ...prev];
+                    });
+                }
+            };
+
+            // const handleDeleteCommentAction = (body) => {
+            //     const { comment_id, post_id, position } = body;
+            //     if (post_id === postId) {
+            //         setCommentDataTemp((prev) => prev.filter((item) => item._id !== comment_id));
+            //         setCommentDataSocket((prev) => prev.filter((item) => item._id !== comment_id));
+            //         getPostById({ post_id: post_id, position: position });
+            //         getTotalCommentCount();
+            //     }
+            // };
+
+            socket.on("listen-like-post-action", handleLikePostAction);
+            socket.on("listen-comment-post-action", handleCommentPostAction);
+            // socket.on("listen-delete-comment-action", handleDeleteCommentAction);
+
+            // Cleanup function
+            return () => {
+                socket.off("listen-like-post-action", handleLikePostAction);
+                socket.off("listen-comment-post-action", handleCommentPostAction);
+                // socket.off("listen-delete-comment-action", handleDeleteCommentAction);
+            };
+        }
+    }, [socket]);
+
+    useEffect(() => {
+        const commentArray = commentDataSocket.concat(commentData);
+        setCommentDataTemp(commentArray);
+        setPosition(commentDataSocket.length > 0 ? commentDataSocket[commentDataSocket.length - 1].createdAt : null);
+    }, [commentDataSocket, commentData]);
+
+    console.log(position);
+    console.log(commentData);
+    console.log("postId: " + postId, commentDataTemp);
+
+    const removeCommentById = (commentId) => {
+        setCommentDataTemp((prev) => prev.filter((item) => item._id !== commentId));
+        setCommentDataSocket((prev) => prev.filter((item) => item._id !== commentId));
     };
 
     const createComment = async (body) => {
         const result = await CommentService.createComment(body);
-        return result;
+        return result.data;
     };
 
     const handleComment = async () => {
+        if (commentInput.trim() === "") return;
         const body = { post_id: postId, text: commentInput };
         const result = await createComment(body);
         if (result) {
-            await getCommentsByPost(postId);
-            await setCommentInput("");
+            await socket.emit("comment-post-action", { comment_id: result._id });
+            const data = { type: "COMMENT", post_id: postId, comment_id: result._id };
+            setCommentInput("");
+            setCountLoadComment(2);
+            getTotalCommentCount();
             toast.success("Đã bình luận");
+
+            if (await isUserNotificationExist(data)) return;
+            if (isUserLogin) return;
+
+            await socket.emit("comment-post-notification", data);
         } else {
             toast.error("Bình luận lỗi");
         }
@@ -231,16 +313,17 @@ function PostCard(props) {
             return result.data;
         },
         onSuccess: (data) => {
-            const newArray = commentData.concat(data.comments);
-            setCommentData(newArray);
-            setTotalComment(data.totalCommentCount);
+            const newArray = commentDataTemp.concat(data.comments);
+            setCommentDataTemp(newArray);
+            getTotalCommentCount();
             setCountLoadComment((preCount) => preCount + 1);
         },
         onError: (err) => {},
     });
 
     const handleLoadComment = async () => {
-        const body = { page: countLoadComment, post_id: postId };
+        const body = { page: countLoadComment, post_id: postId, position: position };
+
         mutationComment.mutate(body);
     };
 
@@ -556,8 +639,8 @@ function PostCard(props) {
                                                         key={pet._id}
                                                         petAvatar={pet.avatar}
                                                         petName={pet.name}
-                                                        petInfo="Chó Anh lông ngắn"
-                                                        path=""
+                                                        petInfo={pet.breed}
+                                                        path={`/pets/${pet._id}`}
                                                         type="list"
                                                     />
                                                 );
@@ -578,7 +661,7 @@ function PostCard(props) {
                         commentData && commentData.length > 0 ? "mt-4" : ""
                     } antialiased w-full space-y-3 ${isCommentSectionVisible ? "" : "hidden"}`}
                 >
-                    {commentData?.map((comment) => {
+                    {commentDataTemp?.map((comment) => {
                         return (
                             <CommentParent
                                 key={comment._id}
@@ -590,7 +673,10 @@ function PostCard(props) {
                                 createdTime={handleTimestamp(comment?.createdAt)}
                                 content={comment?.text}
                                 postOwner={postData?.user?._id}
+                                removeCommentById={removeCommentById}
                                 getCommentsByPost={getCommentsByPost}
+                                getTotalCommentCount={getTotalCommentCount}
+                                commentPosition={position}
                             />
                         );
                     })}

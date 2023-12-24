@@ -19,6 +19,7 @@ function CommentChild(props) {
         commentId,
         commentChildUser,
         userLogin,
+        postOwner,
     } = props;
 
     const sendDataToParent = async (postId, commentId) => {
@@ -58,7 +59,7 @@ function CommentChild(props) {
                         onClick={handleDeleteComment}
                         className="text-sm mt-2 text-gray-500 font-semibold cursor-pointer"
                     >
-                        {commentChildUser == userLogin ? "Xóa bình luận" : ""}
+                        {commentChildUser == userLogin || postOwner == userLogin ? "Xóa bình luận" : ""}
                     </div>
                 </div>
             </div>
