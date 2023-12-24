@@ -8,10 +8,18 @@ import nprogress from "nprogress";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { store } from "../core/store";
+import { useRouter } from "next/navigation";
 // import io from "socket.io-client";
 
 export default function Home() {
-    
+    const router = useRouter();
+    const accessToken = store.getState().user.accessToken;
+    useEffect(() => {
+        if (!accessToken) {
+            router.push("/login");
+        }
+    }, [accessToken]);
+
     return (
         <main>
             <div className="flex grid-cols-2 px-6 justify-center">

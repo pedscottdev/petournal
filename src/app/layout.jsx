@@ -39,11 +39,11 @@ export default function RootLayout({ children }) {
         if (!tokenLocal) {
             router.push("/login");
         }
-    }, [tokenLocal, router]);
+    }, [tokenLocal]);
 
-    if (!tokenLocal) {
-        router.push("/login");
-    }
+    // if (!tokenLocal) {
+    //     router.push("/login");
+    // }
 
     return (
         <html lang="en">
