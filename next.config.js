@@ -9,8 +9,14 @@ const nextConfig = {
         HOST: "https://petournal.onrender.com",
     },
     images: {
-        domains: ["firebasestorage.googleapis.com"],
-    }
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "firebasestorage.googleapis.com",
+                pathname: "**",
+            },
+        ],
+    },
 };
 
 module.exports = nextConfig;
