@@ -1,6 +1,18 @@
 "use client";
 import React, { useContext, useEffect, useState } from "react";
-import { CircularProgress } from "@nextui-org/react";
+import {
+    Button,
+    Checkbox,
+    CheckboxGroup,
+    CircularProgress,
+    Divider,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    useDisclosure,
+} from "@nextui-org/react";
 import Link from "next/link";
 import Head from "next/head";
 import defaultAvatar from "/src/img/default-avatar.png";
@@ -31,8 +43,11 @@ import FollowService from "../../../core/services/follow.service";
 import NotificationService from "../../../core/services/notification.service";
 import { SocketContext } from "../../../core/socket/socket";
 import { useSelector } from "react-redux";
+import { IoIosArrowForward } from "react-icons/io";
 
 function profile() {
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
     const [isFollowing, setIsFollowing] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -45,11 +60,12 @@ function profile() {
 
     const [isPresent, setIsPresent] = useState("user");
     const [presentPet, setPresentPet] = useState(null);
+    const [selected, setSelected] = React.useState();
 
     const params = useParams();
     const userId = params.id;
     const socket = useContext(SocketContext);
-    const userStore = useSelector((state) => state.user)
+    const userStore = useSelector((state) => state.user);
 
     useEffect(() => {
         getProfileUser();
@@ -306,6 +322,81 @@ function profile() {
                                             "Theo dõi"
                                         )}
                                     </button>
+                                    <Button
+                                        onPress={onOpen}
+                                        className="bg-red-500 active:scale-[.94] active:duration-75 transition-all p-2 font-medium text-white text-[15px] px-4 rounded-full"
+                                    >
+                                        Báo cáo
+                                    </Button>
+                                    <Modal backdrop="opaque" isOpen={isOpen} onOpenChange={onOpenChange} radius="lg">
+                                        <ModalContent>
+                                            {(onClose) => (
+                                                <>
+                                                    <ModalHeader className="flex flex-col items-center justify-center text-xl gap-1">
+                                                        Báo cáo
+                                                    </ModalHeader>
+                                                    <Divider />
+                                                    <ModalBody>
+                                                        <p className="text-gray-900 font-bold text-xl">
+                                                            Hãy chọn vấn đề
+                                                        </p>
+                                                        <p className="text-gray-600 text-sm font-light">
+                                                            Nếu bạn nhận thấy ai đó đang gặp nguy hiểm, đừng chần chừ mà
+                                                            hãy tìm ngay sự giúp đỡ trước khi báo cáo với Petournal.
+                                                        </p>
+                                                        <CheckboxGroup
+                                                            color="secondary"
+                                                            value={selected}
+                                                            onValueChange={setSelected}
+                                                            className="mt-4 w-[400px]"
+                                                        >
+                                                            <Checkbox
+                                                                className="p-4 w-full rounded-md hover:bg-violet-100"
+                                                                value="Giả mạo người khác"
+                                                            >
+                                                                <div className="flex items-center w-full justify-between">
+                                                                    <p className="pl-4">Giả mạo người khác</p>
+                                                                    <div className="text-base text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
+                                                                        <IoIosArrowForward />
+                                                                    </div>
+                                                                </div>
+                                                            </Checkbox>
+                                                            <Checkbox
+                                                                className="p-4 rounded-md hover:bg-violet-100"
+                                                                value="buenos-aires"
+                                                            >
+                                                                <div className="flex items-center">
+                                                                    <p className="pl-4">Buenos Aires</p>
+                                                                    <div className="ml-[13rem] text-base text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
+                                                                        <IoIosArrowForward />
+                                                                    </div>
+                                                                </div>
+                                                            </Checkbox>
+                                                            <Checkbox
+                                                                className="p-4 rounded-md hover:bg-violet-100"
+                                                                value="buenos-aires"
+                                                            >
+                                                                <div className="flex items-center">
+                                                                    <p className="pl-4">Buenos Aires</p>
+                                                                    <div className="ml-[13rem] text-base text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
+                                                                        <IoIosArrowForward />
+                                                                    </div>
+                                                                </div>
+                                                            </Checkbox>
+                                                        </CheckboxGroup>
+                                                    </ModalBody>
+                                                    <ModalFooter>
+                                                        <Button color="danger" variant="light" onPress={onClose}>
+                                                            Close
+                                                        </Button>
+                                                        <Button color="primary" onPress={onClose}>
+                                                            Action
+                                                        </Button>
+                                                    </ModalFooter>
+                                                </>
+                                            )}
+                                        </ModalContent>
+                                    </Modal>
                                 </div>
                             </div>
                         </div>
