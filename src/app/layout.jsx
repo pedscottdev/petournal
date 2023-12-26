@@ -35,11 +35,11 @@ export default function RootLayout({ children }) {
         }
     }, [tokenLocal]);
 
-    React.useEffect(() => {
-        if (!tokenLocal) {
-            router.push("/login");
-        }
-    }, [tokenLocal]);
+    // React.useEffect(() => {
+    //     if (!tokenLocal) {
+    //         router.push("/login");
+    //     }
+    // }, [tokenLocal]);
 
     return (
         <html lang="en">

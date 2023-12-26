@@ -13,6 +13,7 @@ import { setToken, setUserLogin } from "../../../core/store/feature/user-slice.j
 import Loading from "../../../components/share/loading.js";
 import toast from "react-hot-toast";
 import { store } from "../../../core/store/index.js";
+import Cookies from 'js-cookie';
 
 function Login() {
     const router = useRouter();
@@ -34,6 +35,9 @@ function Login() {
         },
         onSuccess: ({ data }) => {
             const { accessToken, user } = data.result;
+
+            Cookies.set('accessToken', accessToken);
+
             dispatch(setUserLogin(user));
             dispatch(setToken(accessToken));
             queryClient.invalidateQueries(["user"]);

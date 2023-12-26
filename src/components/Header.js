@@ -26,6 +26,7 @@ import { io } from "socket.io-client";
 import { SocketContext } from "../core/socket/socket";
 import NotificationService from "../core/services/notification.service";
 import FindingBox from "../components/share/finding-box.js";
+import Cookies from 'js-cookie';
 
 function Header() {
     const user = useSelector((state) => {
@@ -91,6 +92,7 @@ function Header() {
 
     const handleLogout = async () => {
         dispatch(resetUserState());
+        Cookies.remove('accessToken');
         router.push("/login");
     };
 

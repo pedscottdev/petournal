@@ -32,6 +32,7 @@ import {
 } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
 import { resetUserState } from "../core/store/feature/user-slice";
+import Cookies from 'js-cookie';
 
 function Sidebar() {
   const pathname = usePathname();
@@ -83,6 +84,7 @@ function Sidebar() {
 
   const handleLogout = async () => {
     dispatch(resetUserState());
+    Cookies.remove("accessToken");
     router.push("/login");
   };
 

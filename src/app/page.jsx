@@ -6,23 +6,12 @@ import Feed from "../components/Feed";
 import Widgets from "../components/Widgets";
 import nprogress from "nprogress";
 import Image from "next/image";
-import { useSelector } from "react-redux";
 import { store } from "../core/store";
 import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 // import io from "socket.io-client";
 
-export default function Home() {
-    const router = useRouter();
-    const accessToken = store.getState().user.accessToken;
-    useEffect(() => {
-        if (!accessToken) {
-            router.push("/login");
-        }
-    }, [accessToken]);
-    
-    if (!accessToken) {
-        router.push("/login");
-    }
+export default  function Home() {
 
     return (
         <main>
