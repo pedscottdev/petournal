@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import defaultAvatar from "/src/img/default-avatar.png";
@@ -89,10 +89,20 @@ function Header() {
         setTotalNoti(data.totalNotifications);
     };
 
-    const handleLogout = async () => {
+    useEffect(() => {
+        if (!user.accessToken) {
+            const timeoutId = setTimeout(() => {
+                router.push("/login");
+            }, 1000);
+
+            return () => clearTimeout(timeoutId);
+        }
+    }, [user.accessToken, router]);
+
+    const handleLogout = useCallback(async () => {
         dispatch(resetUserState());
-        router.push("/login");
-    };
+        router.refresh();
+    }, [dispatch, router]);
 
     return (
         <div className="flex sticky top-0 z-50 max-h-[65px] justify-between items-center p-4 lg:px-5 bg-white  border-b border-b-gray">
@@ -108,7 +118,9 @@ function Header() {
                         placeholder="Tìm kiếm trên Petournal"
                     ></input>
                 </div>
-                <div className="absolute top-5 left-2"><FindingBox variant="user" keyword={filterKeyword} /></div>
+                <div className="absolute top-5 left-2">
+                    <FindingBox variant="user" keyword={filterKeyword} />
+                </div>
             </div>
 
             {/* Right */}

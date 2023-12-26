@@ -22,11 +22,22 @@ function Login() {
     const { register, handleSubmit } = useForm();
 
     const token = store.getState().user.accessToken;
-    if (token) {
-        setTimeout(() => {
-            router.push("/");
-        }, 1000);
-    }
+    useEffect(() => {
+        let isMounted = true;
+
+        const redirectToHome = async () => {
+            if (token && isMounted) {
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                router.push("/");
+            }
+        };
+
+        redirectToHome();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [token, router]);
 
     const mutation = useMutation({
         mutationFn: (data) => {
