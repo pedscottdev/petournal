@@ -18,7 +18,6 @@ function Chatbox(props) {
     const userStore = useSelector((state) => state.user);
     const socket = useContext(SocketContext);
     const router = useRouter();
-    console.log(userId);
 
     const [listMessages, setListMessages] = useState([]);
     const [arrivalMessage, setArrivalMessage] = useState(null);
@@ -69,7 +68,6 @@ function Chatbox(props) {
     useEffect(() => {
         if (socket) {
             socket.on("listen-receive-message", (msg) => {
-                console.log(msg);
                 setArrivalMessage({
                     _id: msg._id,
                     fromSelf: false,

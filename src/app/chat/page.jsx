@@ -63,7 +63,6 @@ function chat() {
     }, [filterKeyword, filterFollowingKeyword]);
 
     const filterConversation = async (keyword) => {
-        console.log(keyword);
         const { data } = await ConversationService.filterConversation({ keyword });
         if (keyword !== "") {
             if (data) {
@@ -102,7 +101,6 @@ function chat() {
 
     const getConversations = async () => {
         const { data } = await ConversationService.getConversations();
-        console.log(data);
         setListConversation(data);
     };
 

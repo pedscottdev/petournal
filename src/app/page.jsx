@@ -2,8 +2,9 @@
 import React from "react";
 import Feed from "../components/Feed";
 import Widgets from "../components/Widgets";
+import withAuth from "../middleware/withAuth";
 
-export default function Home() {
+const Home = () => {
     return (
         <main>
             <div className="flex grid-cols-2 px-6 justify-center">
@@ -18,4 +19,6 @@ export default function Home() {
             </div>
         </main>
     );
-}
+};
+
+export default withAuth(Home);

@@ -85,7 +85,6 @@ function profile() {
     const getPetById = async () => {
         const { data } = await PetService.getPetById(petId);
         if (data) {
-            console.log(data);
             setPetData(data);
             setIsLiked(data.isLiked);
             setCountLike(data.likes.length);
@@ -135,8 +134,6 @@ function profile() {
 
     const handleDateChange = (date) => {
         setValueDate(date);
-        // const formattedDate = date ? date.toLocaleDateString("en-GB") : "";
-        // console.log("Selected Date:", formattedDate);
     };
 
     const handleClose = (state) => {
@@ -146,7 +143,6 @@ function profile() {
     const likePetMutation = useMutation({
         mutationFn: async (data) => {
             const result = await PetService.likePet(data);
-            console.log(result);
             return result.data;
         },
         onSuccess: (data) => {

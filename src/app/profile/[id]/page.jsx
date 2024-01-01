@@ -1,5 +1,10 @@
 "use client";
 import React, { useContext, useEffect, useState } from "react";
+import Head from "next/head";
+import Image from "next/image";
+import defaultAvatar from "/src/img/default-avatar.png";
+import { useParams } from "next/navigation";
+import { Tabs, Tab } from "@nextui-org/react";
 import {
     Button,
     Checkbox,
@@ -13,43 +18,27 @@ import {
     ModalHeader,
     useDisclosure,
 } from "@nextui-org/react";
-import Link from "next/link";
-import Head from "next/head";
-import defaultAvatar from "/src/img/default-avatar.png";
-import bgImg from "/src/img/bg-image.png";
-import Image from "next/image";
-import { Tabs, Tab, Chip, Card, CardBody } from "@nextui-org/react";
-import { Select, SelectItem, Avatar } from "@nextui-org/react";
-import { TbSelector } from "react-icons/tb";
-import {
-    SearchIcon,
-    InformationCircleIcon,
-    DotsCircleHorizontalIcon,
-    DotsHorizontalIcon,
-} from "@heroicons/react/outline";
-import { TbDog } from "react-icons/tb";
+import { IoMdAdd } from "react-icons/io";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
+import { SearchIcon } from "@heroicons/react/outline";
 import PetProfileCard from "../../../components/PetProfileCard";
 import PostCard from "../../../components/PostCard";
-import InputBox from "../../../components/InputBox";
+import Loading from "../../../components/share/loading";
 import PetsAvatar from "../../../utils/PetsAvatar";
-import { useParams } from "next/navigation";
 import UserService from "../../../core/services/user.service";
 import PetService from "../../../core/services/pet.service";
 import TimeLineService from "../../../core/services/time-line.service";
-import { useMutation } from "@tanstack/react-query";
-import Loading from "../../../components/share/loading";
-import toast from "react-hot-toast";
 import FollowService from "../../../core/services/follow.service";
 import NotificationService from "../../../core/services/notification.service";
+import ReportService from "../../../core/services/report.service";
 import { SocketContext } from "../../../core/socket/socket";
-import { useSelector } from "react-redux";
-import { IoIosArrowForward } from "react-icons/io";
 
 function profile() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const [isFollowing, setIsFollowing] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
 
     const [userData, setUserData] = useState();
     const [userBirthday, setUserBirthday] = useState();
@@ -60,7 +49,7 @@ function profile() {
 
     const [isPresent, setIsPresent] = useState("user");
     const [presentPet, setPresentPet] = useState(null);
-    const [selected, setSelected] = React.useState();
+    const [selectedReason, setSelectedReason] = useState([]);
 
     const params = useParams();
     const userId = params.id;
@@ -76,7 +65,6 @@ function profile() {
     const getProfileUser = async () => {
         const { data } = await UserService.getProfileUser(userId);
         if (data) {
-            console.log(data);
             if (data.isFollowing == true) {
                 setIsFollowing(true);
             } else {
@@ -120,8 +108,6 @@ function profile() {
         filterPetMutation.mutate(petId);
         setPresentPet(petId);
     };
-    console.log(page, isPresent, presentPet);
-    console.log(listPost);
 
     const resetPage = async () => {
         await setPage(2);
@@ -192,7 +178,6 @@ function profile() {
             return result.data;
         },
         onSuccess: async (data) => {
-            console.log(data);
             await setListPost((preList) => [...preList, ...data]);
             await setPage((prevPage) => prevPage + 1);
         },
@@ -246,6 +231,27 @@ function profile() {
             setPresentPet(null);
         }
         resetPage();
+    };
+
+    const reportUserMutation = useMutation({
+        mutationFn: async (data) => {
+            const body = { type: "USER", user: userId, reasons: data };
+            const result = await ReportService.createReport(body);
+            return result.data;
+        },
+        onSuccess: () => {
+            toast.success("Đã báo cáo");
+            onClose();
+            setSelectedReason([]);
+        },
+        onError: (err) => {
+            toast.error(err.response.data.message);
+        },
+    });
+
+    const handleReport = () => {
+        console.log(selectedReason);
+        reportUserMutation.mutate(selectedReason);
     };
 
     return (
@@ -346,40 +352,62 @@ function profile() {
                                                         </p>
                                                         <CheckboxGroup
                                                             color="secondary"
-                                                            value={selected}
-                                                            onValueChange={setSelected}
+                                                            value={selectedReason}
+                                                            onValueChange={setSelectedReason}
                                                             className="mt-4 w-[400px]"
                                                         >
                                                             <Checkbox
                                                                 className="p-4 w-full rounded-md hover:bg-violet-100"
                                                                 value="Giả mạo người khác"
                                                             >
-                                                                <div className="flex items-center w-full justify-between">
+                                                                <div className="flex items-center w-[350px] justify-between">
                                                                     <p className="pl-4">Giả mạo người khác</p>
-                                                                    <div className="text-base text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
-                                                                        <IoIosArrowForward />
+                                                                    <div className="text-xl text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
+                                                                        <IoMdAdd />
                                                                     </div>
                                                                 </div>
                                                             </Checkbox>
                                                             <Checkbox
                                                                 className="p-4 rounded-md hover:bg-violet-100"
-                                                                value="buenos-aires"
+                                                                value="Quấy rối"
                                                             >
-                                                                <div className="flex items-center">
-                                                                    <p className="pl-4">Buenos Aires</p>
-                                                                    <div className="ml-[13rem] text-base text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
-                                                                        <IoIosArrowForward />
+                                                                <div className="flex items-center w-[350px] justify-between">
+                                                                    <p className="pl-4">Quấy rối</p>
+                                                                    <div className="text-xl text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
+                                                                        <IoMdAdd />
                                                                     </div>
                                                                 </div>
                                                             </Checkbox>
                                                             <Checkbox
                                                                 className="p-4 rounded-md hover:bg-violet-100"
-                                                                value="buenos-aires"
+                                                                value="Gây chia rẽ"
                                                             >
-                                                                <div className="flex items-center">
-                                                                    <p className="pl-4">Buenos Aires</p>
-                                                                    <div className="ml-[13rem] text-base text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
-                                                                        <IoIosArrowForward />
+                                                                <div className="flex items-center w-[350px] justify-between">
+                                                                    <p className="pl-4">Gây chia rẽ</p>
+                                                                    <div className="text-xl text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
+                                                                        <IoMdAdd />
+                                                                    </div>
+                                                                </div>
+                                                            </Checkbox>
+                                                            <Checkbox
+                                                                className="p-4 rounded-md hover:bg-violet-100"
+                                                                value="Bạo lực"
+                                                            >
+                                                                <div className="flex items-center w-[350px] justify-between">
+                                                                    <p className="pl-4">Bạo lực</p>
+                                                                    <div className="text-xl text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
+                                                                        <IoMdAdd />
+                                                                    </div>
+                                                                </div>
+                                                            </Checkbox>
+                                                            <Checkbox
+                                                                className="p-4 rounded-md hover:bg-violet-100"
+                                                                value="Nội dung không phù hợp"
+                                                            >
+                                                                <div className="flex items-center w-[350px] justify-between">
+                                                                    <p className="pl-4">Nội dung không phù hợp</p>
+                                                                    <div className="text-xl text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
+                                                                        <IoMdAdd />
                                                                     </div>
                                                                 </div>
                                                             </Checkbox>
@@ -387,10 +415,10 @@ function profile() {
                                                     </ModalBody>
                                                     <ModalFooter>
                                                         <Button color="danger" variant="light" onPress={onClose}>
-                                                            Close
+                                                            Huỷ
                                                         </Button>
-                                                        <Button color="primary" onPress={onClose}>
-                                                            Action
+                                                        <Button color="secondary" onClick={handleReport}>
+                                                            {reportUserMutation.isPending ? <Loading /> : "Gửi"}
                                                         </Button>
                                                     </ModalFooter>
                                                 </>

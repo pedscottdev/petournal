@@ -3,7 +3,6 @@ import React from "react";
 import Image from "next/image";
 import bgImage from "/src/img/bg-image.png";
 import Link from "next/link";
-import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import AuthService from "../../../core/services/auth.service.js";
@@ -11,6 +10,7 @@ import { useForm } from "react-hook-form";
 import ErrorField from "../../../components/share/error-field.js";
 import Loading from "../../../components/share/loading.js";
 import defaultAvatar from "/src/img/default-avatar.png";
+import toast from "react-hot-toast";
 
 function Signup() {
     const router = useRouter();
@@ -24,7 +24,6 @@ function Signup() {
             router.push("/login");
         },
         onError: (err) => {
-            console.log(err);
             toast.error(err.response.data.message);
         },
     });

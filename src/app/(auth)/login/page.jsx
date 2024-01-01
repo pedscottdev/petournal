@@ -11,8 +11,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import AuthService from "../../../core/services/auth.service.js";
 import { setToken, setUserLogin } from "../../../core/store/feature/user-slice.js";
 import Loading from "../../../components/share/loading.js";
-import toast from "react-hot-toast";
 import { store } from "../../../core/store/index.js";
+import toast from "react-hot-toast";
 
 function Login() {
     const router = useRouter();
@@ -51,7 +51,6 @@ function Login() {
             router.refresh();
         },
         onError: (error) => {
-            console.log(error);
             toast.error(error.response.data.message);
         },
     });

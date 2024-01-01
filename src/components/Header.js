@@ -135,7 +135,7 @@ function Header() {
                         content={totalNoti}
                         shape="circle"
                         variant="flat"
-                        disableOutline="true"
+                        disableoutline="true"
                     >
                         <PopoverTrigger>
                             <Button radius="full" isIconOnly variant="light" className="border-2 border-gray-100">
@@ -146,21 +146,22 @@ function Header() {
                     <PopoverContent className="p-0">
                         <div className="flex text-lg font-semibold py-3 pl-5 justify-start">Thông báo</div>
                         <div className="divide-y divide-gray-100">
-                            {listNoti?.map((item) => {
-                                return (
-                                    <NotiCard
-                                        key={item._id}
-                                        notificationId={item._id}
-                                        type={item.type}
-                                        userName={item.userSend.lastName + " " + item.userSend.firstName}
-                                        text={item.text}
-                                        userAvatar={item.userSend.avatar}
-                                        time={item.createdAt}
-                                        handleGetUserNoti={getUserNotification}
-                                        isRead={item.isRead}
-                                    />
-                                );
-                            })}
+                            {listNoti.length > 0 &&
+                                listNoti?.map((item) => {
+                                    return (
+                                        <NotiCard
+                                            key={item._id}
+                                            notificationId={item._id}
+                                            type={item.type}
+                                            userName={item.userSend?.lastName + " " + item.userSend?.firstName}
+                                            text={item.text}
+                                            userAvatar={item.userSend?.avatar}
+                                            time={item.createdAt}
+                                            handleGetUserNoti={getUserNotification}
+                                            isRead={item.isRead}
+                                        />
+                                    );
+                                })}
                             {listNoti?.length === 0 ? <NotiCard type={undefined} /> : null}
                             {/* <NotiCard type="like" />
                             <NotiCard type="comment" />

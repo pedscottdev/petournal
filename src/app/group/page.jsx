@@ -69,10 +69,6 @@ function group() {
         });
     };
 
-    useEffect(() => {
-        console.log(listUserSelected);
-    }, [listUserSelected]);
-
     const fileInputRef = useRef(null);
 
     const handleSelectionChange = (e) => {
@@ -134,7 +130,6 @@ function group() {
             return result.data;
         },
         onSuccess: (data) => {
-            console.log(data);
             setListGroups(data.groups);
             setTotalPages(data.totalPages);
         },
@@ -153,7 +148,6 @@ function group() {
             return result.data;
         },
         onSuccess: (data) => {
-            console.log(data);
             setListGroups(data.groups);
             setTotalPages(data.totalPages);
         },
@@ -171,11 +165,9 @@ function group() {
     const createGroupMutation = useMutation({
         mutationFn: async (data) => {
             const result = await GroupService.createGroup(data);
-            console.log(result);
             return result.data;
         },
         onSuccess: (data) => {
-            console.log(data);
             toast.success("Tạo thành công ");
             getGroupsByUserLogin();
             onClose();
