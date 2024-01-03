@@ -23,6 +23,7 @@ import { ImageStorage } from "../../../firebase";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import Loading from "../../components/share/loading.js";
 import FindingBox from "../../components/share/finding-box";
+import withAuth from "../../middleware/withAuth";
 
 function group() {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -444,4 +445,4 @@ function group() {
     );
 }
 
-export default React.memo(group);
+export default withAuth(React.memo(group));

@@ -45,9 +45,6 @@ function Login() {
         },
         onSuccess: ({ data }) => {
             const { accessToken, user } = data.result;
-
-            Cookies.set('accessToken', accessToken);
-
             dispatch(setUserLogin(user));
             dispatch(setToken(accessToken));
             queryClient.invalidateQueries(["user"]);
