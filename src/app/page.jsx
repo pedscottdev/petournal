@@ -4,17 +4,17 @@ import Feed from "../components/Feed";
 import Widgets from "../components/Widgets";
 
 export default function Home() {
-    const router = useRouter();
-    const accessToken = store.getState().user.accessToken;
-    useEffect(() => {
-        if (!accessToken) {
-            router.push("/login");
-        }
-    }, [accessToken]);
+    // const router = useRouter();
+    // const accessToken = store.getState().user.accessToken;
+    // useEffect(() => {
+    //     if (!accessToken) {
+    //         router.push("/login");
+    //     }
+    // }, [accessToken]);
     
-    if (!accessToken) {
-        router.push("/login");
-    }
+    // if (!accessToken) {
+    //     router.push("/login");
+    // }
 
     return (
         <main>
