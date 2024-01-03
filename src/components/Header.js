@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import defaultAvatar from "/src/img/default-avatar.png";
@@ -90,11 +90,20 @@ function Header() {
         setTotalNoti(data.totalNotifications);
     };
 
-    const handleLogout = async () => {
+    useEffect(() => {
+        if (!user.accessToken) {
+            const timeoutId = setTimeout(() => {
+                router.push("/login");
+            }, 1000);
+
+            return () => clearTimeout(timeoutId);
+        }
+    }, [user.accessToken, router]);
+
+    const handleLogout = useCallback(async () => {
         dispatch(resetUserState());
-        Cookies.remove('accessToken');
-        router.push("/login");
-    };
+        router.refresh();
+    }, [dispatch, router]);
 
     return (
         <div className="flex sticky top-0 z-50 max-h-[65px] justify-between items-center p-4 lg:px-5 bg-white  border-b border-b-gray">
@@ -110,7 +119,9 @@ function Header() {
                         placeholder="Tìm kiếm trên Petournal"
                     ></input>
                 </div>
-                <div className="absolute top-5 left-2"><FindingBox variant="user" keyword={filterKeyword} /></div>
+                <div className="absolute top-5 left-2">
+                    <FindingBox variant="user" keyword={filterKeyword} />
+                </div>
             </div>
 
             {/* Right */}
@@ -125,7 +136,7 @@ function Header() {
                         content={totalNoti}
                         shape="circle"
                         variant="flat"
-                        disableOutline="true"
+                        disableoutline="true"
                     >
                         <PopoverTrigger>
                             <Button radius="full" isIconOnly variant="light" className="border-2 border-gray-100">
@@ -136,21 +147,22 @@ function Header() {
                     <PopoverContent className="p-0">
                         <div className="flex text-lg font-semibold py-3 pl-5 justify-start">Thông báo</div>
                         <div className="divide-y divide-gray-100">
-                            {listNoti?.map((item) => {
-                                return (
-                                    <NotiCard
-                                        key={item._id}
-                                        notificationId={item._id}
-                                        type={item.type}
-                                        userName={item.userSend.lastName + " " + item.userSend.firstName}
-                                        text={item.text}
-                                        userAvatar={item.userSend.avatar}
-                                        time={item.createdAt}
-                                        handleGetUserNoti={getUserNotification}
-                                        isRead={item.isRead}
-                                    />
-                                );
-                            })}
+                            {listNoti.length > 0 &&
+                                listNoti?.map((item) => {
+                                    return (
+                                        <NotiCard
+                                            key={item._id}
+                                            notificationId={item._id}
+                                            type={item.type}
+                                            userName={item.userSend?.lastName + " " + item.userSend?.firstName}
+                                            text={item.text}
+                                            userAvatar={item.userSend?.avatar}
+                                            time={item.createdAt}
+                                            handleGetUserNoti={getUserNotification}
+                                            isRead={item.isRead}
+                                        />
+                                    );
+                                })}
                             {listNoti?.length === 0 ? <NotiCard type={undefined} /> : null}
                             {/* <NotiCard type="like" />
                             <NotiCard type="comment" />

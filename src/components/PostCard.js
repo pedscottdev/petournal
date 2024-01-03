@@ -7,7 +7,16 @@ import PetCard from "../utils/PetCard";
 import testImage from "/src/img/test-image.jpg";
 import testImage2 from "/src/img/test-image2.jpg";
 import testImage3 from "/src/img/test-image3.jpg";
-import { Select, SelectItem, Avatar, CircularProgress, Skeleton } from "@nextui-org/react";
+import {
+    Select,
+    SelectItem,
+    Avatar,
+    CircularProgress,
+    Skeleton,
+    CheckboxGroup,
+    Checkbox,
+    Divider,
+} from "@nextui-org/react";
 import { ChatIcon, HeartIcon, ShareIcon, TrashIcon } from "@heroicons/react/outline";
 import { TbHeart, TbHeartFilled, TbMessage2, TbDog } from "react-icons/tb";
 import { HiDotsHorizontal } from "react-icons/hi";
@@ -42,6 +51,8 @@ import { ImageStorage } from "../../firebase";
 import { useRouter } from "next/navigation";
 import { SocketContext } from "../core/socket/socket";
 import NotificationService from "../core/services/notification.service";
+import { IoMdAdd } from "react-icons/io";
+import ReportService from "../core/services/report.service";
 
 function PostCard(props) {
     const { postId, isUserFollowing, isUserLiked, handleGetTimeLine, handleResetPage, variant } = props;
@@ -65,6 +76,7 @@ function PostCard(props) {
 
     const [isLoaded, setIsLoaded] = useState(true);
     const [position, setPosition] = useState();
+    const [selectedReason, setSelectedReason] = useState([]);
 
     const userStore = useSelector((state) => state.user);
 
@@ -86,7 +98,6 @@ function PostCard(props) {
             return result.data;
         },
         onSuccess: async (data) => {
-            console.log(data);
             await toast.success("Đã cập nhật post");
             onEditClose();
             setPostData(data);
@@ -175,6 +186,13 @@ function PostCard(props) {
         onClose: onEditClose,
     } = useDisclosure();
 
+    const {
+        isOpen: isReportOpen,
+        onOpen: onReportOpen,
+        onOpenChange: onReportOpenChange,
+        onClose: onReportClose,
+    } = useDisclosure();
+
     const [isCommentSectionVisible, setIsCommentSectionVisible] = useState(false);
 
     const toggleCommentSection = () => {
@@ -237,7 +255,6 @@ function PostCard(props) {
             const handleCommentPostAction = (data) => {
                 if (data.post === postId) {
                     setCommentDataSocket((prev) => {
-                        console.log(prev);
                         return [data, ...prev];
                     });
                 }
@@ -271,10 +288,6 @@ function PostCard(props) {
         setCommentDataTemp(commentArray);
         setPosition(commentDataSocket.length > 0 ? commentDataSocket[commentDataSocket.length - 1].createdAt : null);
     }, [commentDataSocket, commentData]);
-
-    console.log(position);
-    console.log(commentData);
-    console.log("postId: " + postId, commentDataTemp);
 
     const removeCommentById = (commentId) => {
         setCommentDataTemp((prev) => prev.filter((item) => item._id !== commentId));
@@ -357,6 +370,27 @@ function PostCard(props) {
         router.push(`/profile`);
     };
 
+    const reportPostMutation = useMutation({
+        mutationFn: async (data) => {
+            const body = { type: "POST", post: postId, reasons: data };
+            const result = await ReportService.createReport(body);
+            return result.data;
+        },
+        onSuccess: () => {
+            toast.success("Đã báo cáo");
+            onReportClose();
+            setSelectedReason([]);
+        },
+        onError: (err) => {
+            toast.error(err.response.data.message);
+        },
+    });
+
+    const handleReport = () => {
+        console.log(selectedReason);
+        reportPostMutation.mutate(selectedReason);
+    };
+
     return (
         <div className="flex justify-center bg-white rounded-xl shadow-sm border-1 borrder-gray-200 mt-6">
             <div className="flex flex-col p-6 w-full">
@@ -412,7 +446,13 @@ function PostCard(props) {
                                 </div>
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Action event example">
-                                {!isUserLogin ? <DropdownItem key="new">Báo cáo</DropdownItem> : ""}
+                                {!isUserLogin ? (
+                                    <DropdownItem key="new" onPress={onReportOpen}>
+                                        Báo cáo
+                                    </DropdownItem>
+                                ) : (
+                                    ""
+                                )}
                                 {isUserLogin ? (
                                     <DropdownItem key="copy" onPress={onEditOpen}>
                                         Sửa bài viết
@@ -436,6 +476,88 @@ function PostCard(props) {
                         </Dropdown>
                     </div>
                 </div>
+
+                {/* Modal For Report Posts */}
+                <Modal backdrop="opaque" isOpen={isReportOpen} onOpenChange={onReportOpenChange} radius="lg">
+                    <ModalContent>
+                        {(onReportClose) => (
+                            <>
+                                <ModalHeader className="flex flex-col items-center justify-center text-xl gap-1">
+                                    Báo cáo
+                                </ModalHeader>
+                                <Divider />
+                                <ModalBody>
+                                    <p className="text-gray-900 font-bold text-xl">Hãy chọn vấn đề</p>
+                                    <p className="text-gray-600 text-sm font-light">
+                                        Nếu bạn nhận thấy ai đó đang gặp nguy hiểm, đừng chần chừ mà hãy tìm ngay sự
+                                        giúp đỡ trước khi báo cáo với Petournal.
+                                    </p>
+                                    <CheckboxGroup
+                                        color="secondary"
+                                        value={selectedReason}
+                                        onValueChange={setSelectedReason}
+                                        className="mt-4 w-[400px]"
+                                    >
+                                        <Checkbox className="p-4 w-full rounded-md hover:bg-violet-100" value="Hành hạ">
+                                            <div className="flex items-center w-[350px] justify-between">
+                                                <p className="pl-4">Hành hạ</p>
+                                                <div className="text-xl text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
+                                                    <IoMdAdd />
+                                                </div>
+                                            </div>
+                                        </Checkbox>
+                                        <Checkbox
+                                            className="p-4 rounded-md hover:bg-violet-100"
+                                            value="Bạc đãi thú cưng"
+                                        >
+                                            <div className="flex items-center w-[350px] justify-between">
+                                                <p className="pl-4">Bạc đãi thú cưng</p>
+                                                <div className="text-xl text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
+                                                    <IoMdAdd />
+                                                </div>
+                                            </div>
+                                        </Checkbox>
+                                        <Checkbox
+                                            className="p-4 rounded-md hover:bg-violet-100"
+                                            value="Ngôn từ thù ghét"
+                                        >
+                                            <div className="flex items-center w-[350px] justify-between">
+                                                <p className="pl-4">Ngôn từ thù ghét</p>
+                                                <div className="text-xl text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
+                                                    <IoMdAdd />
+                                                </div>
+                                            </div>
+                                        </Checkbox>
+                                        <Checkbox className="p-4 rounded-md hover:bg-violet-100" value="Tiêu cực">
+                                            <div className="flex items-center w-[350px] justify-between">
+                                                <p className="pl-4">Tiêu cực</p>
+                                                <div className="text-xl text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
+                                                    <IoMdAdd />
+                                                </div>
+                                            </div>
+                                        </Checkbox>
+                                        <Checkbox className="p-4 rounded-md hover:bg-violet-100" value="Spam">
+                                            <div className="flex items-center w-[350px] justify-between">
+                                                <p className="pl-4">Spam</p>
+                                                <div className="text-xl text-right font-bold text-white bg-violet-600 rounded-full p-2 w-fit active:scale-[.94] active:duration-75 transition-all">
+                                                    <IoMdAdd />
+                                                </div>
+                                            </div>
+                                        </Checkbox>
+                                    </CheckboxGroup>
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Button color="danger" variant="light" onPress={onReportClose}>
+                                        Huỷ
+                                    </Button>
+                                    <Button color="secondary" onClick={handleReport}>
+                                        {reportPostMutation.isPending ? <Loading /> : "Gửi"}
+                                    </Button>
+                                </ModalFooter>
+                            </>
+                        )}
+                    </ModalContent>
+                </Modal>
 
                 {/* Modal For Editting Posts */}
                 <Modal isOpen={isEditOpen} onOpenChange={onEditOpenChange} isDismissable={false} size="3xl">

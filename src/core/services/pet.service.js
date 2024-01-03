@@ -11,7 +11,6 @@ const PetService = {
         return axiosClient.post("/pet/createPet", body);
     },
     updatPet: (petId, body) => {
-        console.log(petId, body);
         return axiosClient.post(`/pet/updatePet/${petId}`, body);
     },
     getPetById: (petId) => {

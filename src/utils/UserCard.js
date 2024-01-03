@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import { Checkbox } from "@nextui-org/react";
 import { SocketContext } from "../core/socket/socket.js";
 import NotificationService from "../core/services/notification.service.js";
-import "../app/globals.css"
+import "../app/globals.css";
 
 function UserCard(props) {
     const { userId, userAvatar, userName, follower, userEmail, leader, link, variant, handleOnSelected } = props;
@@ -38,9 +38,7 @@ function UserCard(props) {
 
     const handleFollowClick = async () => {
         if (isFollowing) {
-            console.log("sadas");
             const result = await unFollowUser(userId);
-            console.log(result);
             if (result) {
                 toast.success("Đã bỏ theo dõi");
                 setIsFollowing(false);
@@ -88,7 +86,7 @@ function UserCard(props) {
                             {userName}{" "}
                             {leader && (
                                 <span className="mx-2 ">
-                                    <PiStarFill className="text-sm golden-star"/>
+                                    <PiStarFill className="text-sm golden-star" />
                                 </span>
                             )}
                         </div>

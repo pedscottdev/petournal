@@ -25,7 +25,6 @@ function ConversationCard(props) {
     const handleClick = () => {
         onClick({ user: { userAvatar, userName, userId }, conversationId: conversationId });
     };
-    console.log(isRead);
 
     return (
         <div

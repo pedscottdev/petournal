@@ -115,8 +115,6 @@ function profile() {
         filterPetMutation.mutate(petId);
         setPresentPet(petId);
     };
-    console.log(page, isPresent, presentPet);
-    console.log(listPost);
 
     const resetPage = async () => {
         await setPage(2);
@@ -144,7 +142,6 @@ function profile() {
             return result.data;
         },
         onSuccess: async (data) => {
-            console.log(data);
             await setListPost((preList) => [...preList, ...data]);
             await setPage((prevPage) => prevPage + 1);
         },

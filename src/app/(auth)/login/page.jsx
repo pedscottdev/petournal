@@ -11,9 +11,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import AuthService from "../../../core/services/auth.service.js";
 import { setToken, setUserLogin } from "../../../core/store/feature/user-slice.js";
 import Loading from "../../../components/share/loading.js";
-import toast from "react-hot-toast";
 import { store } from "../../../core/store/index.js";
-import Cookies from 'js-cookie';
+import toast from "react-hot-toast";
 
 function Login() {
     const router = useRouter();
@@ -23,11 +22,22 @@ function Login() {
     const { register, handleSubmit } = useForm();
 
     const token = store.getState().user.accessToken;
-    if (token) {
-        setTimeout(() => {
-            router.push("/");
-        }, 1000);
-    }
+    useEffect(() => {
+        let isMounted = true;
+
+        const redirectToHome = async () => {
+            if (token && isMounted) {
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                router.push("/");
+            }
+        };
+
+        redirectToHome();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [token, router]);
 
     const mutation = useMutation({
         mutationFn: (data) => {
@@ -44,7 +54,6 @@ function Login() {
             router.refresh();
         },
         onError: (error) => {
-            console.log(error);
             toast.error(error.response.data.message);
         },
     });

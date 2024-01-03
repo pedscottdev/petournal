@@ -60,7 +60,6 @@ const InputBox = (props) => {
 
     const addPostToGroup = async (data) => {
         const body = { group_id: groupId, post_id: data };
-        console.log(body);
         await GroupService.addPostToGroup(body);
         handleGetTimeLine();
         handleResetPage();

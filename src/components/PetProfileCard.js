@@ -34,7 +34,6 @@ function PetProfileCard(props) {
     const likePetMutation = useMutation({
         mutationFn: async (data) => {
             const result = await PetService.likePet(data);
-            console.log(result);
             return result.data;
         },
         onSuccess: async (data) => {
