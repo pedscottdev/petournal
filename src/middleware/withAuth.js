@@ -1,12 +1,17 @@
 import { store } from "../core/store";
 import Login from "../app/(auth)/login/page";
+import { useRouter } from "next/navigation";
+
 
 const withAuth = (Component) => {
     const Auth = () => {
+        
         const accessToken = store.getState().user.accessToken;
 
+        const {push} = useRouter();
+
         if (!accessToken) {
-            return <Login />;
+            push("/login")
         }
 
         if (accessToken) {
@@ -14,10 +19,6 @@ const withAuth = (Component) => {
         }
     };
 
-    // Copy getInitial props so it will run as well
-    if (Component.getInitialProps) {
-        Auth.getInitialProps = Component.getInitialProps;
-    }
 
     return Auth;
 };

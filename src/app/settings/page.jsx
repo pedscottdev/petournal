@@ -10,6 +10,7 @@ import { setToken, updateUserState } from "../../core/store/feature/user-slice";
 import { useDispatch, useSelector } from "react-redux";
 import { Tabs, Tab, Chip, Card, CardBody } from "@nextui-org/react";
 import "../globals.css";
+import withAuth from "../../middleware/withAuth";
 
 function settings() {
   const user = useSelector((state) => state.user);
@@ -443,7 +444,7 @@ function settings() {
   );
 }
 
-export default React.memo(settings);
+export default withAuth(React.memo(settings));
 
 const isValidDataPassword = (data) => {
   const errors = [];

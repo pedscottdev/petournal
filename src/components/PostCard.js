@@ -230,7 +230,7 @@ function PostCard(props) {
         if (isLiked) {
             await likePost(postId);
             await toast.success("Đã bỏ thích bài viết");
-            await likePostActionSocket();
+            // await likePostActionSocket();
             await setIsLiked(false);
         } else {
             await likePost(postId);
@@ -249,7 +249,9 @@ function PostCard(props) {
     useEffect(() => {
         if (socket !== null) {
             const handleLikePostAction = (data) => {
-                setUsersLike(data);
+                if(postId == data._id){
+                    setUsersLike(data?.likes);
+                }
             };
 
             const handleCommentPostAction = (data) => {

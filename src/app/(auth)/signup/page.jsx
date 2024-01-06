@@ -125,9 +125,9 @@ function Signup() {
 
                         <Link href="/login">
                             <div className="mt-8 flex justify-center items-center">
-                                <button className="text-violet-500 textbase font-medium ml-2">
+                                <div className="text-violet-500 textbase font-medium ml-2">
                                     Chuyển đến trang đăng nhập
-                                </button>
+                                </div>
                             </div>
                         </Link>
                     </div>
@@ -140,44 +140,28 @@ function Signup() {
 export default Signup;
 
 const isValidUserData = (data) => {
-    const errors = [];
-
     if (!data.lastName) {
-        errors.push("Vui lòng nhập Tên");
-    }
-
-    if (!data.email) {
-        errors.push("Vui lòng nhập email");
+        toast.error("Vui lòng nhập Họ");
+    } else if (!data.firstName) {
+        toast.error("Vui lòng nhập Tên");
+    } else if (!data.email) {
+        toast.error("Vui lòng nhập email");
     } else if (!isValidEmail(data.email)) {
-        errors.push("Vui lòng nhập email hợp lệ");
-    }
-
-    if (!data.password) {
-        errors.push("Vui lòng nhập mật khẩu");
+        toast.error("Vui lòng nhập email hợp lệ");
+    } else if (!data.password) {
+        toast.error("Vui lòng nhập mật khẩu");
     } else if (data.password.length < 8) {
-        errors.push("Mật khẩu phải có ít nhất 8 ký tự ");
-    }
-
-    if (!data.confirmPassword) {
-        errors.push("Vui lòng nhập xác nhận mật khẩu");
+        toast.error("Mật khẩu phải có ít nhất 8 ký tự ");
+    } else if (!data.confirmPassword) {
+        toast.error("Vui lòng nhập xác nhận mật khẩu");
     } else if (data.confirmPassword !== data.password) {
-        errors.push("Mật khẩu không trùng khớp");
+        toast.error("Mật khẩu không trùng khớp");
+    } else if (data.isAcceptCondition !== true) {
+        toast.error("Vui lòng chấp nhận điều khoản");
     }
-
-    if (data.isAcceptCondition !== true) {
-        errors.push("Vui lòng chấp nhận điều khoản");
-    }
-
-    errors.forEach((err) => {
-        toast.error(err);
-    });
-
-    return errors.length === 0;
 };
 
 const isValidEmail = (email) => {
-    // Kiểm tra xem chuỗi email có đúng định dạng email không. Bạn có thể sử dụng biểu thức chính quy (regex) hoặc thư viện hỗ trợ kiểm tra email.
-    // Dưới đây là một ví dụ sử dụng regex đơn giản:
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     return emailRegex.test(email);
 };
