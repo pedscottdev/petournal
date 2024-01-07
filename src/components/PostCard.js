@@ -391,6 +391,10 @@ function PostCard(props) {
         reportPostMutation.mutate(selectedReason);
     };
 
+    const handleViewImage = () => {
+      console.log("view image");
+    }
+
     return (
         <div className="flex justify-center bg-white rounded-xl shadow-sm border-1 borrder-gray-200 mt-6">
             <div className="flex flex-col p-6 w-full">
@@ -671,7 +675,7 @@ function PostCard(props) {
                 {/* Content */}
                 <div className="mt-4">
                     <p className="text-[#000000] text-[15px] sm:text-base">{postData?.content}</p>
-                    <div className="max-h-[380px]">
+                    <div onClick={handleViewImage} className="max-h-[380px]">
                         {postData?.imageUrl ? (
                             <Skeleton isLoaded={isLoaded}>
                                 <Image

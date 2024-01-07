@@ -73,6 +73,9 @@ const InputBox = (props) => {
         onSuccess: (data) => {
             dispatch(resetIsChecked());
             toast.success("Đã đăng post");
+            setInput("");
+            setSelectedFile(null);
+            setShowEmojis(false);
             variant === "group" ? addPostToGroup(data._id) : null;
             handleGetTimeLine();
             handleResetPage();
@@ -115,14 +118,12 @@ const InputBox = (props) => {
 
                 createPostMutation.mutate(body);
             } else {
-                toast.error("Bài viết phải có thú cưng");
+                toast.error("Bài viết phải gắn thẻ thú cưng");
+                onOpenChange();
             }
         }
 
         setLoading(false);
-        setInput("");
-        setSelectedFile(null);
-        setShowEmojis(false);
     };
 
     const addImageToPost = (e) => {

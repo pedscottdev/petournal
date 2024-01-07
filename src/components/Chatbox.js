@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import defaultAvatar from "../img/default-avatar.png";
 import Image from "next/image";
 import { HiOutlineUserCircle } from "react-icons/hi2";
@@ -22,6 +22,10 @@ function Chatbox(props) {
     const [listMessages, setListMessages] = useState([]);
     const [arrivalMessage, setArrivalMessage] = useState(null);
     const [text, setText] = useState("");
+    const [page, setPage] = useState(2);
+    const [loadingMoreMessages, setLoadingMoreMessages] = useState(false);
+
+    const scrollRef = useRef();
 
     useEffect(() => {
         getMessages();
@@ -51,7 +55,7 @@ function Chatbox(props) {
             });
             setListMessages(msgs);
             setText("");
-            
+
             handleGetConversation();
         },
     });
@@ -83,6 +87,68 @@ function Chatbox(props) {
         arrivalMessage && setListMessages((prev) => [...prev, arrivalMessage]);
     }, [arrivalMessage]);
 
+    useEffect(() => {
+        const scroll = scrollRef.current;
+        if (scroll) {
+            scroll.scrollTop = scroll.scrollHeight;
+        }
+    }, [listMessages]);
+
+    // const handleScroll = async () => {
+    //     const scrollElement = scrollRef.current;
+    //     console.log(scrollElement?.scrollHeight);
+
+    //     if (scrollElement?.scrollTop === 0 && !loadingMoreMessages) {
+    //         // User has scrolled to the top
+    //         setLoadingMoreMessages(true);
+
+    //         // Fetch more messages and append them to the existing list
+    //         const body = { to: userId, page };
+    //         const { data } = await MessageService.getMessages(body);
+    //         setListMessages((prev) => [...prev, ...data]);
+
+    //         setPage((prevPage) => prevPage + 1);
+    //         setLoadingMoreMessages(false);
+    //     }
+    // };
+
+    const renderMessagesWithDividers = () => {
+        const messagesByDate = {};
+
+        // Group messages by date
+        listMessages.forEach((message) => {
+            const date = new Date(message.updatedAt);
+            const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+
+            if (!messagesByDate[formattedDate]) {
+                messagesByDate[formattedDate] = [];
+            }
+
+            messagesByDate[formattedDate].push(message);
+        });
+
+        // Render messages with dividers
+        return Object.keys(messagesByDate).map((date) => (
+            <div key={date}>
+                <Divider label={date} />
+                <div className="flex flex-col-reverse">
+                    {messagesByDate[date].map((message) => {
+                        return (
+                            <div ref={scrollRef} key={message._id}>
+                                <ChatLine
+                                    userAvatar={message.fromSelf ? userStore.avatar : userAvatar}
+                                    content={message.message}
+                                    time={formatTime(message.updatedAt)}
+                                    type={message.fromSelf ? "sender" : "receiver"}
+                                />
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+        ));
+    };
+
     return (
         <div className="bg-[#FBFBFB] h-full">
             {/* Header */}
@@ -105,20 +171,13 @@ function Chatbox(props) {
             </div>
 
             {/* Threads */}
-            <div className="flex overflow-y-auto flex-col-reverse h-[80%] ">
-                <div className="bg-white h-full overflow-y-auto space-y-2 border-b pb-6 border-gray-200">
-                    <Divider label="28 Tháng 10" />
-                    {listMessages?.map((message) => {
-                        return (
-                            <ChatLine
-                                key={message._id}
-                                userAvatar={message.fromSelf == true ? userStore.avatar : userAvatar}
-                                content={message.message}
-                                time={formatTime(message.updatedAt)}
-                                type={message.fromSelf == true ? "sender" : "receiver"}
-                            />
-                        );
-                    })}
+            <div className="h-[80%] ">
+                <div
+                    ref={scrollRef}
+                    // onScroll={handleScroll}
+                    className="bg-white  flex flex-col-reverse h-full overflow-y-auto space-y-2 border-b pb-6 border-gray-200"
+                >
+                    {renderMessagesWithDividers()}
                 </div>
             </div>
 

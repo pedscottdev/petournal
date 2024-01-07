@@ -77,6 +77,7 @@ function groupid() {
     const getPostsFromGroup = async () => {
         const body = { group_id: groupId };
         const { data } = await GroupService.getPostsFromGroup(body);
+        console.log(data);
         setListPost(data);
     };
 
@@ -171,6 +172,7 @@ function groupid() {
     const updateProfleMutation = useMutation({
         mutationFn: async (data) => {
             const result = await GroupService.updateProfileGroup(data);
+            console.log(result);
             return result.data;
         },
         onSuccess: (data) => {
@@ -202,6 +204,8 @@ function groupid() {
                 describe: groupDesc,
             };
         }
+
+        console.log(body);
 
         updateProfleMutation.mutate(body);
     };

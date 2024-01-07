@@ -21,7 +21,9 @@ function Signup() {
         },
         onSuccess: () => {
             toast.success("Đăng ký thành công");
-            router.push("/login");
+            setTimeout(() => {
+                router.push("/login");
+            }, 1000);
         },
         onError: (err) => {
             toast.error(err.response.data.message);

@@ -27,6 +27,7 @@ function Login() {
 
         const redirectToHome = async () => {
             if (token && isMounted) {
+                toast.success("Đăng nhập thành công");
                 await new Promise((resolve) => setTimeout(resolve, 1000));
                 router.push("/");
             }

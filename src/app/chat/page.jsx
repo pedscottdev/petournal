@@ -125,6 +125,7 @@ function chat() {
                                         width={128}
                                         height={128}
                                         quality={100}
+                                        alt=""
                                     ></Image>
                                     <p className="font-medium text-[15px]">{userStore.fullName}</p>
                                 </div>
