@@ -52,7 +52,12 @@ import { useRouter } from "next/navigation";
 import { SocketContext } from "../core/socket/socket";
 import NotificationService from "../core/services/notification.service";
 import { IoMdAdd } from "react-icons/io";
+import { BsZoomIn, BsZoomOut } from "react-icons/bs";
+import { RxReload } from "react-icons/rx";
+
 import ReportService from "../core/services/report.service";
+import "react-photo-view/dist/react-photo-view.css";
+import { PhotoView, PhotoProvider } from "react-photo-view";
 
 function PostCard(props) {
     const { postId, isUserFollowing, isUserLiked, handleGetTimeLine, handleResetPage, variant } = props;
@@ -309,6 +314,7 @@ function PostCard(props) {
             setCommentInput("");
             setCountLoadComment(2);
             getTotalCommentCount();
+            setIsCommentSectionVisible(true);
             toast.success("Đã bình luận");
 
             if (await isUserNotificationExist(data)) return;
@@ -390,10 +396,6 @@ function PostCard(props) {
         console.log(selectedReason);
         reportPostMutation.mutate(selectedReason);
     };
-
-    const handleViewImage = () => {
-      console.log("view image");
-    }
 
     return (
         <div className="flex justify-center bg-white rounded-xl shadow-sm border-1 borrder-gray-200 mt-6">
@@ -675,17 +677,40 @@ function PostCard(props) {
                 {/* Content */}
                 <div className="mt-4">
                     <p className="text-[#000000] text-[15px] sm:text-base">{postData?.content}</p>
-                    <div onClick={handleViewImage} className="max-h-[380px]">
+                    <div className="max-h-[380px]">
                         {postData?.imageUrl ? (
                             <Skeleton isLoaded={isLoaded}>
-                                <Image
-                                    src={postData?.imageUrl}
-                                    className="rounded-xl cursor-pointer max-h-[360px] object-cover mt-4"
-                                    alt=""
-                                    isblurred="true"
-                                    width={1000}
-                                    height={1000}
-                                />
+                                <PhotoProvider
+                                    toolbarRender={({ onScale, scale, rotate, onRotate }) => {
+                                        return (
+                                            <div className="flex text-2xl mx-10">
+                                                <BsZoomIn
+                                                    className="cursor-pointer"
+                                                    onClick={() => onScale(scale + 1)}
+                                                />
+                                                <BsZoomOut
+                                                    className="mx-8 cursor-pointer"
+                                                    onClick={() => onScale(scale - 1)}
+                                                />
+                                                <RxReload
+                                                    className="cursor-pointer"
+                                                    onClick={() => onRotate(rotate + 90)}
+                                                />
+                                            </div>
+                                        );
+                                    }}
+                                >
+                                    <PhotoView src={postData?.imageUrl}>
+                                        <Image
+                                            src={postData?.imageUrl}
+                                            className="rounded-xl cursor-pointer max-h-[360px] object-cover mt-4"
+                                            alt=""
+                                            isblurred="true"
+                                            width={1000}
+                                            height={1000}
+                                        />
+                                    </PhotoView>
+                                </PhotoProvider>
                             </Skeleton>
                         ) : (
                             ""

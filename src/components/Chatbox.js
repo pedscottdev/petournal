@@ -11,6 +11,13 @@ import { useSelector } from "react-redux";
 import { SocketContext } from "../core/socket/socket";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { PhotographIcon } from "@heroicons/react/outline";
+import { ImageStorage } from "../../firebase";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import "react-photo-view/dist/react-photo-view.css";
+import { PhotoProvider } from "react-photo-view";
+import { BsZoomIn, BsZoomOut } from "react-icons/bs";
+import { RxReload } from "react-icons/rx";
 
 function Chatbox(props) {
     const { userId, userAvatar, userName, handleGetConversation } = props;
@@ -26,6 +33,37 @@ function Chatbox(props) {
     const [loadingMoreMessages, setLoadingMoreMessages] = useState(false);
 
     const scrollRef = useRef();
+    const filePickerRef = useRef(null);
+
+    const addImageToPost = (e) => {
+        const reader = new FileReader();
+
+        if (e.target.files[0]) {
+            const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"]; // Add the allowed image types
+
+            if (allowedTypes.includes(e.target.files[0].type)) {
+                reader.readAsDataURL(e.target.files[0]);
+            } else {
+                toast.error("Vui lòng thêm tệp định dạng hình ảnh");
+                // Optionally, you can reset the input field to clear the invalid selection
+                e.target.value = "";
+                return;
+            }
+        }
+
+        reader.onload = async (readerEvent) => {
+            const imageFile = readerEvent.target.result;
+            const imageRef = ref(ImageStorage, `chat/${userStore.id}/images/${Date.now()}`);
+
+            if (imageFile) {
+                await uploadString(imageRef, imageFile, "data_url").then(async (value) => {
+                    const downloadURL = await getDownloadURL(value.ref);
+                    const body = { to: userId, imageUrl: downloadURL };
+                    createMessageMutation.mutate(body);
+                });
+            }
+        };
+    };
 
     useEffect(() => {
         getMessages();
@@ -61,6 +99,7 @@ function Chatbox(props) {
     });
 
     const handleSend = async () => {
+        if (text === "" || text.trim().length === 0) return;
         const body = { to: userId, message: text };
         createMessageMutation.mutate(body);
     };
@@ -138,6 +177,7 @@ function Chatbox(props) {
                                 <ChatLine
                                     userAvatar={message.fromSelf ? userStore.avatar : userAvatar}
                                     content={message.message}
+                                    image={message.imageUrl}
                                     time={formatTime(message.updatedAt)}
                                     type={message.fromSelf ? "sender" : "receiver"}
                                 />
@@ -172,17 +212,36 @@ function Chatbox(props) {
 
             {/* Threads */}
             <div className="h-[80%] ">
-                <div
-                    ref={scrollRef}
-                    // onScroll={handleScroll}
-                    className="bg-white  flex flex-col-reverse h-full overflow-y-auto space-y-2 border-b pb-6 border-gray-200"
+                <PhotoProvider
+                    toolbarRender={({ onScale, scale, rotate, onRotate }) => {
+                        return (
+                            <div className="flex text-2xl mx-10">
+                                <BsZoomIn className="cursor-pointer" onClick={() => onScale(scale + 1)} />
+                                <BsZoomOut className="mx-8 cursor-pointer" onClick={() => onScale(scale - 1)} />
+                                <RxReload className="cursor-pointer" onClick={() => onRotate(rotate + 90)} />
+                            </div>
+                        );
+                    }}
                 >
-                    {renderMessagesWithDividers()}
-                </div>
+                    <div
+                        ref={scrollRef}
+                        // onScroll={handleScroll}
+                        className="bg-white  flex flex-col-reverse h-full overflow-y-auto space-y-2 border-b pb-6 border-gray-200"
+                    >
+                        {renderMessagesWithDividers()}
+                    </div>
+                </PhotoProvider>
             </div>
 
             {/* Input */}
             <div className="flex items-center space-x-4 w-full px-6 h-[10%] bg-[#fbfbfb]">
+                <button
+                    className="active:scale-[.94] p-2 active:duration-75 transition-all rounded-full flex gap-2"
+                    onClick={() => filePickerRef.current.click()}
+                >
+                    <PhotographIcon className="h-10 w-10 text-[#2683D7]" />
+                    <input type="file" hidden onChange={addImageToPost} ref={filePickerRef} />
+                </button>
                 <div className="w-full flex items-center border-2 border-gray-300 rounded-full bg-[#f8f8f9] py-2.5 px-3 ">
                     <input
                         className=" flex w-full ml-4 bg-transparent outline-none text-[15px] text-gray-500 flex-shrink"

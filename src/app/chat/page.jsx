@@ -16,6 +16,8 @@ import ConversationService from "../../core/services/conversation.service";
 import { SocketContext } from "../../core/socket/socket";
 import { useMutation } from "@tanstack/react-query";
 import Loading from "../../components/share/loading";
+import "react-photo-view/dist/react-photo-view.css";
+import { PhotoProvider } from "react-photo-view";
 
 function chat() {
     const [selectedUser, setSelectedUser] = useState(null);
@@ -249,7 +251,7 @@ function chat() {
                                                 conversation.userPartner.firstName
                                             }
                                             selfChat={conversation.isUserSend}
-                                            latestMessage={conversation.lastMessage.message}
+                                            latestMessage={conversation.lastMessage.message ? conversation.lastMessage.message : "Đã gửi ảnh"}
                                             time={formatDate(conversation.lastMessage.updatedAt)}
                                             hasConversation="true"
                                         />

@@ -91,11 +91,15 @@ function CommentParent(props) {
         if (result) {
             await socket.emit("comment-child-post-action", { comment_id: result._id });
             await setCommentChildInput("");
+            setCommentVisible(true);
 
             const data = { type: "COMMENT", post_id: postId, comment_id: commentId };
             if (await isUserNotificationExist(data)) return;
             if (postOwner === userLogin.id) return;
             await socket.emit("comment-post-notification", data);
+        }
+        else{
+            toast.error("Bình luận đã được xoá");
         }
     };
 

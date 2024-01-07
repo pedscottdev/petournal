@@ -11,6 +11,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { Toaster } from "react-hot-toast";
 import { SocketContext } from "../core/socket/socket";
 import socketio from "socket.io-client";
+
 // import { Inter } from 'next/font/google'
 
 // const font = Inter ({ subsets: ['latin'] })
