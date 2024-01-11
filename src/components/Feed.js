@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import InputBox from "./InputBox";
 import PostCard from "./PostCard";
-import { AnnotationIcon, SearchIcon, BellIcon } from "@heroicons/react/outline";
+import EmptyFeed from "../utils/EmptyFeed";
 
 import TimeLineService from "../core/services/time-line.service";
 import { useMutation } from "@tanstack/react-query";
@@ -66,19 +66,21 @@ function Feed() {
             </div>
 
             {/* Posts */}
-            {listPost?.map((post) => {
-                return (
-                    <PostCard
-                        key={post._id}
-                        variant={post.pets.length == 0 ? "group" : null}
-                        postId={post._id}
-                        isUserFollowing={post?.isFollowing}
-                        isUserLiked={post?.isLiked}
-                        handleGetTimeLine={getTimeLine}
-                        handleResetPage={resetPage}
-                    />
-                );
-            })}
+            {listPost.length > 0 &&
+                listPost?.map((post) => {
+                    return (
+                        <PostCard
+                            key={post._id}
+                            variant={post.pets.length == 0 ? "group" : null}
+                            postId={post._id}
+                            isUserFollowing={post?.isFollowing}
+                            isUserLiked={post?.isLiked}
+                            handleGetTimeLine={getTimeLine}
+                            handleResetPage={resetPage}
+                        />
+                    );
+                })}
+            {listPost.length == 0 && <EmptyFeed />}
         </div>
     );
 }
