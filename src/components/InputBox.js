@@ -17,7 +17,7 @@ import PetBadge from "../utils/PetBadge";
 import PetCard from "../utils/PetCard";
 import SammyAvatar from "../img/sammy-avatar.jpg";
 import PetService from "../core/services/pet.service.js";
-import { resetIsChecked, setUserPets } from "../core/store/feature/pet-slice";
+import { filterPets, resetIsChecked, setUserPets } from "../core/store/feature/pet-slice";
 import { useDispatch, useSelector } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
 import PostService from "../core/services/post.service.js";
@@ -27,11 +27,13 @@ import GroupService from "../core/services/group.service.js";
 
 const InputBox = (props) => {
     const { handleGetTimeLine, handleResetPage, variant, groupId } = props;
+    const dispatch = useDispatch();
 
     const [input, setInput] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
     const [showEmojis, setShowEmojis] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [filter, setFilter] = useState("");
 
     const filePickerRef = useRef(null);
 
@@ -39,7 +41,13 @@ const InputBox = (props) => {
         getPetsByUserLogin();
     }, []);
 
-    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(filterPets(filter));
+        if (filter === "") {
+            getPetsByUserLogin();
+        }
+    }, [filter]);
+
     const getPetsByUserLogin = async () => {
         const { data } = await PetService.getPetsByUserLogin();
         let petArray = [];
@@ -243,6 +251,8 @@ const InputBox = (props) => {
                                             <input
                                                 className=" flex ml-4 bg-transparent outline-none text-base text-gray-500 flex-shrink min-w-[20rem]"
                                                 type="text"
+                                                value={filter}
+                                                onChange={(e) => setFilter(e.target.value)}
                                                 placeholder="Tìm thú cưng của bạn"
                                             ></input>
                                         </div>

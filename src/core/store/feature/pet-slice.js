@@ -30,9 +30,13 @@ const PetSlice = createSlice({
                 pet.isChecked = false;
             });
         },
+        filterPets: (state, action) => {
+            const keyword = action.payload.toLowerCase();
+            return state.filter((pet) => pet.name.toLowerCase().includes(keyword));
+        },
     },
 });
 
-export const { setUserPets, setIsChecked, resetIsChecked } = PetSlice.actions;
+export const { setUserPets, setIsChecked, resetIsChecked, filterPets } = PetSlice.actions;
 
 export default PetSlice.reducer;

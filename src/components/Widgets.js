@@ -36,7 +36,7 @@ function Widgets() {
                                 key={userRecommend?.user?._id}
                                 userId={userRecommend?.user?._id}
                                 userName={userRecommend?.user.lastName + " " + userRecommend?.user.firstName}
-                                userAvatar={defaultAvatar}
+                                userAvatar={userRecommend?.user.avatar}
                                 follower={userRecommend.followerOfUserRecommend}
                             />
                         );
