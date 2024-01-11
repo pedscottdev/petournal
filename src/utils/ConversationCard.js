@@ -43,7 +43,7 @@ function ConversationCard(props) {
                     <div className=" ml-4">
                         <a
                             className={`text-[15px] ${
-                                isRead ? "font-semibold" : "font-bold"
+                                isRead ? "font-semibold" : "font-semibold"
                             } cursor-pointer  text-gray-900 truncate dark:text-white`}
                         >
                             {userName}
@@ -51,7 +51,7 @@ function ConversationCard(props) {
                         {hasConversation ? (
                             <div
                                 className={`text-[15px] ${
-                                    isRead ? "font-medium" : "font-bold text-violet-600"
+                                    isRead ? "font-medium" : "font-semibold text-violet-600"
                                 } truncate limit-word text-gray-500`}
                             >
                                 {selfChat ? "Bạn: " + latestMessage : latestMessage}
