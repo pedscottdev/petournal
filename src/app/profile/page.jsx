@@ -36,6 +36,7 @@ import { setAvatar } from "../../core/store/feature/user-slice";
 import "react-photo-view/dist/react-photo-view.css";
 import { PhotoView, PhotoProvider } from "react-photo-view";
 import { BsZoomIn, BsZoomOut } from "react-icons/bs";
+import withAuth from "../../middleware/withAuth";
 
 function profile() {
     const [isFollowing, setIsFollowing] = useState(false);
@@ -503,7 +504,7 @@ function profile() {
     );
 }
 
-export default React.memo(profile);
+export default withAuth(React.memo(profile));
 
 const calculateAge = (birthday) => {
     const currentDate = new Date();

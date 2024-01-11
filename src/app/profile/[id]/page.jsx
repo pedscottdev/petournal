@@ -37,6 +37,7 @@ import { SocketContext } from "../../../core/socket/socket";
 import { BsZoomIn, BsZoomOut } from "react-icons/bs";
 import "react-photo-view/dist/react-photo-view.css";
 import { PhotoView, PhotoProvider } from "react-photo-view";
+import withAuth from "../../../middleware/withAuth";
 
 function profile() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -606,7 +607,7 @@ function profile() {
     );
 }
 
-export default React.memo(profile);
+export default withAuth(React.memo(profile));
 
 const calculateAge = (birthday) => {
     const currentDate = new Date();

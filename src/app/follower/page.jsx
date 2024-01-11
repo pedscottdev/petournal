@@ -11,6 +11,7 @@ import ProfileCard from "../../components/ProfileCard";
 import FollowService from "../../core/services/follow.service";
 import { useMutation } from "@tanstack/react-query";
 import FindingBox from "../../components/share/finding-box";
+import withAuth from "../../middleware/withAuth";
 
 function follower() {
     const [listFollowings, setListFollowings] = useState([]);
@@ -347,4 +348,4 @@ function follower() {
     );
 }
 
-export default React.memo(follower);
+export default withAuth(React.memo(follower));

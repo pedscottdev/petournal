@@ -22,6 +22,7 @@ import { getDownloadURL, ref, uploadBytes, uploadBytesResumable, uploadString } 
 import { ImageStorage } from "../../../firebase";
 import { useSelector } from "react-redux";
 import FindingBox from "../../components/share/finding-box";
+import withAuth from "../../middleware/withAuth";
 
 // Date Picker
 const options = {
@@ -493,7 +494,7 @@ function pets() {
     );
 }
 
-export default React.memo(pets);
+export default withAuth(React.memo(pets));
 
 const calculateAge = (birthday) => {
     const currentDate = new Date();

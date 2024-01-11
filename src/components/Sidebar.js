@@ -55,11 +55,6 @@ function Sidebar() {
             icon: PiPaperPlaneRightBold,
         },
         {
-            path: "/petcare",
-            title: "Pet Care",
-            icon: PiHandHeartBold,
-        },
-        {
             path: "/profile",
             title: "Trang cá nhân",
             icon: PiUserCircleBold,

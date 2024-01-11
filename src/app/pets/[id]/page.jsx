@@ -20,6 +20,7 @@ import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { BsZoomIn, BsZoomOut } from "react-icons/bs";
 import "react-photo-view/dist/react-photo-view.css";
 import { PhotoView, PhotoProvider } from "react-photo-view";
+import withAuth from "../../../middleware/withAuth";
 
 // Date Picker
 const options = {
@@ -500,7 +501,7 @@ function profile() {
     );
 }
 
-export default profile;
+export default withAuth(profile);
 
 const calculateAge = (birthday) => {
     const currentDate = new Date();

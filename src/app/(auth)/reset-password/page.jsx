@@ -24,4 +24,4 @@ function page() {
     return <FormResetPass />;
 }
 
-export default page;
+export default  page;

@@ -13,6 +13,7 @@ import { setToken, setUserLogin } from "../../../core/store/feature/user-slice.j
 import Loading from "../../../components/share/loading.js";
 import { store } from "../../../core/store/index.js";
 import toast from "react-hot-toast";
+import withAuth from "../../../middleware/withAuth.js";
 
 function Login() {
     const router = useRouter();

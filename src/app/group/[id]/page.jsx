@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 import { ImageStorage } from "../../../../firebase";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import Loading from "../../../components/share/loading";
+import withAuth from "../../../middleware/withAuth";
 
 function groupid() {
     const params = useParams();
@@ -423,7 +424,11 @@ function groupid() {
                                                                     className="text-[15px] font-medium"
                                                                     onClick={addUserToGroup}
                                                                 >
-                                                                    {addUserMutation.isPending ? <Loading /> : "Xác nhận"}
+                                                                    {addUserMutation.isPending ? (
+                                                                        <Loading />
+                                                                    ) : (
+                                                                        "Xác nhận"
+                                                                    )}
                                                                 </div>
                                                             </Button>
                                                         </ModalFooter>
@@ -473,13 +478,11 @@ function groupid() {
                                                 userName={member.user.lastName + " " + member.user.firstName}
                                                 userAvatar={member.user.avatar}
                                                 follower={member.totalFollowers}
-                                                leader = {member.isLeader}
+                                                leader={member.isLeader}
                                                 variant="group"
                                             />
                                         );
                                     })}
-
-                                
                                 </div>
                             </div>
                         </div>
@@ -490,4 +493,4 @@ function groupid() {
     );
 }
 
-export default groupid;
+export default withAuth(groupid);

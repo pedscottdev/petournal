@@ -18,6 +18,7 @@ import { useMutation } from "@tanstack/react-query";
 import Loading from "../../components/share/loading";
 import "react-photo-view/dist/react-photo-view.css";
 import { PhotoProvider } from "react-photo-view";
+import withAuth from "../../middleware/withAuth";
 
 function chat() {
     const [selectedUser, setSelectedUser] = useState(null);
@@ -292,7 +293,7 @@ function chat() {
     );
 }
 
-export default React.memo(chat);
+export default withAuth(React.memo(chat));
 
 const formatDate = (inputDate) => {
     const date = new Date(inputDate);
