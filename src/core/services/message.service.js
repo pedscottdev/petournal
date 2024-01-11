@@ -7,6 +7,9 @@ const MessageService = {
     getMessages: (body) => {
         return axiosClient.post("/message/getMessages", body);
     },
+    deleteMessage: (body) => {
+        return axiosClient.post("/message/deleteMessage", body);
+    },
 };
 
 export default MessageService;

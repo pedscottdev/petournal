@@ -33,6 +33,9 @@ import toast from "react-hot-toast";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { ImageStorage } from "../../../firebase";
 import { setAvatar } from "../../core/store/feature/user-slice";
+import "react-photo-view/dist/react-photo-view.css";
+import { PhotoView, PhotoProvider } from "react-photo-view";
+import { BsZoomIn, BsZoomOut } from "react-icons/bs";
 
 function profile() {
     const [isFollowing, setIsFollowing] = useState(false);
@@ -253,15 +256,31 @@ function profile() {
                             src="https://images.unsplash.com/photo-1615715616181-6ba85d724137?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                             className="w-full h-28 object-cover"
                         />
-                        <div className="flex justify-center -mt-8">
-                            <Image
-                                src={userStore.avatar}
-                                className="rounded-full object-cover border-solid w-24 h-24 border-white border-3 -mt-3"
-                                width={128}
-                                height={128}
-                                quality={100}
-                                alt="avatar"
-                            />
+                        <div className="flex justify-center -mt-8 cursor-pointer">
+                            <PhotoProvider
+                                toolbarRender={({ onScale, scale }) => {
+                                    return (
+                                        <div className="flex text-2xl mx-10">
+                                            <BsZoomIn className="cursor-pointer" onClick={() => onScale(scale + 1)} />
+                                            <BsZoomOut
+                                                className="mx-8 cursor-pointer"
+                                                onClick={() => onScale(scale - 1)}
+                                            />
+                                        </div>
+                                    );
+                                }}
+                            >
+                                <PhotoView src={userStore.avatar}>
+                                    <Image
+                                        src={userStore.avatar}
+                                        className="rounded-full object-cover border-solid w-24 h-24 border-white border-3 -mt-3"
+                                        width={128}
+                                        height={128}
+                                        quality={100}
+                                        alt="avatar"
+                                    />
+                                </PhotoView>
+                            </PhotoProvider>
                         </div>
                         <div className="text-center px-3 pb-4 pt-2 rounded-t-xl">
                             <h3 className="text-gray-700 text-xl font-bold ">{userStore.fullName}</h3>

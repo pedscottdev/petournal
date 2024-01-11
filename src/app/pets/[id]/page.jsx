@@ -17,6 +17,9 @@ import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { ImageStorage } from "../../../../firebase";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { BsZoomIn, BsZoomOut } from "react-icons/bs";
+import "react-photo-view/dist/react-photo-view.css";
+import { PhotoView, PhotoProvider } from "react-photo-view";
 
 // Date Picker
 const options = {
@@ -231,8 +234,28 @@ function profile() {
                                 className="object-cover h-6 w-6 ml-4 rounded-full"
                             />
                         </button>
-                        <div className="">
-                            <img alt="profile" src={petData?.avatar} className="object-cover h-32 w-32 rounded-full" />
+                        <div className="cursor-pointer">
+                            <PhotoProvider
+                                toolbarRender={({ onScale, scale }) => {
+                                    return (
+                                        <div className="flex text-2xl mx-10">
+                                            <BsZoomIn className="cursor-pointer" onClick={() => onScale(scale + 1)} />
+                                            <BsZoomOut
+                                                className="mx-8 cursor-pointer"
+                                                onClick={() => onScale(scale - 1)}
+                                            />
+                                        </div>
+                                    );
+                                }}
+                            >
+                                <PhotoView src={petData?.avatar}>
+                                    <img
+                                        alt="profile"
+                                        src={petData?.avatar}
+                                        className="object-cover h-32 w-32 rounded-full"
+                                    />
+                                </PhotoView>
+                            </PhotoProvider>
                         </div>
 
                         <div className="flex flex-col mt-3 text-center">

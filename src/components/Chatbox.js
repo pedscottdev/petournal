@@ -72,7 +72,9 @@ function Chatbox(props) {
     const getMessages = async () => {
         const body = { to: userId };
         const { data } = await MessageService.getMessages(body);
-        setListMessages(data);
+        if (data) {
+            setListMessages(data);
+        }
     };
 
     const createMessageMutation = useMutation({
@@ -110,7 +112,7 @@ function Chatbox(props) {
 
     useEffect(() => {
         if (socket) {
-            socket.on("listen-receive-message", (msg) => {
+            const handleListenReceiveMessage = (msg) => {
                 setArrivalMessage({
                     _id: msg._id,
                     fromSelf: false,
@@ -118,9 +120,22 @@ function Chatbox(props) {
                     createdAt: msg.createdAt,
                     updatedAt: msg.updatedAt,
                 });
-            });
+            };
+
+            const handleListenDeleteMessage = () => {
+                getMessages();
+                handleGetConversation();
+            };
+
+            socket.on("listen-receive-message", handleListenReceiveMessage);
+            socket.on("listen-delete-message", handleListenDeleteMessage);
+
+            return () => {
+                socket.off("listen-receive-message", handleListenReceiveMessage);
+                socket.off("listen-delete-message", handleListenDeleteMessage);
+            };
         }
-    }, []);
+    }, [socket]);
 
     useEffect(() => {
         arrivalMessage && setListMessages((prev) => [...prev, arrivalMessage]);
@@ -176,10 +191,14 @@ function Chatbox(props) {
                             <div ref={scrollRef} key={message._id}>
                                 <ChatLine
                                     userAvatar={message.fromSelf ? userStore.avatar : userAvatar}
+                                    userId={userId}
+                                    messageId={message._id}
                                     content={message.message}
                                     image={message.imageUrl}
                                     time={formatTime(message.updatedAt)}
                                     type={message.fromSelf ? "sender" : "receiver"}
+                                    getMessages={getMessages}
+                                    handleGetConversation={handleGetConversation}
                                 />
                             </div>
                         );

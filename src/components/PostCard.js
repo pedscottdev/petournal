@@ -58,6 +58,7 @@ import { RxReload } from "react-icons/rx";
 import ReportService from "../core/services/report.service";
 import "react-photo-view/dist/react-photo-view.css";
 import { PhotoView, PhotoProvider } from "react-photo-view";
+import Link from "next/link";
 
 function PostCard(props) {
     const { postId, isUserFollowing, isUserLiked, handleGetTimeLine, handleResetPage, variant } = props;
@@ -254,7 +255,7 @@ function PostCard(props) {
     useEffect(() => {
         if (socket !== null) {
             const handleLikePostAction = (data) => {
-                if(postId == data._id){
+                if (postId == data._id) {
                     setUsersLike(data?.likes);
                 }
             };
@@ -413,12 +414,12 @@ function PostCard(props) {
                             className="h-11 w-11 rounded-full"
                         />
                         <div className=" group ml-4 mr-5 flex flex-col">
-                            <h3
+                            <Link
+                                href={isUserLogin ? `/profile` : `/profile/${postData?.user?._id}`}
                                 className="font-semibold text-[15px] sm:text-base text-[#000000] hover:underline cursor-pointer"
-                                onClick={isUserLogin ? handleNavigatePersonal : handleNavigate}
                             >
                                 {`${postData?.user?.lastName} ${postData?.user?.firstName}`}
-                            </h3>
+                            </Link>
 
                             <p className="text-gray-400 text-[14px]">{timePostAgo}</p>
                         </div>

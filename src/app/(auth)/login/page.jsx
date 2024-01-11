@@ -46,6 +46,10 @@ function Login() {
         },
         onSuccess: ({ data }) => {
             const { accessToken, user } = data.result;
+            if (user.status === 0) {
+                toast.error("Tài khoản đã bị khoá");
+                return;
+            }
             dispatch(setUserLogin(user));
             dispatch(setToken(accessToken));
             queryClient.invalidateQueries(["user"]);

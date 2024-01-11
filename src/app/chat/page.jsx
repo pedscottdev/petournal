@@ -54,7 +54,7 @@ function chat() {
     }, []);
 
     useEffect(() => {
-        socket.on("listen-receive-message", (data) => {
+        socket.on("listen-receive-message", () => {
             getConversations();
         });
     }, [socket]);
@@ -171,38 +171,39 @@ function chat() {
                                                         ) : (
                                                             listFollowing.length > 0 &&
                                                             listFollowing?.map((following) => {
-                                                                return (
-                                                                    <ConversationCard
-                                                                        key={following._id}
-                                                                        isRead={false}
-                                                                        conversationId={null}
-                                                                        onClick={handleUserSelect}
-                                                                        userAvatar={
-                                                                            filterFollowingKeyword !== ""
-                                                                                ? following.avatar
-                                                                                : following?.following?.avatar
-                                                                        }
-                                                                        userId={
-                                                                            filterFollowingKeyword !== ""
-                                                                                ? following._id
-                                                                                : following?.following?._id
-                                                                        }
-                                                                        userName={
-                                                                            filterFollowingKeyword !== ""
-                                                                                ? following.lastName +
-                                                                                  " " +
-                                                                                  following.firstName
-                                                                                : following?.following?.lastName +
-                                                                                  " " +
-                                                                                  following?.following?.firstName
-                                                                        }
-                                                                        email={
-                                                                            filterFollowingKeyword !== ""
-                                                                                ? following.email
-                                                                                : following?.following?.email
-                                                                        }
-                                                                    />
-                                                                );
+                                                                if (following.isChat == false)
+                                                                    return (
+                                                                        <ConversationCard
+                                                                            key={following._id}
+                                                                            isRead={false}
+                                                                            conversationId={null}
+                                                                            onClick={handleUserSelect}
+                                                                            userAvatar={
+                                                                                filterFollowingKeyword !== ""
+                                                                                    ? following.avatar
+                                                                                    : following?.following?.avatar
+                                                                            }
+                                                                            userId={
+                                                                                filterFollowingKeyword !== ""
+                                                                                    ? following._id
+                                                                                    : following?.following?._id
+                                                                            }
+                                                                            userName={
+                                                                                filterFollowingKeyword !== ""
+                                                                                    ? following.lastName +
+                                                                                      " " +
+                                                                                      following.firstName
+                                                                                    : following?.following?.lastName +
+                                                                                      " " +
+                                                                                      following?.following?.firstName
+                                                                            }
+                                                                            email={
+                                                                                filterFollowingKeyword !== ""
+                                                                                    ? following.email
+                                                                                    : following?.following?.email
+                                                                            }
+                                                                        />
+                                                                    );
                                                             })
                                                         )}
                                                     </div>
@@ -251,7 +252,11 @@ function chat() {
                                                 conversation.userPartner.firstName
                                             }
                                             selfChat={conversation.isUserSend}
-                                            latestMessage={conversation.lastMessage.message ? conversation.lastMessage.message : "Đã gửi ảnh"}
+                                            latestMessage={
+                                                conversation.lastMessage.message
+                                                    ? conversation.lastMessage.message
+                                                    : "Đã gửi ảnh"
+                                            }
                                             time={formatDate(conversation.lastMessage.updatedAt)}
                                             hasConversation="true"
                                         />

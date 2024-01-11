@@ -32,7 +32,10 @@ function Signup() {
 
     const handleRegister = (values) => {
         if (isValidUserData(values)) {
-            mutation.mutate({ ...values, avatar: defaultAvatar.src });
+            mutation.mutate({
+                ...values,
+                avatar: "https://firebasestorage.googleapis.com/v0/b/petournal-e5c1a.appspot.com/o/default%20user%20Avatar%2F1702319592767.png?alt=media&token=64defb97-1690-4f4c-995c-16dcba72ffaf",
+            });
         }
     };
 

@@ -119,7 +119,6 @@ const InputBox = (props) => {
                 createPostMutation.mutate(body);
             } else {
                 toast.error("Bài viết phải gắn thẻ thú cưng");
-                onOpenChange();
             }
         }
 

@@ -99,7 +99,7 @@ function ProfileCard(props) {
 
             {/* Controller */}
             <div className="flex items-center space-x-5  justify-center w-full py-5">
-                <Link href="">
+                <Link href={`/profile/${userId}`}>
                     <button className="bg-violet-600 active:scale-[.94] active:duration-75 transition-all font-medium text-white p-2 text-[15px] px-4 rounded-full">
                         Xem Profile
                     </button>
