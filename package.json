@@ -13,6 +13,7 @@
     "@emoji-mart/react": "^1.1.1",
     "@fullhuman/postcss-purgecss": "^5.0.0",
     "@heroicons/react": "^1.0.6",
+    "@hookform/resolvers": "2.4.0",
     "@nextui-org/react": "^2.1.13",
     "@reduxjs/toolkit": "^1.9.7",
     "@tailwindcss/postcss7-compat": "^2.2.17",
@@ -34,7 +35,7 @@
     "postcss-import": "^15.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-hook-form": "^7.47.0",
+    "react-hook-form": "7.4.2",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.8.0",
     "react-photo-view": "^1.2.4",
@@ -44,7 +45,8 @@
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.7.2",
     "tailwind-datepicker-react": "^1.4.3",
-    "tailwind-merge": "^0.9.0"
+    "tailwind-merge": "^0.9.0",
+    "yup": "0.27.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",

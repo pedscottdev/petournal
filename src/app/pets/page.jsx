@@ -23,6 +23,10 @@ import { ImageStorage } from "../../../firebase";
 import { useSelector } from "react-redux";
 import FindingBox from "../../components/share/finding-box";
 import withAuth from "../../middleware/withAuth";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import ErrorField from "../../components/share/error-field";
 
 // Date Picker
 const options = {
@@ -59,6 +63,14 @@ const options = {
         year: "numeric",
     },
 };
+
+const PetSchema = yup.object().shape({
+    petName: yup.string().required("Vui lòng nhập tên thú cưng").max(255),
+    species: yup.string().required("Vui chọn loài thú cưng"),
+    breed: yup.string().max(255).required("Vui chọn giống thú cưng"),
+    sex: yup.string().required("Vui chọn giới tính thú cưng"),
+    bio: yup.string().max(500).required("Vui nhập giới thiệu thú cưng"),
+});
 
 function pets() {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -144,7 +156,7 @@ function pets() {
         },
     });
 
-    const handleCreatePet = async () => {
+    const handleCreatePet = async (values) => {
         let body;
 
         const originalDate = new Date(valueDate);
@@ -157,25 +169,18 @@ function pets() {
             await uploadString(imageRef, selectedImage, "data_url").then(async (value) => {
                 const downloadURL = await getDownloadURL(value.ref);
                 body = {
-                    name: petName,
-                    species: selectedSpecies,
-                    breed: breed,
-                    bio: bio,
+                    name: values.petName,
+                    species: values.species,
+                    breed: values.breed,
+                    bio: values.bio,
                     birthday: birthday,
                     avatar: downloadURL,
-                    sex: selectedSex,
+                    sex: values.sex,
                 };
             });
         } else {
-            body = {
-                name: petName,
-                species: selectedSpecies,
-                breed: breed,
-                bio: bio,
-                birthday: birthday,
-                // avatar: defaultPetAvatar.src,
-                sex: selectedSex,
-            };
+            toast.error("Vui lòng chọn ảnh dại diện cho thú cưng");
+            return;
         }
 
         createPetMutation.mutate(body);
@@ -221,6 +226,12 @@ function pets() {
         await setPage(1);
     };
 
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({ resolver: yupResolver(PetSchema) });
+
     return (
         <>
             <Head>
@@ -239,164 +250,179 @@ function pets() {
                         <ModalContent>
                             {(onClose) => (
                                 <>
-                                    <ModalHeader className="flex flex-col gap-1">Thông tin thú cưng</ModalHeader>
-                                    <ModalBody>
-                                        <div className="flex w-full mb-4">
-                                            <Image
-                                                src={selectedImage || defaultPetAvatar}
-                                                className="h-28 w-28 rounded-full object-cover"
-                                                width={128}
-                                                height={128}
-                                                quality={100}
-                                                alt="petAvatar"
-                                            />
-                                            <div className="ml-6">
-                                                <button
-                                                    className="w-fit bg-violet-600 text-white text-[15px] font-medium rounded-xl p-2 px-4 mb-2 cursor-pointer"
-                                                    onClick={handleUpdateButtonClick}
-                                                >
-                                                    Cập nhật ảnh đại diện
-                                                    <input
-                                                        type="file"
-                                                        hidden
-                                                        onChange={handleImageChange}
-                                                        ref={fileInputRef}
-                                                    />
-                                                </button>
-                                                {selectedImage && (
+                                    <form onSubmit={handleSubmit(handleCreatePet)}>
+                                        <ModalHeader className="flex flex-col gap-1">Thông tin thú cưng</ModalHeader>
+                                        <ModalBody>
+                                            <div className="flex w-full mb-4">
+                                                <Image
+                                                    src={selectedImage || defaultPetAvatar}
+                                                    className="h-28 w-28 rounded-full object-cover"
+                                                    width={128}
+                                                    height={128}
+                                                    quality={100}
+                                                    alt="petAvatar"
+                                                />
+                                                <div className="ml-6">
                                                     <button
-                                                        className="bg-red-500 text-white text-[15px] font-medium rounded-xl p-2 px-4 mb-2 ml-2"
-                                                        onClick={handleRemoveImage}
+                                                        type="button"
+                                                        className="w-fit bg-violet-600 text-white text-[15px] font-medium rounded-xl p-2 px-4 mb-2 cursor-pointer"
+                                                        onClick={handleUpdateButtonClick}
                                                     >
-                                                        Gỡ ảnh
+                                                        Cập nhật ảnh đại diện
+                                                        <input
+                                                            type="file"
+                                                            id="petImage"
+                                                            hidden
+                                                            onChange={handleImageChange}
+                                                            ref={fileInputRef}
+                                                        />
                                                     </button>
-                                                )}
-                                                <div className="text-sm text-gray-500 max-w-sm">
-                                                    Lưu ý: Chỉ tải lên ảnh có kích thước nhỏ hơn 5MB. Định dạng hỗ trợ:
-                                                    JPG, PNG, JPEG.
+                                                    {selectedImage && (
+                                                        <button
+                                                            type="button"
+                                                            className="bg-red-500 text-white text-[15px] font-medium rounded-xl p-2 px-4 mb-2 ml-2"
+                                                            onClick={handleRemoveImage}
+                                                        >
+                                                            Gỡ ảnh
+                                                        </button>
+                                                    )}
+                                                    <div className="text-sm text-gray-500 max-w-sm">
+                                                        Lưu ý: Chỉ tải lên ảnh có kích thước nhỏ hơn 5MB. Định dạng hỗ
+                                                        trợ: JPG, PNG, JPEG.
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="lg:col-span-2">
-                                            <div className="grid gap-4 gap-y-4 text-sm grid-cols-1 md:grid-cols-6">
-                                                <div className="md:col-span-6">
-                                                    <label for="pet_name" className="font-medium">
-                                                        Tên thú cưng
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        id="pet_name"
-                                                        value={petName}
-                                                        onChange={(e) => setPetName(e.target.value)}
-                                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
-                                                    />
-                                                </div>
-                                                <div className="md:col-span-3">
-                                                    <label for="species" className="font-medium">
-                                                        Loài
-                                                    </label>
-                                                    <Select
-                                                        radius="sm"
-                                                        size="md"
-                                                        variant="bordered"
-                                                        placeholder="Chọn loài"
-                                                        labelPlacement="outside"
-                                                        className="mt-1 bg-gray-50"
-                                                        value={selectedSpecies}
-                                                        onChange={(e) => setSelectedSpecies(e.target.value)}
-                                                    >
-                                                        <SelectItem key="dog" value="dog">
-                                                            Chó
-                                                        </SelectItem>
-                                                        <SelectItem key="cat" value="cat">
-                                                            Mèo
-                                                        </SelectItem>
-                                                        <SelectItem key="other" value="other">
-                                                            Khác
-                                                        </SelectItem>
-                                                    </Select>
-                                                </div>
+                                            <div className="lg:col-span-2">
+                                                <div className="grid gap-4 gap-y-4 text-sm grid-cols-1 md:grid-cols-6">
+                                                    <div className="md:col-span-6">
+                                                        <label for="petName" className="font-medium flex items-center">
+                                                            <p className="mr-4">Tên thú cưng</p>{" "}
+                                                            <ErrorField sub={errors.petName?.message} />
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            id="petName"
+                                                            // value={petName}
+                                                            // onChange={(e) => setPetName(e.target.value)}
+                                                            {...register("petName")}
+                                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
+                                                        />
+                                                    </div>
+                                                    <div className="md:col-span-3">
+                                                        <label for="species" className="font-medium flex items-center">
+                                                            <p className="mr-4">Loài</p>{" "}
+                                                            <ErrorField sub={errors.species?.message} />
+                                                        </label>
+                                                        <Select
+                                                            radius="sm"
+                                                            size="md"
+                                                            variant="bordered"
+                                                            placeholder="Chọn loài"
+                                                            labelPlacement="outside"
+                                                            className="mt-1 bg-gray-50"
+                                                            // value={selectedSpecies}
+                                                            // onChange={(e) => setSelectedSpecies(e.target.value)}
+                                                            {...register("species")}
+                                                        >
+                                                            <SelectItem key="dog" value="dog">
+                                                                Chó
+                                                            </SelectItem>
+                                                            <SelectItem key="cat" value="cat">
+                                                                Mèo
+                                                            </SelectItem>
+                                                            <SelectItem key="other" value="other">
+                                                                Khác
+                                                            </SelectItem>
+                                                        </Select>
+                                                    </div>
 
-                                                <div className="md:col-span-3">
-                                                    <label for="variables" className="font-medium">
-                                                        Giống
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        id="variables"
-                                                        value={breed}
-                                                        onChange={(e) => setBreed(e.target.value)}
-                                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
-                                                    />
-                                                </div>
+                                                    <div className="md:col-span-3">
+                                                        <label for="breed" className="font-medium flex items-center">
+                                                            <p className="mr-4">Giống</p>{" "}
+                                                            <ErrorField sub={errors.breed?.message} />
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            id="breed"
+                                                            // value={breed}
+                                                            // onChange={(e) => setBreed(e.target.value)}
+                                                            {...register("breed")}
+                                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
+                                                        />
+                                                    </div>
 
-                                                <div className="md:col-span-3">
-                                                    <label for="birthday" className="font-medium mb-1">
-                                                        Ngày sinh
-                                                    </label>
-                                                    {/* <input
+                                                    <div className="md:col-span-3">
+                                                        <label for="birthday" className="font-medium mb-1">
+                                                            Ngày sinh
+                                                        </label>
+                                                        {/* <input
                             type="text"
                             id="birthday"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-full p-2.5 px-4 mt-1"
                           /> */}
-                                                    <Datepicker
-                                                        className="mt-1"
-                                                        options={options}
-                                                        value={valueDate}
-                                                        onChange={handleDateChange}
-                                                        show={show}
-                                                        setShow={handleClose}
-                                                    />
-                                                </div>
+                                                        <Datepicker
+                                                            className="mt-1"
+                                                            options={options}
+                                                            value={valueDate}
+                                                            onChange={handleDateChange}
+                                                            show={show}
+                                                            setShow={handleClose}
+                                                        />
+                                                    </div>
 
-                                                <div className="md:col-span-3 h-6">
-                                                    <label for="sex" className="font-medium">
-                                                        Giới tính
-                                                    </label>
-                                                    <Select
-                                                        id="sex"
-                                                        radius="sm"
-                                                        size="md"
-                                                        variant="bordered"
-                                                        placeholder="Chọn giới tính"
-                                                        labelPlacement="outside"
-                                                        className="mt-1 bg-gray-50"
-                                                        value={selectedSex}
-                                                        onChange={(e) => setSelectedSex(e.target.value)}
-                                                    >
-                                                        <SelectItem key="male" value="male">
-                                                            Đực
-                                                        </SelectItem>
-                                                        <SelectItem key="female" value="female">
-                                                            Cái
-                                                        </SelectItem>
-                                                    </Select>
-                                                </div>
+                                                    <div className="md:col-span-3 h-6">
+                                                        <label for="sex" className="font-medium flex items-center">
+                                                            <p className="mr-4">Giới tính</p>{" "}
+                                                            <ErrorField sub={errors.sex?.message} />
+                                                        </label>
+                                                        <Select
+                                                            id="sex"
+                                                            radius="sm"
+                                                            size="md"
+                                                            variant="bordered"
+                                                            placeholder="Chọn giới tính"
+                                                            labelPlacement="outside"
+                                                            className="mt-1 bg-gray-50"
+                                                            // value={selectedSex}
+                                                            // onChange={(e) => setSelectedSex(e.target.value)}
+                                                            {...register("sex")}
+                                                        >
+                                                            <SelectItem key="male" value="male">
+                                                                Đực
+                                                            </SelectItem>
+                                                            <SelectItem key="female" value="female">
+                                                                Cái
+                                                            </SelectItem>
+                                                        </Select>
+                                                    </div>
 
-                                                <div className="md:col-span-6">
-                                                    <label for="bio" className="font-medium">
-                                                        Giới thiệu
-                                                    </label>
-                                                    <textarea
-                                                        id="bio"
-                                                        rows="3"
-                                                        value={bio}
-                                                        onChange={(e) => setBio(e.target.value)}
-                                                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-1"
-                                                        placeholder="Mô tả về thú cưng của bạn."
-                                                    ></textarea>
+                                                    <div className="md:col-span-6">
+                                                        <label for="bio" className="font-medium flex items-center">
+                                                            <p className="mr-4">Giới thiệu</p>{" "}
+                                                            <ErrorField sub={errors.bio?.message} />
+                                                        </label>
+                                                        <textarea
+                                                            id="bio"
+                                                            rows="3"
+                                                            // value={bio}
+                                                            // onChange={(e) => setBio(e.target.value)}
+                                                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-1"
+                                                            placeholder="Mô tả về thú cưng của bạn."
+                                                            {...register("bio")}
+                                                        ></textarea>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </ModalBody>
-                                    <ModalFooter>
-                                        <Button color="danger" variant="light" onPress={onClose}>
-                                            <div className="text-[15px] font-medium">Đóng</div>
-                                        </Button>
-                                        <Button color="secondary" onClick={handleCreatePet}>
-                                            <div className="text-[15px] font-medium">Xác nhận</div>
-                                        </Button>
-                                    </ModalFooter>
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            <Button color="danger" variant="light" onPress={onClose}>
+                                                <div className="text-[15px] font-medium">Đóng</div>
+                                            </Button>
+                                            <Button color="secondary" type="submit">
+                                                <div className="text-[15px] font-medium">Xác nhận</div>
+                                            </Button>
+                                        </ModalFooter>
+                                    </form>
                                 </>
                             )}
                         </ModalContent>
